@@ -80,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                height: sy(20),
+                height: sy(10),
               ),
               Text(
                 'Talk is cheap.',
