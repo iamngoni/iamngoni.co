@@ -11,4 +11,5 @@ import 'package:flutter/material.dart';
 class SiteColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color dark = Color(0xFF0C0C1A);
+  static const Color green = Color(0xFF49E349);
 }

@@ -57,3 +57,8 @@ flutter:
     - assets/images/
     - assets/lottie/
     - assets/icons/
+
+  fonts:
+    - family: HedvigLettersSerif
+      fonts:
+        - asset: fonts/HedvigLettersSerif-Regular.ttf
