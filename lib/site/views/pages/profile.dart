@@ -50,10 +50,10 @@ class ProfilePage extends StatelessWidget {
                       ],
                     ),
                     child: Text(
-                      'Backend & Mobile Developer',
+                      'Backend & Mobile Developer | B.Tech Hons. Software Eng. 👨🏿‍🎓',
                       style: TextStyle(
                         color: SiteColors.dark,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w700,
                         fontSize: sy(10),
                       ),
                     ),
