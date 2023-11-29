@@ -99,7 +99,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: sy(30),
+                height: sy(10),
               ),
               Text(
                 'I create elegantly straightforward designs and take joy in my '

@@ -58,7 +58,28 @@ class SitePage extends StatelessWidget {
 
               if (state is Connected) {
                 log('Connected');
-                return const LandingPage();
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth > 1366) {
+                      return const LandingPage();
+                    } else {
+                      return const Material(
+                        child: ColoredBox(
+                          color: SiteColors.dark,
+                          child: Center(
+                            child: Text(
+                              "Maybe I'm not so great after all 😬?",
+                              style: TextStyle(
+                                color: SiteColors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                );
               }
 
               return const SizedBox.shrink();

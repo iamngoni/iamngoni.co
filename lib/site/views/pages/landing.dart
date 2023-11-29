@@ -50,7 +50,7 @@ class _LandingPageState extends State<LandingPage> {
             ),
             alignment: Alignment.center,
             child: PageView(
-              children: [
+              children: const [
                 ProfilePage(),
               ],
             ),
