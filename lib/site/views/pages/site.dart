@@ -33,7 +33,7 @@ class SitePage extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             scaffoldBackgroundColor: SiteColors.dark,
-            fontFamily: 'Inter',
+            fontFamily: 'HedvigLettersSerif',
             useMaterial3: true,
           ),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
