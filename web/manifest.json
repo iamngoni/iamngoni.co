@@ -1,11 +1,11 @@
 {
-    "name": "iamngoni_co",
-    "short_name": "iamngoni_co",
+    "name": "Ngonidzashe Mangudya",
+    "short_name": "Ngonidzashe Mangudya",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Ngonidzashe Mangudya",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
