@@ -10,6 +10,7 @@ dependencies:
   barcode_widget: ^2.0.4
   bloc: ^8.1.2
   cached_network_image: ^3.2.3
+  candlesticks:
   connectivity_plus: ^4.0.2
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1
@@ -65,6 +66,9 @@ flutter:
     # parkade
     - assets/parkade/icons/
     - assets/parkade/images/
+
+    # marketstack
+    - assets/market/images/
 
   fonts:
     - family: HedvigLettersSerif

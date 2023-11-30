@@ -56,6 +56,12 @@ class $AssetsLottieGen {
   List<String> get values => [searchingConnection];
 }
 
+class $AssetsMarketGen {
+  const $AssetsMarketGen();
+
+  $AssetsMarketImagesGen get images => const $AssetsMarketImagesGen();
+}
+
 class $AssetsParkadeGen {
   const $AssetsParkadeGen();
 
@@ -175,6 +181,29 @@ class $AssetsLinguaLettersGen {
       ];
 }
 
+class $AssetsMarketImagesGen {
+  const $AssetsMarketImagesGen();
+
+  /// File path: assets/market/images/graph.png
+  AssetGenImage get graph =>
+      const AssetGenImage('assets/market/images/graph.png');
+
+  /// File path: assets/market/images/logo.png
+  AssetGenImage get logo =>
+      const AssetGenImage('assets/market/images/logo.png');
+
+  /// File path: assets/market/images/logo_x.png
+  AssetGenImage get logoX =>
+      const AssetGenImage('assets/market/images/logo_x.png');
+
+  /// File path: assets/market/images/marketstack_logo_white.png
+  AssetGenImage get marketstackLogoWhite =>
+      const AssetGenImage('assets/market/images/marketstack_logo_white.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [graph, logo, logoX, marketstackLogoWhite];
+}
+
 class $AssetsParkadeIconsGen {
   const $AssetsParkadeIconsGen();
 
@@ -214,6 +243,7 @@ class Assets {
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLinguaGen lingua = $AssetsLinguaGen();
   static const $AssetsLottieGen lottie = $AssetsLottieGen();
+  static const $AssetsMarketGen market = $AssetsMarketGen();
   static const $AssetsParkadeGen parkade = $AssetsParkadeGen();
 }
 

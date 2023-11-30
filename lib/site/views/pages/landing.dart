@@ -15,6 +15,7 @@ import '../../../injection.dart';
 import '../../../shared/services/storage.dart';
 import '../../../shared/utils/welcome.dart';
 import '../../apps/lingua/views/pages/app.dart';
+import '../../apps/marketstack/market/views/pages/basalt_assessment.dart';
 import '../../apps/parkade/parkade/views/pages/parkade.dart';
 import '../../models/data/project.dart';
 import 'app_preview.dart';
@@ -56,6 +57,15 @@ Whether you're a driver tired of the endless search for parking or a business se
       entryPoint: const ParkadeApp(),
       githubUrl: 'https://github.com/iamngoni/parkade',
       date: DateTime(2023, 4, 13),
+    ),
+    Project(
+      title: 'Project 3: marketstack',
+      description: '''
+      The "marketstack" project was a simple project to retrieve world stock market historical data from Marketstack and display on an app using candlesticks. The app was built using Flutter and the BLoC pattern. 
+     ''',
+      entryPoint: const BasaltAssessment(),
+      githubUrl: 'https://github.com/iamngoni/marketstack_report',
+      date: DateTime(2022, 10, 31),
     ),
   ];
 
