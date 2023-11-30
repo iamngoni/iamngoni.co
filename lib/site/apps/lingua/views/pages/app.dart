@@ -121,14 +121,17 @@ class _LinguaAppState extends State<LinguaApp> {
                                   children: [
                                     Image(
                                       image: AssetImage(_ltr.path),
-                                      width: 50,
+                                      width: sy(50),
                                       color: Colors.white,
                                     ),
-                                    const SizedBox(height: 25),
+                                    SizedBox(
+                                      height: sy(20),
+                                    ),
                                     Text(
                                       _ltr.letter.toUpperCase(),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
+                                        fontSize: sy(20),
                                       ),
                                     ),
                                   ],
