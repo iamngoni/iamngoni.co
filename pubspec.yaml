@@ -11,6 +11,7 @@ dependencies:
   bloc: ^8.1.2
   cached_network_image: ^3.2.3
   candlesticks:
+  carousel_slider:
   connectivity_plus: ^4.0.2
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1
@@ -30,6 +31,7 @@ dependencies:
   injectable: ^2.3.2
   intl: ^0.18.0
   json_annotation: ^4.8.1
+  localregex:
   lottie: ^2.7.0
   modal_bottom_sheet: ^3.0.0-pre
   network_info_plus: ^4.0.2
@@ -69,6 +71,10 @@ flutter:
 
     # marketstack
     - assets/market/images/
+
+    # shopperschoice
+    - assets/shopperschoice/images/
+    - assets/shopperschoice/icons/
 
   fonts:
     - family: HedvigLettersSerif

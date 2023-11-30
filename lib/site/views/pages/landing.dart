@@ -17,6 +17,7 @@ import '../../../shared/utils/welcome.dart';
 import '../../apps/lingua/views/pages/app.dart';
 import '../../apps/marketstack/market/views/pages/basalt_assessment.dart';
 import '../../apps/parkade/parkade/views/pages/parkade.dart';
+import '../../apps/shopperschoice/views/pages/app.dart';
 import '../../models/data/project.dart';
 import 'app_preview.dart';
 import 'profile.dart';
@@ -65,6 +66,15 @@ Whether you're a driver tired of the endless search for parking or a business se
      ''',
       entryPoint: const BasaltAssessment(),
       githubUrl: 'https://github.com/iamngoni/marketstack_report',
+      date: DateTime(2022, 10, 31),
+    ),
+    Project(
+      title: 'Project 4: shopperschoice',
+      description: '''
+      The "shopperschoice" project was a simple revamp of the shopperschoice app. The app was built using Flutter.
+     ''',
+      entryPoint: const ShoppersChoiceApp(),
+      githubUrl: 'https://github.com/iamngoni',
       date: DateTime(2022, 10, 31),
     ),
   ];

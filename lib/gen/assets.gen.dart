@@ -69,6 +69,15 @@ class $AssetsParkadeGen {
   $AssetsParkadeImagesGen get images => const $AssetsParkadeImagesGen();
 }
 
+class $AssetsShopperschoiceGen {
+  const $AssetsShopperschoiceGen();
+
+  $AssetsShopperschoiceIconsGen get icons =>
+      const $AssetsShopperschoiceIconsGen();
+  $AssetsShopperschoiceImagesGen get images =>
+      const $AssetsShopperschoiceImagesGen();
+}
+
 class $AssetsLinguaLettersGen {
   const $AssetsLinguaLettersGen();
 
@@ -236,6 +245,147 @@ class $AssetsParkadeImagesGen {
   List<AssetGenImage> get values => [car, me];
 }
 
+class $AssetsShopperschoiceIconsGen {
+  const $AssetsShopperschoiceIconsGen();
+
+  /// File path: assets/shopperschoice/icons/calendar w.png
+  AssetGenImage get calendarW =>
+      const AssetGenImage('assets/shopperschoice/icons/calendar w.png');
+
+  /// File path: assets/shopperschoice/icons/calendar.png
+  AssetGenImage get calendar =>
+      const AssetGenImage('assets/shopperschoice/icons/calendar.png');
+
+  /// File path: assets/shopperschoice/icons/faq w.png
+  AssetGenImage get faqW =>
+      const AssetGenImage('assets/shopperschoice/icons/faq w.png');
+
+  /// File path: assets/shopperschoice/icons/faq.png
+  AssetGenImage get faq =>
+      const AssetGenImage('assets/shopperschoice/icons/faq.png');
+
+  /// File path: assets/shopperschoice/icons/horse w.png
+  AssetGenImage get horseW =>
+      const AssetGenImage('assets/shopperschoice/icons/horse w.png');
+
+  /// File path: assets/shopperschoice/icons/horse.png
+  AssetGenImage get horse =>
+      const AssetGenImage('assets/shopperschoice/icons/horse.png');
+
+  /// File path: assets/shopperschoice/icons/success.png
+  AssetGenImage get success =>
+      const AssetGenImage('assets/shopperschoice/icons/success.png');
+
+  /// File path: assets/shopperschoice/icons/terms_and_conditions_white.png
+  AssetGenImage get termsAndConditionsWhite => const AssetGenImage(
+      'assets/shopperschoice/icons/terms_and_conditions_white.png');
+
+  /// File path: assets/shopperschoice/icons/tokenization w.png
+  AssetGenImage get tokenizationW =>
+      const AssetGenImage('assets/shopperschoice/icons/tokenization w.png');
+
+  /// File path: assets/shopperschoice/icons/tokenization.png
+  AssetGenImage get tokenization =>
+      const AssetGenImage('assets/shopperschoice/icons/tokenization.png');
+
+  /// File path: assets/shopperschoice/icons/win-win.png
+  AssetGenImage get winWin =>
+      const AssetGenImage('assets/shopperschoice/icons/win-win.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        calendarW,
+        calendar,
+        faqW,
+        faq,
+        horseW,
+        horse,
+        success,
+        termsAndConditionsWhite,
+        tokenizationW,
+        tokenization,
+        winWin
+      ];
+}
+
+class $AssetsShopperschoiceImagesGen {
+  const $AssetsShopperschoiceImagesGen();
+
+  /// File path: assets/shopperschoice/images/banner_1.png
+  AssetGenImage get banner1 =>
+      const AssetGenImage('assets/shopperschoice/images/banner_1.png');
+
+  /// File path: assets/shopperschoice/images/banner_2.png
+  AssetGenImage get banner2 =>
+      const AssetGenImage('assets/shopperschoice/images/banner_2.png');
+
+  /// File path: assets/shopperschoice/images/banner_3.png
+  AssetGenImage get banner3 =>
+      const AssetGenImage('assets/shopperschoice/images/banner_3.png');
+
+  /// File path: assets/shopperschoice/images/bon_marche.png
+  AssetGenImage get bonMarche =>
+      const AssetGenImage('assets/shopperschoice/images/bon_marche.png');
+
+  /// File path: assets/shopperschoice/images/contitouch-logo-white.png
+  AssetGenImage get contitouchLogoWhite => const AssetGenImage(
+      'assets/shopperschoice/images/contitouch-logo-white.png');
+
+  /// File path: assets/shopperschoice/images/ok.png
+  AssetGenImage get ok =>
+      const AssetGenImage('assets/shopperschoice/images/ok.png');
+
+  /// File path: assets/shopperschoice/images/okmart.jpg
+  AssetGenImage get okmartJpg =>
+      const AssetGenImage('assets/shopperschoice/images/okmart.jpg');
+
+  /// File path: assets/shopperschoice/images/okmart.png
+  AssetGenImage get okmartPng =>
+      const AssetGenImage('assets/shopperschoice/images/okmart.png');
+
+  /// File path: assets/shopperschoice/images/shoppers_choice_logo.png
+  AssetGenImage get shoppersChoiceLogo => const AssetGenImage(
+      'assets/shopperschoice/images/shoppers_choice_logo.png');
+
+  /// File path: assets/shopperschoice/images/shoppers_choice_logo_gray.png
+  AssetGenImage get shoppersChoiceLogoGray => const AssetGenImage(
+      'assets/shopperschoice/images/shoppers_choice_logo_gray.png');
+
+  /// File path: assets/shopperschoice/images/shoppers_choice_logo_splashed.png
+  AssetGenImage get shoppersChoiceLogoSplashed => const AssetGenImage(
+      'assets/shopperschoice/images/shoppers_choice_logo_splashed.png');
+
+  /// File path: assets/shopperschoice/images/shoppers_choice_logo_white.png
+  AssetGenImage get shoppersChoiceLogoWhite => const AssetGenImage(
+      'assets/shopperschoice/images/shoppers_choice_logo_white.png');
+
+  /// File path: assets/shopperschoice/images/splash.png
+  AssetGenImage get splash =>
+      const AssetGenImage('assets/shopperschoice/images/splash.png');
+
+  /// File path: assets/shopperschoice/images/woman.png
+  AssetGenImage get woman =>
+      const AssetGenImage('assets/shopperschoice/images/woman.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+        banner1,
+        banner2,
+        banner3,
+        bonMarche,
+        contitouchLogoWhite,
+        ok,
+        okmartJpg,
+        okmartPng,
+        shoppersChoiceLogo,
+        shoppersChoiceLogoGray,
+        shoppersChoiceLogoSplashed,
+        shoppersChoiceLogoWhite,
+        splash,
+        woman
+      ];
+}
+
 class Assets {
   Assets._();
 
@@ -245,6 +395,8 @@ class Assets {
   static const $AssetsLottieGen lottie = $AssetsLottieGen();
   static const $AssetsMarketGen market = $AssetsMarketGen();
   static const $AssetsParkadeGen parkade = $AssetsParkadeGen();
+  static const $AssetsShopperschoiceGen shopperschoice =
+      $AssetsShopperschoiceGen();
 }
 
 class AssetGenImage {
