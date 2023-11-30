@@ -62,7 +62,9 @@ Whether you're a driver tired of the endless search for parking or a business se
     Project(
       title: 'Project 3: marketstack',
       description: '''
-      The "marketstack" project was a simple project to retrieve world stock market historical data from Marketstack and display on an app using candlesticks. The app was built using Flutter and the BLoC pattern. 
+      The "marketstack" project was a simple project to retrieve world stock market historical data from Marketstack and display on an app using candlesticks. The app was built using Flutter and the BLoC pattern.
+      
+      You may need to allow "http" connections for this particular project to work. 
      ''',
       entryPoint: const BasaltAssessment(),
       githubUrl: 'https://github.com/iamngoni/marketstack_report',
@@ -75,7 +77,7 @@ Whether you're a driver tired of the endless search for parking or a business se
      ''',
       entryPoint: const ShoppersChoiceApp(),
       githubUrl: 'https://github.com/iamngoni',
-      date: DateTime(2022, 10, 31),
+      date: DateTime(2022, 7, 30),
     ),
   ];
 
