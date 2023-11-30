@@ -58,6 +58,9 @@ flutter:
     - assets/lottie/
     - assets/icons/
 
+    # lingua
+    - assets/lingua/letters/
+
   fonts:
     - family: HedvigLettersSerif
       fonts:

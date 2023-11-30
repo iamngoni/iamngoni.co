@@ -14,7 +14,12 @@ import '../../../shared/configs/colors.dart';
 import '../widgets/pulsating_me.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({
+    required this.pageController,
+    super.key,
+  });
+
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +59,8 @@ class ProfilePage extends StatelessWidget {
                           ],
                         ),
                         child: Text(
-                          'Backend & Mobile Developer | B.Tech Hons. Software Eng. 👨🏿‍🎓',
+                          'Backend & Mobile Developer | B.Tech Hons. Software'
+                          ' Eng. 👨🏿‍🎓',
                           style: TextStyle(
                             color: SiteColors.dark,
                             fontWeight: FontWeight.w700,
@@ -90,7 +96,8 @@ class ProfilePage extends StatelessWidget {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                               image: const AssetImage(
-                                  'assets/images/iamngoni-2.png'),
+                                'assets/images/iamngoni-2.png',
+                              ),
                               fit: BoxFit.cover,
                               colorFilter: ColorFilter.mode(
                                 SiteColors.white.withOpacity(0.2),
@@ -134,13 +141,14 @@ class ProfilePage extends StatelessWidget {
                     height: sy(10),
                   ),
                   Text(
-                    'I create elegantly straightforward designs and take joy in my '
-                    'work. With over five years in the field, my role as a Flutter '
-                    'mobile developer has led to the creation of efficient, '
-                    'aesthetically pleasing mobile applications, enhancing user '
-                    'experiences significantly. Additionally, I possess skills in '
-                    'developing robust backend architectures capable of managing '
-                    'substantial traffic volumes.',
+                    'I create elegantly straightforward designs and take joy'
+                    ' in my work. With over five years in the field, my role as'
+                    ' a Flutter mobile developer has led to the creation of'
+                    ' efficient, aesthetically pleasing mobile applications, '
+                    'enhancing user experiences significantly. Additionally, I'
+                    ' possess skills in developing robust backend '
+                    'architectures capable of managing substantial traffic'
+                    ' volumes.',
                     style: TextStyle(
                       color: SiteColors.white.withOpacity(0.8),
                       fontWeight: FontWeight.w400,
@@ -150,28 +158,36 @@ class ProfilePage extends StatelessWidget {
                   SizedBox(
                     height: sy(30),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: sx(15),
-                      vertical: sy(10),
-                    ),
-                    decoration: BoxDecoration(
-                      color: SiteColors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: SiteColors.white.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 1,
-                          offset: const Offset(7, 7),
+                  GestureDetector(
+                    onTap: () {
+                      pageController.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: sx(15),
+                        vertical: sy(10),
+                      ),
+                      decoration: BoxDecoration(
+                        color: SiteColors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: SiteColors.white.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: const Offset(7, 7),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        'Show me the code 👀',
+                        style: TextStyle(
+                          color: SiteColors.dark,
+                          fontWeight: FontWeight.w700,
+                          fontSize: sy(10),
                         ),
-                      ],
-                    ),
-                    child: Text(
-                      'Show me the code 👀',
-                      style: TextStyle(
-                        color: SiteColors.dark,
-                        fontWeight: FontWeight.w700,
-                        fontSize: sy(10),
                       ),
                     ),
                   ),
