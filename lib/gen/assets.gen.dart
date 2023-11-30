@@ -9,6 +9,16 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
+
+  /// File path: assets/icons/github.png
+  AssetGenImage get github => const AssetGenImage('assets/icons/github.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [github];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -33,7 +43,6 @@ class $AssetsImagesGen {
 class $AssetsLinguaGen {
   const $AssetsLinguaGen();
 
-  $AssetsLinguaDataGen get data => const $AssetsLinguaDataGen();
   $AssetsLinguaLettersGen get letters => const $AssetsLinguaLettersGen();
 }
 
@@ -47,14 +56,11 @@ class $AssetsLottieGen {
   List<String> get values => [searchingConnection];
 }
 
-class $AssetsLinguaDataGen {
-  const $AssetsLinguaDataGen();
+class $AssetsParkadeGen {
+  const $AssetsParkadeGen();
 
-  /// File path: assets/lingua/data/letters.json
-  String get letters => 'assets/lingua/data/letters.json';
-
-  /// List of all assets
-  List<String> get values => [letters];
+  $AssetsParkadeIconsGen get icons => const $AssetsParkadeIconsGen();
+  $AssetsParkadeImagesGen get images => const $AssetsParkadeImagesGen();
 }
 
 class $AssetsLinguaLettersGen {
@@ -169,12 +175,46 @@ class $AssetsLinguaLettersGen {
       ];
 }
 
+class $AssetsParkadeIconsGen {
+  const $AssetsParkadeIconsGen();
+
+  /// File path: assets/parkade/icons/calendar.png
+  AssetGenImage get calendar =>
+      const AssetGenImage('assets/parkade/icons/calendar.png');
+
+  /// File path: assets/parkade/icons/home.png
+  AssetGenImage get home =>
+      const AssetGenImage('assets/parkade/icons/home.png');
+
+  /// File path: assets/parkade/icons/settings.png
+  AssetGenImage get settings =>
+      const AssetGenImage('assets/parkade/icons/settings.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [calendar, home, settings];
+}
+
+class $AssetsParkadeImagesGen {
+  const $AssetsParkadeImagesGen();
+
+  /// File path: assets/parkade/images/car.png
+  AssetGenImage get car => const AssetGenImage('assets/parkade/images/car.png');
+
+  /// File path: assets/parkade/images/me.png
+  AssetGenImage get me => const AssetGenImage('assets/parkade/images/me.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [car, me];
+}
+
 class Assets {
   Assets._();
 
+  static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLinguaGen lingua = $AssetsLinguaGen();
   static const $AssetsLottieGen lottie = $AssetsLottieGen();
+  static const $AssetsParkadeGen parkade = $AssetsParkadeGen();
 }
 
 class AssetGenImage {

@@ -15,6 +15,7 @@ import '../../../injection.dart';
 import '../../../shared/services/storage.dart';
 import '../../../shared/utils/welcome.dart';
 import '../../apps/lingua/views/pages/app.dart';
+import '../../apps/parkade/parkade/views/pages/parkade.dart';
 import '../../models/data/project.dart';
 import 'app_preview.dart';
 import 'profile.dart';
@@ -42,6 +43,19 @@ class _LandingPageState extends State<LandingPage> {
       entryPoint: const LinguaApp(),
       githubUrl: 'https://github.com/iamngoni/lingua',
       date: DateTime(2021, 2, 4),
+    ),
+    Project(
+      title: 'Project 2: parkade',
+      description: '''
+      The "Parkade" app is a dynamic and user-friendly solution for parking management and navigation. Designed to streamline the parking experience, this application assists users in locating free parking slots in parkades with real-time updates. It not only helps in finding a parking spot but also manages parking tickets efficiently, ensuring a hassle-free parking experience.
+
+Developed using the Very Good CLI, known for promoting maintainable and high-quality code, Parkade stands out for its robust functionality and ease of use. It's an ideal tool for individuals seeking convenient parking solutions and for parking lot operators aiming to optimize their space management and enhance customer satisfaction.
+
+Whether you're a driver tired of the endless search for parking or a business seeking to upgrade your parking management system, Parkade provides an innovative, tech-driven answer to all parking woes.
+      ''',
+      entryPoint: const ParkadeApp(),
+      githubUrl: 'https://github.com/iamngoni/parkade',
+      date: DateTime(2023, 4, 13),
     ),
   ];
 

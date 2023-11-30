@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'injection.dart';
 import 'shared/state/connectivity_status/connectivity_status_bloc.dart';
 import 'shared/state/locale/locale_bloc.dart';
+import 'site/apps/parkade/parkade_slot_selection/blocs/slot_selection/slot_selection_bloc.dart';
 
 List<BlocProvider> providers = [
   BlocProvider<LocaleBloc>(
@@ -19,5 +20,8 @@ List<BlocProvider> providers = [
   ),
   BlocProvider<ConnectivityStatusBloc>(
     create: (_) => getIt<ConnectivityStatusBloc>(),
+  ),
+  BlocProvider<SlotSelectionBloc>(
+    create: (_) => getIt<SlotSelectionBloc>(),
   ),
 ];

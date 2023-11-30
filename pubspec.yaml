@@ -7,6 +7,7 @@ environment:
   sdk: '>=3.3.0-135.0.dev <4.0.0'
 
 dependencies:
+  barcode_widget: ^2.0.4
   bloc: ^8.1.2
   cached_network_image: ^3.2.3
   connectivity_plus: ^4.0.2
@@ -60,6 +61,10 @@ flutter:
 
     # lingua
     - assets/lingua/letters/
+
+    # parkade
+    - assets/parkade/icons/
+    - assets/parkade/images/
 
   fonts:
     - family: HedvigLettersSerif
