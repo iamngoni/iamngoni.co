@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:handy_extensions/handy_extensions.dart';
 import 'package:relative_scale/relative_scale.dart';
 
+import '../../../gen/assets.gen.dart';
 import '../../../shared/configs/colors.dart';
 import '../../models/data/project.dart';
 
@@ -138,7 +139,7 @@ class AppPreview extends StatelessWidget {
                             );
                           },
                           child: ImageIcon(
-                            const AssetImage('icons/github.png'),
+                            AssetImage(Assets.icons.github.path),
                             color: SiteColors.white,
                             size: sy(30),
                           ),
