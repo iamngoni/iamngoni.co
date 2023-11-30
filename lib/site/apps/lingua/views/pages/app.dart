@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:handy_extensions/handy_extensions.dart';
 import 'package:relative_scale/relative_scale.dart';
 
+import '../../../../../shared/configs/colors.dart';
 import '../../models/letter.dart';
 
 class LinguaApp extends StatefulWidget {
@@ -253,15 +254,37 @@ class _LinguaAppState extends State<LinguaApp> {
   }
 
   Widget alphabetRecitor() {
-    return GestureDetector(
-      onTap: reciteAlphabet,
-      child: const Text(
-        'Do The Alphabet  🔠',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 17,
-        ),
-      ),
+    return RelativeBuilder(
+      builder: (context, height, width, sy, sx) {
+        return GestureDetector(
+          onTap: reciteAlphabet,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: sx(5),
+              vertical: sy(2),
+            ),
+            decoration: BoxDecoration(
+              color: SiteColors.green,
+              boxShadow: [
+                BoxShadow(
+                  color: SiteColors.white.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 1,
+                  offset: const Offset(4, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              'Do The Alphabet  (Click Me)',
+              style: TextStyle(
+                color: SiteColors.dark,
+                fontWeight: FontWeight.w700,
+                fontSize: sy(10),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
