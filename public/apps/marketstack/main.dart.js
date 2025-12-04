@@ -45043,7 +45043,7 @@ xj(){var s=0,r=A.T(t.XX),q,p=2,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c,b
 var $async$xj=A.U(function(a,a0){if(a===1){o.push(a0)
 s=p}while(true)switch(s){case 0:p=4
 s=7
-return A.a_(n.a.Lv(0,"https://marketstack-proxy.toppan-security-ics-project.workers.dev/v1/tickers?access_key=284392f3a08ef83a4623e87c8d4f4944",t.a),$async$xj)
+return A.a_(n.a.Lv(0,"https://marketstack-proxy.imngonii.workers.dev/v1/tickers?access_key=284392f3a08ef83a4623e87c8d4f4944",t.a),$async$xj)
 case 7:m=a0
 e=m.a
 e.toString
@@ -45081,7 +45081,7 @@ xi(a,b,c){return this.a0y(a,b,c)},
 a0y(a,a0,a1){var s=0,r=A.T(t.MD),q,p=2,o=[],n=this,m,l,k,j,i,h,g,f,e,d,c,b
 var $async$xi=A.U(function(a2,a3){if(a2===1){o.push(a3)
 s=p}while(true)switch(s){case 0:p=4
-m="https://marketstack-proxy.toppan-security-ics-project.workers.dev/v1/tickers/"+a.b.toLowerCase()+"/eod?access_key=284392f3a08ef83a4623e87c8d4f4944"
+m="https://marketstack-proxy.imngonii.workers.dev/v1/tickers/"+a.b.toLowerCase()+"/eod?access_key=284392f3a08ef83a4623e87c8d4f4944"
 if(a1!=null&&a0!=null){g=m
 f=A.n(A.aU(a0)>=10?A.aU(a0):"0"+A.aU(a0))
 e=A.n(A.bM(a0)>=10?A.bM(a0):"0"+A.bM(a0))
