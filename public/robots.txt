@@ -1,0 +1,10 @@
+# robots.txt for iamngoni.co
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://iamngoni.co/sitemap.xml
+
+# Disallow Flutter app internal assets
+Disallow: /apps/*/canvaskit/
+Disallow: /apps/*/assets/

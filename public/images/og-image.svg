@@ -1,0 +1,54 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00f0ff"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#ff0080"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.1">
+    <line x1="0" y1="0" x2="1200" y2="630" stroke="#00f0ff" stroke-width="1"/>
+    <line x1="200" y1="0" x2="1200" y2="500" stroke="#00f0ff" stroke-width="1"/>
+    <line x1="400" y1="0" x2="1200" y2="400" stroke="#00f0ff" stroke-width="1"/>
+    <line x1="0" y1="200" x2="1000" y2="630" stroke="#00f0ff" stroke-width="1"/>
+  </g>
+
+  <!-- Decorative circles -->
+  <circle cx="1050" cy="150" r="100" fill="#00f0ff" opacity="0.1"/>
+  <circle cx="150" cy="500" r="80" fill="#a855f7" opacity="0.1"/>
+
+  <!-- Main content -->
+  <text x="100" y="200" font-family="Inter, system-ui, sans-serif" font-size="32" fill="#00f0ff" font-weight="500">// PORTFOLIO</text>
+
+  <text x="100" y="300" font-family="Inter, system-ui, sans-serif" font-size="72" fill="white" font-weight="700">Ngonidzashe</text>
+  <text x="100" y="380" font-family="Inter, system-ui, sans-serif" font-size="72" fill="url(#textGradient)" font-weight="700">Mangudya</text>
+
+  <text x="100" y="460" font-family="Inter, system-ui, sans-serif" font-size="28" fill="#a1a1aa">Backend &amp; Mobile Developer</text>
+
+  <!-- Tag line -->
+  <text x="100" y="540" font-family="JetBrains Mono, monospace" font-size="24" fill="#00f0ff" opacity="0.8">&gt; Talk is cheap. Show me the code.</text>
+
+  <!-- Tech badges -->
+  <g transform="translate(100, 570)">
+    <rect x="0" y="0" width="80" height="30" rx="4" fill="#00f0ff" opacity="0.2"/>
+    <text x="40" y="20" font-family="Inter, sans-serif" font-size="14" fill="#00f0ff" text-anchor="middle">Flutter</text>
+
+    <rect x="90" y="0" width="60" height="30" rx="4" fill="#a855f7" opacity="0.2"/>
+    <text x="120" y="20" font-family="Inter, sans-serif" font-size="14" fill="#a855f7" text-anchor="middle">Dart</text>
+
+    <rect x="160" y="0" width="80" height="30" rx="4" fill="#ff0080" opacity="0.2"/>
+    <text x="200" y="20" font-family="Inter, sans-serif" font-size="14" fill="#ff0080" text-anchor="middle">Backend</text>
+  </g>
+
+  <!-- URL -->
+  <text x="1100" y="600" font-family="JetBrains Mono, monospace" font-size="18" fill="#71717a" text-anchor="end">iamngoni.co</text>
+</svg>
