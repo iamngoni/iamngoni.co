@@ -3,8 +3,5 @@
   "name": "iamngoni-portfolio",
   "compatibility_date": "2024-12-01",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "dist/server/index.js",
-  "assets": {
-    "directory": "dist/client"
-  }
+  "main": "@tanstack/react-start/server-entry"
 }
