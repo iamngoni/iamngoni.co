@@ -339,18 +339,19 @@ function MobilePreview({ appPath }: { appPath: string }) {
 
 function TabletPreview({
   appPath,
-  landscape = false,
+  rotated = false,
 }: {
   appPath: string;
-  landscape?: boolean;
+  rotated?: boolean;
 }) {
-  if (landscape) {
+  if (rotated) {
+    // Rotated tablet - iframe is rotated -90deg to show landscape content
     return (
-      <div className="tablet-frame-landscape">
-        <div className="tablet-screen-landscape">
+      <div className="tablet-frame-rotated">
+        <div className="tablet-screen-rotated">
           <iframe
             src={appPath}
-            className="w-full h-full"
+            className="tablet-iframe-rotated"
             title="Tablet Preview"
             loading="lazy"
           />
@@ -594,7 +595,7 @@ function ProjectPreviewContent({
         <MobilePreview appPath={project.appPath} />
       )}
       {project.type === "tablet" && project.appPath && (
-        <TabletPreview appPath={project.appPath} landscape={isMobile} />
+        <TabletPreview appPath={project.appPath} rotated={isMobile} />
       )}
       {project.type === "web" && project.appPath && (
         <WebPreview appPath={project.appPath} />
@@ -662,7 +663,7 @@ function PreviewBottomSheet({
                 onClose();
               }
             }}
-            className="fixed bottom-0 left-0 right-0 z-[70] bg-background border-t border-primary/20 rounded-t-3xl max-h-[85vh] overflow-hidden flex flex-col"
+            className="fixed bottom-0 left-0 right-0 top-12 z-[70] bg-background border-t border-primary/20 rounded-t-3xl overflow-hidden flex flex-col"
           >
             {/* Drag Handle */}
             <div

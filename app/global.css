@@ -117,25 +117,38 @@
         @apply rounded-[1rem] overflow-hidden bg-white w-full h-full;
     }
 
-    /* Tablet frame landscape - for mobile bottom sheet */
-    .tablet-frame-landscape {
+    /* Tablet frame rotated - for mobile bottom sheet */
+    /* The frame stays portrait but the iframe inside is rotated to show landscape content */
+    .tablet-frame-rotated {
         @apply relative bg-black rounded-[1.5rem] p-3;
-        width: 100%;
-        max-width: 500px;
-        aspect-ratio: 16/10;
+        width: 280px;
+        height: 380px;
         box-shadow:
             0 0 0 2px #1a1a2e,
             0 0 0 4px #2a2a3e,
             0 20px 40px -10px rgba(0, 0, 0, 0.6);
     }
 
-    .tablet-frame-landscape::before {
+    .tablet-frame-rotated::before {
         content: "";
-        @apply absolute left-1/2 -translate-x-1/2 bottom-2 h-2 w-12 bg-zinc-800 rounded-full;
+        @apply absolute top-1/2 -translate-y-1/2 right-2 w-2 h-12 bg-zinc-800 rounded-full;
     }
 
-    .tablet-screen-landscape {
-        @apply rounded-[1rem] overflow-hidden bg-white w-full h-full;
+    .tablet-screen-rotated {
+        @apply rounded-[1rem] overflow-hidden bg-white w-full h-full relative;
+    }
+
+    .tablet-iframe-rotated {
+        position: absolute;
+        transform: rotate(-90deg);
+        transform-origin: center center;
+        /* After rotation, width becomes height and vice versa */
+        width: 354px;
+        height: 254px;
+        top: 50%;
+        left: 50%;
+        margin-top: -177px;
+        margin-left: -127px;
     }
 
     /* Browser frame for web previews */
