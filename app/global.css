@@ -121,8 +121,10 @@
     /* The frame stays portrait but the iframe inside is rotated to show landscape content */
     .tablet-frame-rotated {
         @apply relative bg-black rounded-[1.5rem] p-3;
-        width: 280px;
-        height: 380px;
+        width: calc(100vw - 2rem);
+        max-width: 400px;
+        height: calc(100vh - 12rem);
+        max-height: 600px;
         box-shadow:
             0 0 0 2px #1a1a2e,
             0 0 0 4px #2a2a3e,
@@ -142,13 +144,15 @@
         position: absolute;
         transform: rotate(-90deg);
         transform-origin: center center;
-        /* After rotation, width becomes height and vice versa */
-        width: 354px;
-        height: 254px;
+        /* Rotated iframe: width/height are swapped, sized to fill the container */
+        width: calc(100vh - 14rem);
+        max-width: 574px;
+        height: calc(100vw - 3.5rem);
+        max-height: 374px;
         top: 50%;
         left: 50%;
-        margin-top: -177px;
-        margin-left: -127px;
+        transform: rotate(-90deg) translate(-50%, -50%);
+        transform-origin: top left;
     }
 
     /* Browser frame for web previews */
