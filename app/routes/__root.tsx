@@ -13,7 +13,7 @@ const siteUrl = "https://iamngoni.co";
 const title = "Ngonidzashe Mangudya | Backend & Mobile Developer";
 const description =
   "Portfolio of Ngonidzashe Mangudya - Backend & Mobile Developer with 5+ years of Flutter experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.";
-const ogImage = `${siteUrl}/images/banner.png`;
+const ogImage = `${siteUrl}/images/og-image.svg`;
 
 export const Route = createRootRoute({
   head: () => ({
