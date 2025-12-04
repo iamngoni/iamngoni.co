@@ -322,17 +322,35 @@ interface ProjectsSidebarProps {
   onClose: () => void;
 }
 
+function FlutterBadge() {
+  return (
+    <div className="flex items-center justify-center gap-2 mt-3 text-xs text-zinc-500">
+      <svg
+        viewBox="0 0 24 24"
+        className="w-4 h-4 text-sky-400"
+        fill="currentColor"
+      >
+        <path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z" />
+      </svg>
+      <span>Built with Flutter</span>
+    </div>
+  );
+}
+
 function MobilePreview({ appPath }: { appPath: string }) {
   return (
-    <div className="device-frame-small">
-      <div className="device-screen-small">
-        <iframe
-          src={appPath}
-          className="w-full h-full"
-          title="App Preview"
-          loading="lazy"
-        />
+    <div className="flex flex-col items-center">
+      <div className="device-frame-small">
+        <div className="device-screen-small">
+          <iframe
+            src={appPath}
+            className="w-full h-full"
+            title="App Preview"
+            loading="lazy"
+          />
+        </div>
       </div>
+      <FlutterBadge />
     </div>
   );
 }
@@ -347,15 +365,18 @@ function TabletPreview({
   if (rotated) {
     // Rotated tablet - iframe is rotated -90deg to show landscape content
     return (
-      <div className="tablet-frame-rotated">
-        <div className="tablet-screen-rotated">
-          <iframe
-            src={appPath}
-            className="tablet-iframe-rotated"
-            title="Tablet Preview"
-            loading="lazy"
-          />
+      <div className="flex flex-col items-center">
+        <div className="tablet-frame-rotated">
+          <div className="tablet-screen-rotated">
+            <iframe
+              src={appPath}
+              className="tablet-iframe-rotated"
+              title="Tablet Preview"
+              loading="lazy"
+            />
+          </div>
         </div>
+        <FlutterBadge />
       </div>
     );
   }
