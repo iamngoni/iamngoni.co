@@ -48,7 +48,7 @@ export const Route = createRootRoute({
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
       { name: "twitter:image", content: ogImage },
-      { name: "twitter:creator", content: "@iaboringoni" },
+      { name: "twitter:creator", content: "@iamngoni" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -73,8 +73,8 @@ export const Route = createRootRoute({
           },
           sameAs: [
             "https://github.com/iamngoni",
-            "https://twitter.com/iaboringoni",
-            "https://linkedin.com/in/ngaboroni",
+            "https://twitter.com/iamngoni",
+            "https://www.linkedin.com/in/ngonidzashe-mangudya-ba084a174/",
             "https://pub.dev/publishers/iamngoni.co.zw",
           ],
           knowsAbout: [
