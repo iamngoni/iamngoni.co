@@ -2,8 +2,11 @@ import {
   createStartHandler,
   defaultStreamHandler,
 } from "@tanstack/react-start/server";
-import { getRouter } from "./router";
+import { getRouterManifest } from "@tanstack/react-start/router-manifest";
+
+import { createRouter } from "./router";
 
 export default createStartHandler({
-  getRouter,
+  createRouter,
+  getRouterManifest,
 })(defaultStreamHandler);
