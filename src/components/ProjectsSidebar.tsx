@@ -254,6 +254,33 @@ const projects: Project[] = [
     imagePreview: "/images/theme-preview.png",
     color: "from-emerald-500 to-green-500",
   },
+  {
+    id: "vamboai",
+    title: "VamboAI",
+    description:
+      "A Dart package providing access to the Vambo AI API for language identification and translation. Supports a wide range of African languages and beyond, enabling seamless language processing in Dart/Flutter applications.",
+    date: "2024",
+    githubUrl: "https://github.com/iamngoni/vamboai",
+    type: "library",
+    packageUrl: "https://pub.dev/packages/vamboai",
+    installCommand: "dart pub add vamboai",
+    usageCode: `import 'package:vamboai/vamboai.dart';
+
+// Initialize the client
+final vambo = VamboAI(apiKey: 'your-api-key');
+
+// Identify language in text
+final identification = await vambo.identify(
+  text: 'Mhoro, makadii?',
+);
+
+// Translate text between languages
+final translation = await vambo.translate(
+  text: 'Hello, how are you?',
+  targetLanguage: 'sn', // Shona
+);`,
+    color: "from-yellow-500 to-amber-500",
+  },
 ];
 
 const typeIcons: Record<ProjectType, typeof Smartphone> = {
