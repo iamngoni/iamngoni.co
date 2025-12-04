@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "vinxi build",
+    "build": "vinxi build && cp -r functions dist/",
     "start": "vinxi start",
     "deploy": "pnpm run build && npx wrangler --cwd dist/ pages deploy"
   },
