@@ -8,6 +8,7 @@ node_modules/
 dist/
 .vinxi/
 .output/
+.wrangler/
 
 # Ignore IDE specific files
 .idea/
