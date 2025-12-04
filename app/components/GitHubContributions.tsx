@@ -11,51 +11,59 @@ interface ContributionWeek {
   days: ContributionDay[];
 }
 
-// Generate realistic contribution pattern
-function generateMockContributions(): ContributionWeek[] {
-  const weeks: ContributionWeek[] = [];
-  const today = new Date();
+// Fetch real GitHub contributions
+async function fetchGitHubContributions(
+  username: string,
+): Promise<ContributionWeek[]> {
+  try {
+    // Use GitHub's GraphQL API via a proxy or public endpoint
+    // We'll scrape the contribution calendar from the GitHub profile page
+    const response = await fetch(
+      `https://github-contributions-api.jogruber.de/v4/${username}?y=last`,
+    );
 
-  for (let week = 51; week >= 0; week--) {
-    const days: ContributionDay[] = [];
-    for (let day = 0; day < 7; day++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - (week * 7 + (6 - day)));
-
-      const isWeekend = day === 0 || day === 6;
-      const baseChance = isWeekend ? 0.3 : 0.7;
-      const hasContribution = Math.random() < baseChance;
-
-      let count = 0;
-      let level = 0;
-
-      if (hasContribution) {
-        const rand = Math.random();
-        if (rand < 0.4) {
-          count = Math.floor(Math.random() * 3) + 1;
-          level = 1;
-        } else if (rand < 0.7) {
-          count = Math.floor(Math.random() * 5) + 3;
-          level = 2;
-        } else if (rand < 0.9) {
-          count = Math.floor(Math.random() * 8) + 5;
-          level = 3;
-        } else {
-          count = Math.floor(Math.random() * 15) + 10;
-          level = 4;
-        }
-      }
-
-      days.push({
-        date: date.toISOString().split("T")[0],
-        count,
-        level,
-      });
+    if (!response.ok) {
+      throw new Error("Failed to fetch contributions");
     }
-    weeks.push({ days });
-  }
 
-  return weeks;
+    const data = await response.json();
+
+    // Transform the API response into our format
+    const weeks: ContributionWeek[] = [];
+    let currentWeek: ContributionDay[] = [];
+
+    // The API returns contributions array with date, count, level
+    const contributions = data.contributions || [];
+
+    contributions.forEach(
+      (
+        contrib: { date: string; count: number; level: number },
+        index: number,
+      ) => {
+        currentWeek.push({
+          date: contrib.date,
+          count: contrib.count,
+          level: contrib.level,
+        });
+
+        // Every 7 days, start a new week
+        if (currentWeek.length === 7) {
+          weeks.push({ days: currentWeek });
+          currentWeek = [];
+        }
+      },
+    );
+
+    // Add any remaining days as the last week
+    if (currentWeek.length > 0) {
+      weeks.push({ days: currentWeek });
+    }
+
+    return weeks;
+  } catch (error) {
+    console.error("Error fetching GitHub contributions:", error);
+    return [];
+  }
 }
 
 // Color levels - base and bright versions
@@ -145,7 +153,7 @@ export function GitHubContributions() {
   const [floatOffset, setFloatOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    setContributions(generateMockContributions());
+    fetchGitHubContributions("iamngoni").then(setContributions);
   }, []);
 
   // Handle mouse move for parallax effect
