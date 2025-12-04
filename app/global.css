@@ -117,6 +117,27 @@
         @apply rounded-[1rem] overflow-hidden bg-white w-full h-full;
     }
 
+    /* Tablet frame landscape - for mobile bottom sheet */
+    .tablet-frame-landscape {
+        @apply relative bg-black rounded-[1.5rem] p-3;
+        width: 100%;
+        max-width: 500px;
+        aspect-ratio: 16/10;
+        box-shadow:
+            0 0 0 2px #1a1a2e,
+            0 0 0 4px #2a2a3e,
+            0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .tablet-frame-landscape::before {
+        content: "";
+        @apply absolute left-1/2 -translate-x-1/2 bottom-2 h-2 w-12 bg-zinc-800 rounded-full;
+    }
+
+    .tablet-screen-landscape {
+        @apply rounded-[1rem] overflow-hidden bg-white w-full h-full;
+    }
+
     /* Browser frame for web previews */
     .browser-frame {
         @apply bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800;

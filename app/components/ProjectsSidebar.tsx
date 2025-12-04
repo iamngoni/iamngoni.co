@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import {
   X,
   Github,
@@ -12,8 +12,10 @@ import {
   GitPullRequest,
   GitMerge,
   CircleDot,
+  ChevronDown,
+  Eye,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type ProjectType =
   | "mobile"
@@ -301,6 +303,20 @@ const typeLabels: Record<ProjectType, string> = {
   contribution: "Open Source",
 };
 
+// Hook to detect mobile viewport
+function useIsMobile(breakpoint: number = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 interface ProjectsSidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -321,7 +337,28 @@ function MobilePreview({ appPath }: { appPath: string }) {
   );
 }
 
-function TabletPreview({ appPath }: { appPath: string }) {
+function TabletPreview({
+  appPath,
+  landscape = false,
+}: {
+  appPath: string;
+  landscape?: boolean;
+}) {
+  if (landscape) {
+    return (
+      <div className="tablet-frame-landscape">
+        <div className="tablet-screen-landscape">
+          <iframe
+            src={appPath}
+            className="w-full h-full"
+            title="Tablet Preview"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="tablet-frame">
       <div className="tablet-screen">
@@ -420,7 +457,7 @@ function LibraryPreview({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full max-w-md">
       {installCommand && (
         <div className="terminal-frame">
           <div className="terminal-header">
@@ -543,9 +580,183 @@ function ContributionPreview({
   );
 }
 
+// Preview content component used in both desktop and bottom sheet
+function ProjectPreviewContent({
+  project,
+  isMobile,
+}: {
+  project: Project;
+  isMobile: boolean;
+}) {
+  return (
+    <>
+      {project.type === "mobile" && project.appPath && (
+        <MobilePreview appPath={project.appPath} />
+      )}
+      {project.type === "tablet" && project.appPath && (
+        <TabletPreview appPath={project.appPath} landscape={isMobile} />
+      )}
+      {project.type === "web" && project.appPath && (
+        <WebPreview appPath={project.appPath} />
+      )}
+      {project.type === "cli" && project.cliDemo && (
+        <CliPreview lines={project.cliDemo} />
+      )}
+      {project.type === "library" && (
+        <LibraryPreview
+          installCommand={project.installCommand}
+          usageCode={project.usageCode}
+          imagePreview={project.imagePreview}
+        />
+      )}
+      {project.type === "contribution" && (
+        <ContributionPreview
+          prNumber={project.prNumber}
+          prStatus={project.prStatus}
+          prTitle={project.prTitle}
+          repoName="zed-industries/zed"
+        />
+      )}
+    </>
+  );
+}
+
+// Bottom Sheet Component for mobile preview
+function PreviewBottomSheet({
+  isOpen,
+  onClose,
+  project,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  project: Project;
+}) {
+  const dragControls = useDragControls();
+  const TypeIcon = typeIcons[project.type];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 z-[60]"
+          />
+
+          {/* Bottom Sheet */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            drag="y"
+            dragControls={dragControls}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 100 || info.velocity.y > 500) {
+                onClose();
+              }
+            }}
+            className="fixed bottom-0 left-0 right-0 z-[70] bg-background border-t border-primary/20 rounded-t-3xl max-h-[85vh] overflow-hidden flex flex-col"
+          >
+            {/* Drag Handle */}
+            <div
+              className="flex justify-center py-3 cursor-grab active:cursor-grabbing"
+              onPointerDown={(e) => dragControls.start(e)}
+            >
+              <div className="w-12 h-1.5 bg-zinc-600 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-3 h-3 rounded-full bg-gradient-to-r ${project.color}`}
+                />
+                <div>
+                  <h3 className="font-semibold text-zinc-100">
+                    {project.title}
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                    <TypeIcon className="w-3 h-3" />
+                    <span>{typeLabels[project.type]}</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 text-zinc-400 hover:text-primary transition-colors rounded-lg hover:bg-zinc-800/50"
+              >
+                <ChevronDown className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Preview Content */}
+            <div className="flex-1 overflow-y-auto p-4 flex items-center justify-center">
+              <ProjectPreviewContent project={project} isMobile={true} />
+            </div>
+
+            {/* Actions */}
+            <div className="p-4 border-t border-zinc-800 bg-surface/30 flex gap-3">
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm text-zinc-300 border border-zinc-700 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
+              >
+                <Github className="w-4 h-4" />
+                Source
+              </a>
+              {(project.type === "mobile" ||
+                project.type === "tablet" ||
+                project.type === "web") &&
+                project.appPath && (
+                  <a
+                    href={project.appPath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm text-background bg-primary rounded-lg hover:bg-primary/90 transition-all"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    {project.type === "web" ? "Visit" : "Full Screen"}
+                  </a>
+                )}
+              {project.type === "library" && project.packageUrl && (
+                <a
+                  href={project.packageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm text-background bg-primary rounded-lg hover:bg-primary/90 transition-all"
+                >
+                  <Package className="w-4 h-4" />
+                  Package
+                </a>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
   const [activeProject, setActiveProject] = useState<Project>(projects[0]);
+  const [showPreview, setShowPreview] = useState(false);
+  const isMobile = useIsMobile(1024); // lg breakpoint
   const TypeIcon = typeIcons[activeProject.type];
+
+  const handleProjectClick = (project: Project) => {
+    setActiveProject(project);
+    if (isMobile) {
+      setShowPreview(true);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -566,15 +777,15 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 right-0 h-full w-full md:w-[85%] bg-background border-l border-primary/20 z-50 overflow-hidden"
+            className="fixed top-0 right-0 h-full w-full lg:w-[85%] bg-background border-l border-primary/20 z-50 overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+            <div className="flex items-center justify-between p-4 lg:p-6 border-b border-zinc-800">
               <div>
                 <span className="text-primary font-mono text-xs block mb-1">
                   // PROJECTS
                 </span>
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-xl lg:text-2xl font-bold">
                   Show Me The <span className="gradient-text">Code</span>
                 </h2>
               </div>
@@ -587,17 +798,20 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
             </div>
 
             {/* Content */}
-            <div className="flex h-[calc(100%-88px)]">
-              {/* Project list */}
-              <div className="w-2/5 border-r border-zinc-800 overflow-y-auto p-4 space-y-2">
+            <div className="flex h-[calc(100%-72px)] lg:h-[calc(100%-88px)]">
+              {/* Project list - full width on mobile, 2/5 on desktop */}
+              <div
+                className={`${isMobile ? "w-full" : "w-2/5"} border-r border-zinc-800 overflow-y-auto p-4 space-y-2`}
+              >
                 {projects.map((project) => {
                   const Icon = typeIcons[project.type];
+                  const isActive = activeProject.id === project.id;
                   return (
                     <button
                       key={project.id}
-                      onClick={() => setActiveProject(project)}
+                      onClick={() => handleProjectClick(project)}
                       className={`w-full text-left p-4 rounded-lg border transition-all duration-300 ${
-                        activeProject.id === project.id
+                        isActive
                           ? "bg-surface border-primary/50 shadow-[0_0_20px_rgba(0,240,255,0.1)]"
                           : "bg-transparent border-zinc-800 hover:border-zinc-700"
                       }`}
@@ -608,9 +822,7 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                         />
                         <h3
                           className={`font-semibold text-sm flex-1 ${
-                            activeProject.id === project.id
-                              ? "text-primary"
-                              : "text-zinc-100"
+                            isActive ? "text-primary" : "text-zinc-100"
                           }`}
                         >
                           {project.title}
@@ -623,103 +835,114 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                         <span className="text-zinc-700">•</span>
                         <span>{typeLabels[project.type]}</span>
                       </div>
+
+                      {/* Mobile: Show description and preview button for active item */}
+                      {isMobile && isActive && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          className="mt-3 pt-3 border-t border-zinc-800"
+                        >
+                          <p className="text-zinc-400 text-xs mb-3 line-clamp-2">
+                            {project.description}
+                          </p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowPreview(true);
+                            }}
+                            className="flex items-center gap-2 px-3 py-2 text-xs text-primary border border-primary/50 rounded-lg hover:bg-primary/10 transition-all w-full justify-center"
+                          >
+                            <Eye className="w-3 h-3" />
+                            View Preview
+                          </button>
+                        </motion.div>
+                      )}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Preview area */}
-              <div className="w-3/5 flex flex-col">
-                {/* Type badge */}
-                <div className="px-6 pt-4">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface/50 border border-zinc-800 rounded-full text-xs text-zinc-400">
-                    <TypeIcon className="w-3 h-3" />
-                    {typeLabels[activeProject.type]}
+              {/* Preview area - desktop only */}
+              {!isMobile && (
+                <div className="w-3/5 flex flex-col">
+                  {/* Type badge */}
+                  <div className="px-6 pt-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface/50 border border-zinc-800 rounded-full text-xs text-zinc-400">
+                      <TypeIcon className="w-3 h-3" />
+                      {typeLabels[activeProject.type]}
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+                  <div
+                    className={`flex-1 flex overflow-hidden ${activeProject.type === "web" || activeProject.type === "tablet" ? "p-4" : "items-center justify-center p-6"}`}
+                  >
+                    <ProjectPreviewContent
+                      project={activeProject}
+                      isMobile={false}
+                    />
+                  </div>
+
+                  {/* Project info */}
+                  <div className="p-4 border-t border-zinc-800 bg-surface/30">
+                    <p className="text-zinc-400 text-sm mb-4 line-clamp-3">
+                      {activeProject.description}
+                    </p>
+                    <div className="flex gap-3">
+                      <a
+                        href={activeProject.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-300 border border-zinc-700 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
+                      >
+                        <Github className="w-4 h-4" />
+                        Source
+                      </a>
+                      {(activeProject.type === "mobile" ||
+                        activeProject.type === "tablet" ||
+                        activeProject.type === "web") &&
+                        activeProject.appPath && (
+                          <a
+                            href={activeProject.appPath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-background bg-primary rounded-lg hover:bg-primary/90 transition-all"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            {activeProject.type === "mobile" ||
+                            activeProject.type === "tablet"
+                              ? "Full Screen"
+                              : "Visit Site"}
+                          </a>
+                        )}
+                      {activeProject.type === "library" &&
+                        activeProject.packageUrl && (
+                          <a
+                            href={activeProject.packageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-background bg-primary rounded-lg hover:bg-primary/90 transition-all"
+                          >
+                            <Package className="w-4 h-4" />
+                            View Package
+                          </a>
+                        )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Preview */}
-                <div
-                  className={`flex-1 flex overflow-hidden ${activeProject.type === "web" || activeProject.type === "tablet" ? "p-4" : "items-center justify-center p-6"}`}
-                >
-                  {activeProject.type === "mobile" && activeProject.appPath && (
-                    <MobilePreview appPath={activeProject.appPath} />
-                  )}
-                  {activeProject.type === "tablet" && activeProject.appPath && (
-                    <TabletPreview appPath={activeProject.appPath} />
-                  )}
-                  {activeProject.type === "web" && activeProject.appPath && (
-                    <WebPreview appPath={activeProject.appPath} />
-                  )}
-                  {activeProject.type === "cli" && activeProject.cliDemo && (
-                    <CliPreview lines={activeProject.cliDemo} />
-                  )}
-                  {activeProject.type === "library" && (
-                    <LibraryPreview
-                      installCommand={activeProject.installCommand}
-                      usageCode={activeProject.usageCode}
-                      imagePreview={activeProject.imagePreview}
-                    />
-                  )}
-                  {activeProject.type === "contribution" && (
-                    <ContributionPreview
-                      prNumber={activeProject.prNumber}
-                      prStatus={activeProject.prStatus}
-                      prTitle={activeProject.prTitle}
-                      repoName="zed-industries/zed"
-                    />
-                  )}
-                </div>
-
-                {/* Project info */}
-                <div className="p-4 border-t border-zinc-800 bg-surface/30">
-                  <p className="text-zinc-400 text-sm mb-4 line-clamp-3">
-                    {activeProject.description}
-                  </p>
-                  <div className="flex gap-3">
-                    <a
-                      href={activeProject.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-300 border border-zinc-700 rounded-lg hover:border-primary/50 hover:text-primary transition-all"
-                    >
-                      <Github className="w-4 h-4" />
-                      Source
-                    </a>
-                    {(activeProject.type === "mobile" ||
-                      activeProject.type === "tablet" ||
-                      activeProject.type === "web") &&
-                      activeProject.appPath && (
-                        <a
-                          href={activeProject.appPath}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-background bg-primary rounded-lg hover:bg-primary/90 transition-all"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          {activeProject.type === "mobile" ||
-                          activeProject.type === "tablet"
-                            ? "Full Screen"
-                            : "Visit Site"}
-                        </a>
-                      )}
-                    {activeProject.type === "library" &&
-                      activeProject.packageUrl && (
-                        <a
-                          href={activeProject.packageUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-background bg-primary rounded-lg hover:bg-primary/90 transition-all"
-                        >
-                          <Package className="w-4 h-4" />
-                          View Package
-                        </a>
-                      )}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </motion.div>
+
+          {/* Mobile Preview Bottom Sheet */}
+          {isMobile && (
+            <PreviewBottomSheet
+              isOpen={showPreview}
+              onClose={() => setShowPreview(false)}
+              project={activeProject}
+            />
+          )}
         </>
       )}
     </AnimatePresence>
