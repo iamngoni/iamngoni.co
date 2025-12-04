@@ -663,7 +663,7 @@ function PreviewBottomSheet({
                 onClose();
               }
             }}
-            className="fixed bottom-0 left-0 right-0 top-12 z-[70] bg-background border-t border-primary/20 rounded-t-3xl overflow-hidden flex flex-col"
+            className="fixed inset-0 z-[70] bg-background overflow-hidden flex flex-col"
           >
             {/* Drag Handle */}
             <div
