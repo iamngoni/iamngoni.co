@@ -60,7 +60,7 @@ export function MainScreen() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[128px]" />
 
         {/* Content */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pb-24 sm:pb-16">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pb-32 sm:pb-16">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             {/* Avatar */}
             <motion.div
