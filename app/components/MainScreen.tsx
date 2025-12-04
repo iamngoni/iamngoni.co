@@ -185,7 +185,7 @@ export function MainScreen() {
 
         {/* Footer */}
         <div className="absolute bottom-6 left-0 right-0 text-center px-4">
-          <div className="flex items-center justify-center gap-4 mb-2">
+          <div className="flex sm:hidden items-center justify-center gap-4 mb-2">
             {socialLinks.map((social) => (
               <a
                 key={social.label}
