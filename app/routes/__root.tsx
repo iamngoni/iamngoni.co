@@ -9,7 +9,7 @@ import {
 
 import appCss from "../global.css?url";
 
-const siteUrl = "https://iamngoni.co";
+const siteUrl = "https://iamngoni.dev";
 const title = "Ngonidzashe Mangudya | Backend & Mobile Developer";
 const description =
   "Portfolio of Ngonidzashe Mangudya - Backend & Mobile Developer with 5+ years of Flutter experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.";
