@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-background text-zinc-200 font-sans antialiased;
+    }
+
+    ::selection {
+        @apply bg-primary/30 text-white;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-background;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-primary/30 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-primary/50;
+    }
+}
+
+@layer components {
+    .gradient-text {
+        @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
+    }
+
+    .glow-border {
+        @apply border border-primary/30;
+        box-shadow:
+            0 0 20px rgba(0, 240, 255, 0.1),
+            inset 0 0 20px rgba(0, 240, 255, 0.05);
+    }
+
+    .glow-text {
+        text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+
+    .cyber-card {
+        @apply bg-surface/50 backdrop-blur-sm border border-primary/20 rounded-lg;
+        box-shadow: 0 0 30px rgba(0, 240, 255, 0.05);
+    }
+
+    /* Large device frame */
+    .device-frame {
+        @apply relative bg-black rounded-[3rem] p-3;
+        box-shadow:
+            0 0 0 3px #1a1a2e,
+            0 0 0 6px #2a2a3e,
+            0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .device-frame::before {
+        content: "";
+        @apply absolute top-6 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full;
+    }
+
+    .device-screen {
+        @apply rounded-[2.5rem] overflow-hidden bg-white;
+        aspect-ratio: 9/19.5;
+    }
+
+    /* Smaller device frame for sidebar */
+    .device-frame-small {
+        @apply relative bg-black rounded-[2.5rem] p-2.5;
+        width: 280px;
+        box-shadow:
+            0 0 0 2px #1a1a2e,
+            0 0 0 4px #2a2a3e,
+            0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .device-frame-small::before {
+        content: "";
+        @apply absolute top-4 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-10;
+    }
+
+    .device-screen-small {
+        @apply rounded-[2rem] overflow-hidden bg-white;
+        height: 580px;
+    }
+
+    /* Tablet frame for tablet previews */
+    .tablet-frame {
+        @apply relative bg-black rounded-[1.5rem] p-3;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        box-shadow:
+            0 0 0 2px #1a1a2e,
+            0 0 0 4px #2a2a3e,
+            0 20px 40px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .tablet-frame::before {
+        content: "";
+        @apply absolute top-1/2 -translate-y-1/2 right-2 w-2 h-12 bg-zinc-800 rounded-full;
+    }
+
+    .tablet-screen {
+        @apply rounded-[1rem] overflow-hidden bg-white w-full h-full;
+    }
+
+    /* Browser frame for web previews */
+    .browser-frame {
+        @apply bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.5);
+    }
+
+    .browser-header {
+        @apply flex items-center px-4 py-3 bg-zinc-800/50 border-b border-zinc-700;
+        flex-shrink: 0;
+    }
+
+    .browser-content {
+        @apply bg-white;
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* Terminal frame for CLI previews */
+    .terminal-frame {
+        @apply bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.5);
+    }
+
+    .terminal-header {
+        @apply flex items-center px-4 py-3 bg-zinc-800/50 border-b border-zinc-700;
+    }
+
+    .terminal-content {
+        @apply p-4 bg-zinc-950 text-zinc-300 min-h-[200px];
+    }
+
+    /* Code frame for library examples */
+    .code-frame {
+        @apply bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.5);
+    }
+
+    .code-header {
+        @apply px-4 py-2 bg-zinc-800/50 border-b border-zinc-700;
+    }
+
+    .code-content {
+        @apply p-4 bg-zinc-950 overflow-x-auto;
+        max-height: 250px;
+    }
+
+    /* PR/Contribution frame */
+    .pr-frame {
+        @apply bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800;
+        box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.5);
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}

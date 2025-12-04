@@ -1,0 +1,106 @@
+[
+  {
+    "letter": "a",
+    "image": "assets/letters/a.png"
+  },
+  {
+    "letter": "b",
+    "image": "assets/letters/b.png"
+  },
+  {
+    "letter": "c",
+    "image": "assets/letters/c.png"
+  },
+  {
+    "letter": "d",
+    "image": "assets/letters/d.png"
+  },
+  {
+    "letter": "e",
+    "image": "assets/letters/e.png"
+  },
+  {
+    "letter": "f",
+    "image": "assets/letters/f.png"
+  },
+  {
+    "letter": "g",
+    "image": "assets/letters/g.png"
+  },
+  {
+    "letter": "h",
+    "image": "assets/letters/h.png"
+  },
+  {
+    "letter": "i",
+    "image": "assets/letters/i.png"
+  },
+  {
+    "letter": "j",
+    "image": "assets/letters/j.png"
+  },
+  {
+    "letter": "k",
+    "image": "assets/letters/k.png"
+  },
+  {
+    "letter": "l",
+    "image": "assets/letters/l.png"
+  },
+  {
+    "letter": "m",
+    "image": "assets/letters/m.png"
+  },
+  {
+    "letter": "n",
+    "image": "assets/letters/n.png"
+  },
+  {
+    "letter": "o",
+    "image": "assets/letters/o.png"
+  },
+  {
+    "letter": "p",
+    "image": "assets/letters/p.png"
+  },
+  {
+    "letter": "q",
+    "image": "assets/letters/q.png"
+  },
+  {
+    "letter": "r",
+    "image": "assets/letters/r.png"
+  },
+  {
+    "letter": "s",
+    "image": "assets/letters/s.png"
+  },
+  {
+    "letter": "t",
+    "image": "assets/letters/t.png"
+  },
+  {
+    "letter": "u",
+    "image": "assets/letters/u.png"
+  },
+  {
+    "letter": "v",
+    "image": "assets/letters/v.png"
+  },
+  {
+    "letter": "w",
+    "image": "assets/letters/w.png"
+  },
+  {
+    "letter": "x",
+    "image": "assets/letters/x.png"
+  },
+  {
+    "letter": "y",
+    "image": "assets/letters/y.png"
+  },
+  {
+    "letter": "z",
+    "image": "assets/letters/z.png"
+  }
+]
