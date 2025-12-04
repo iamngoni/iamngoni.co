@@ -1,7 +1,7 @@
 {
-  "name": "iamngoni",
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "iamngoni-portfolio",
   "compatibility_date": "2024-12-01",
-  "assets": {
-    "directory": "./dist/client"
-  }
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry"
 }
