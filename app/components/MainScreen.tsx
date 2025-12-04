@@ -164,7 +164,7 @@ export function MainScreen() {
                   Experience
                 </button>
 
-                <div className="flex items-center gap-4">
+                <div className="hidden sm:flex items-center gap-4">
                   {socialLinks.map((social) => (
                     <a
                       key={social.label}
@@ -184,10 +184,23 @@ export function MainScreen() {
         </div>
 
         {/* Footer */}
-        <div className="absolute bottom-6 left-0 right-0 text-center">
+        <div className="absolute bottom-6 left-0 right-0 text-center px-4">
+          <div className="flex items-center justify-center gap-4 mb-2">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-zinc-600 hover:text-primary transition-colors"
+                aria-label={social.label}
+              >
+                <social.icon className="w-4 h-4" />
+              </a>
+            ))}
+          </div>
           <p className="text-zinc-600 text-xs font-mono">
-            Building the future, one commit at a time •
-            ngmangudya@codecraftsolutions.co.za
+            Building the future, one commit at a time
           </p>
         </div>
       </main>
