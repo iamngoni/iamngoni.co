@@ -28,3 +28,6 @@ node_modules
 .env.local
 .zed/
 .env
+
+# Playwright
+.playwright-cli/
