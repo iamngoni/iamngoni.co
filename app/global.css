@@ -304,6 +304,14 @@
         @apply my-8 overflow-x-auto rounded-lg border border-zinc-800/80 bg-[#0f1117] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.22)];
     }
 
+    .blog-content .blog-code-block {
+        @apply relative my-8;
+    }
+
+    .blog-content .blog-code-block pre {
+        @apply my-0 pr-14;
+    }
+
     .blog-content pre code {
         @apply block min-w-full border-0 bg-transparent p-0 text-sm leading-7 text-zinc-300;
         tab-size: 2;

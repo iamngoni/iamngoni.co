@@ -1,6 +1,13 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
-import { getPostComponent } from "~/lib/blog-content";
+import {
+  isValidElement,
+  useMemo,
+  useState,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from "react";
+import { ArrowLeft, CalendarDays, Check, Clock3, Copy } from "lucide-react";
+import { getPostComponent, type BlogMdxComponents } from "~/lib/blog-content";
 import { getPostBySlug } from "~/lib/blog";
 import {
   defaultOgImage,
@@ -64,6 +71,10 @@ export const Route = createFileRoute("/blog/$slug")({
   component: BlogPost,
 });
 
+const blogMdxComponents: BlogMdxComponents = {
+  pre: BlogCodeBlock,
+};
+
 function BlogPost() {
   const { slug } = Route.useParams();
   const post = getPostBySlug(slug);
@@ -119,9 +130,74 @@ function BlogPost() {
         </header>
 
         <div className="blog-content">
-          <PostContent />
+          <PostContent components={blogMdxComponents} />
         </div>
       </article>
     </main>
   );
+}
+
+type CodeBlockProps = ComponentPropsWithoutRef<"pre">;
+
+function BlogCodeBlock({ children, ...props }: CodeBlockProps) {
+  const [copied, setCopied] = useState(false);
+  const code = useMemo(() => getTextFromNode(children).replace(/\n$/, ""), [
+    children,
+  ]);
+
+  async function copyCode() {
+    if (!code) return;
+
+    await writeToClipboard(code);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  return (
+    <div className="blog-code-block group/code">
+      <button
+        type="button"
+        onClick={copyCode}
+        className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-700/80 bg-zinc-950/85 text-zinc-400 opacity-100 shadow-lg shadow-black/20 transition-colors hover:border-primary/50 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 md:opacity-0 md:group-hover/code:opacity-100"
+        aria-label={copied ? "Copied code" : "Copy code"}
+        title={copied ? "Copied" : "Copy code"}
+      >
+        {copied ? (
+          <Check className="h-4 w-4" />
+        ) : (
+          <Copy className="h-4 w-4" />
+        )}
+      </button>
+      <pre {...props}>{children}</pre>
+    </div>
+  );
+}
+
+function getTextFromNode(node: ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(getTextFromNode).join("");
+
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return getTextFromNode(node.props.children);
+  }
+
+  return "";
+}
+
+async function writeToClipboard(value: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
 }
