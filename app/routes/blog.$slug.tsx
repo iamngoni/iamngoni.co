@@ -1,27 +1,75 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { getPostBySlug, BlogPost as Post } from "~/lib/blog";
+import { getPostComponent } from "~/lib/blog-content";
+import { getPostBySlug } from "~/lib/blog";
+import {
+  defaultOgImage,
+  pageTitle,
+  siteName,
+  siteUrl,
+  twitterCreator,
+} from "~/lib/site";
 
 export const Route = createFileRoute("/blog/$slug")({
+  head: ({ params }) => {
+    const post = getPostBySlug(params.slug);
+    const url = `${siteUrl}/blog/${post?.slug ?? params.slug}`;
+
+    if (!post) {
+      const title = pageTitle("Post not found");
+
+      return {
+        meta: [
+          { title },
+          { name: "description", content: "That blog post could not be found." },
+          { name: "robots", content: "noindex, follow" },
+          { property: "og:url", content: url },
+          { property: "og:title", content: title },
+          { property: "og:description", content: "That blog post could not be found." },
+          { name: "twitter:url", content: url },
+          { name: "twitter:title", content: title },
+          { name: "twitter:description", content: "That blog post could not be found." },
+        ],
+        links: [{ rel: "canonical", href: url }],
+      };
+    }
+
+    const title = pageTitle(post.title);
+    const meta = [
+      { title },
+      { name: "description", content: post.description },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+      { property: "og:title", content: title },
+      { property: "og:description", content: post.description },
+      { property: "og:image", content: defaultOgImage },
+      { property: "og:site_name", content: siteName },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:url", content: url },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: post.description },
+      { name: "twitter:image", content: defaultOgImage },
+      { name: "twitter:creator", content: twitterCreator },
+      ...(post.date
+        ? [{ property: "article:published_time", content: post.date }]
+        : []),
+      ...post.tags.map((tag) => ({ property: "article:tag", content: tag })),
+    ];
+
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: BlogPost,
 });
 
 function BlogPost() {
   const { slug } = Route.useParams();
   const post = getPostBySlug(slug);
+  const PostContent = post ? getPostComponent(post) : undefined;
 
-  const getPostBody = (post: Post) => {
-    let postBody = post?.body;
-    if (post.title) {
-      postBody = postBody?.replace(post?.title, "");
-    }
-
-    return postBody;
-  };
-
-  if (!post) {
+  if (!post || !PostContent) {
     return (
       <main className="min-h-screen bg-background px-6 py-10 text-zinc-100">
         <div className="mx-auto max-w-3xl">
@@ -34,7 +82,7 @@ function BlogPost() {
           </Link>
           <h1 className="text-4xl font-bold">Post not found</h1>
           <p className="mt-4 text-zinc-400">
-            That markdown file does not exist in the blog directory.
+            That MDX file does not exist in the blog directory.
           </p>
         </div>
       </main>
@@ -71,9 +119,7 @@ function BlogPost() {
         </header>
 
         <div className="blog-content">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {getPostBody(post)}
-          </ReactMarkdown>
+          <PostContent />
         </div>
       </article>
     </main>

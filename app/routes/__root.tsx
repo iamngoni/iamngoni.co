@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 import type { ReactNode } from "react";
 import {
   Outlet,
@@ -9,20 +8,24 @@ import {
 
 import appCss from "../global.css?url";
 import { getExperienceYearsLabel } from "~/lib/experience";
+import {
+  defaultOgImage,
+  defaultTitle,
+  siteName,
+  siteUrl,
+  twitterCreator,
+} from "~/lib/site";
 
-const siteUrl = "https://iamngoni.dev";
-const title = "Ngonidzashe Mangudya | Backend & Mobile Developer";
 const experienceYears = getExperienceYearsLabel();
 const description =
   `Ngonidzashe Mangudya - Backend & Mobile Developer with ${experienceYears} years of mobile and backend experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.`;
-const ogImage = `${siteUrl}/images/banner.png`;
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title },
+      { title: defaultTitle },
       { name: "description", content: description },
       { name: "theme-color", content: "#0a0a0f" },
       {
@@ -36,27 +39,27 @@ export const Route = createRootRoute({
       // Open Graph / Facebook
       { property: "og:type", content: "website" },
       { property: "og:url", content: siteUrl },
-      { property: "og:title", content: title },
+      { property: "og:title", content: defaultTitle },
       { property: "og:description", content: description },
-      { property: "og:image", content: ogImage },
+      { property: "og:image", content: defaultOgImage },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:site_name", content: "Ngonidzashe Mangudya" },
+      { property: "og:site_name", content: siteName },
       { property: "og:locale", content: "en_US" },
 
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:url", content: siteUrl },
-      { name: "twitter:title", content: title },
+      { name: "twitter:title", content: defaultTitle },
       { name: "twitter:description", content: description },
-      { name: "twitter:image", content: ogImage },
-      { name: "twitter:creator", content: "@iamngoni" },
+      { name: "twitter:image", content: defaultOgImage },
+      { name: "twitter:creator", content: twitterCreator },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico" },
-      { rel: "canonical", href: siteUrl },
-      { rel: "apple-touch-icon", href: "/images/apple-touch-icon.png" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", sizes: "16x16", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
     ],
     scripts: [
       {
@@ -64,9 +67,9 @@ export const Route = createRootRoute({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Person",
-          name: "Ngonidzashe Mangudya",
+          name: siteName,
           url: siteUrl,
-          image: ogImage,
+          image: defaultOgImage,
           jobTitle: "Backend & Mobile Developer",
           worksFor: {
             "@type": "Organization",

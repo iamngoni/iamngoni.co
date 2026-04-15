@@ -1,20 +1,28 @@
 export interface BlogPost {
+  sourcePath: string;
   slug: string;
   sourceSlug: string;
   title: string;
   date?: string;
   formattedDate: string;
+  description: string;
   preview: string;
   readingMinutes: number;
   tags: string[];
   body: string;
 }
 
-const postModules = import.meta.glob("/content/blog/*.md", {
+const postSources = import.meta.glob("/content/blog/*.mdx", {
   eager: true,
   import: "default",
-  query: "?raw",
-}) as Record<string, string>;
+  query: {
+    raw: "",
+  },
+}) as Record<string, unknown>;
+
+function getComponentPath(path: string) {
+  return path.replace(/\?.*$/, "");
+}
 
 function parseFrontmatter(markdown: string) {
   if (!markdown.startsWith("---\n")) {
@@ -46,7 +54,7 @@ function parseFrontmatter(markdown: string) {
 }
 
 function getFilename(path: string) {
-  return path.split("/").pop()?.replace(/\.md$/, "") ?? path;
+  return path.split("/").pop()?.replace(/\.mdx$/, "") ?? path;
 }
 
 function splitFilename(filename: string) {
@@ -72,8 +80,52 @@ function previewFromBody(body: string) {
     body
       .split(/\n\s*\n/)
       .map((part) => part.trim())
-      .find((part) => part && !part.startsWith("#")) ?? ""
+      .find(
+        (part) =>
+          part &&
+          !part.startsWith("#") &&
+          !part.startsWith("import ") &&
+          !part.startsWith("export "),
+      ) ?? ""
   );
+}
+
+function markdownToPlainText(markdown: string) {
+  return markdown
+    .replace(/^\s*import\s.+$/gm, "")
+    .replace(/^\s*export\s.+$/gm, "")
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/_([^_]+)_/g, "$1")
+    .replace(/^>\s?/gm, "")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function bodyWithoutLeadingTitle(body: string, title: string) {
+  const leadingTitle = body.match(/^#\s+(.+?)\n+/);
+
+  if (!leadingTitle) return body;
+
+  if (markdownToPlainText(leadingTitle[1]) !== title) {
+    return body;
+  }
+
+  return body.slice(leadingTitle[0].length);
+}
+
+function truncateDescription(value: string) {
+  if (value.length <= 160) return value;
+
+  return `${value.slice(0, 157).replace(/\s+\S*$/, "")}...`;
 }
 
 function readingMinutes(body: string) {
@@ -91,35 +143,48 @@ export function formatPostDate(date?: string) {
   }).format(new Date(`${date}T00:00:00`));
 }
 
-function normalizePost(path: string, markdown: string): BlogPost {
-  const sourceSlug = getFilename(path);
+function getMarkdownSource(source: unknown) {
+  return typeof source === "string" ? source : "";
+}
+
+function normalizePost(path: string, source: unknown): BlogPost {
+  const markdown = getMarkdownSource(source);
+  const sourcePath = getComponentPath(path);
+  const sourceSlug = getFilename(sourcePath);
   const inferred = splitFilename(sourceSlug);
   const { metadata, body } = parseFrontmatter(markdown);
   const slug = metadata.slug ?? inferred.slug;
   const date = metadata.date ?? inferred.date;
+  const title = metadata.title ?? titleFromSlug(inferred.slug);
+  const content = bodyWithoutLeadingTitle(body, title);
   const tags = metadata.tags
     ? metadata.tags
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean)
     : [];
-  const preview = metadata.excerpt ?? previewFromBody(body);
+  const preview = metadata.excerpt ?? previewFromBody(content);
+  const description = truncateDescription(
+    metadata.description ?? (markdownToPlainText(preview) || title),
+  );
 
   return {
+    sourcePath,
     slug,
     sourceSlug,
-    title: metadata.title ?? titleFromSlug(inferred.slug),
+    title,
     date,
     formattedDate: formatPostDate(date),
+    description,
     preview,
-    readingMinutes: readingMinutes(body),
+    readingMinutes: readingMinutes(content),
     tags,
-    body,
+    body: content,
   };
 }
 
 export function getAllPosts() {
-  return Object.entries(postModules)
+  return Object.entries(postSources)
     .map(([path, markdown]) => normalizePost(path, markdown))
     .sort((a, b) => {
       const aTime = a.date ? new Date(a.date).getTime() : 0;
