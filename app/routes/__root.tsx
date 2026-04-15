@@ -8,11 +8,13 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../global.css?url";
+import { getExperienceYearsLabel } from "~/lib/experience";
 
 const siteUrl = "https://iamngoni.dev";
 const title = "Ngonidzashe Mangudya | Backend & Mobile Developer";
+const experienceYears = getExperienceYearsLabel();
 const description =
-  "Ngonidzashe Mangudya - Backend & Mobile Developer with 5+ years of Flutter experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.";
+  `Ngonidzashe Mangudya - Backend & Mobile Developer with ${experienceYears} years of mobile and backend experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.`;
 const ogImage = `${siteUrl}/images/banner.png`;
 
 export const Route = createRootRoute({

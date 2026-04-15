@@ -4,9 +4,12 @@ import {
   Github,
   ExternalLink,
   Calendar,
+  AppWindow,
   Terminal,
   Package,
   Globe,
+  Monitor,
+  Server,
   Smartphone,
   Tablet,
   GitPullRequest,
@@ -21,6 +24,8 @@ type ProjectType =
   | "mobile"
   | "tablet"
   | "web"
+  | "desktop"
+  | "service"
   | "cli"
   | "library"
   | "contribution";
@@ -42,6 +47,9 @@ interface Project {
   usageCode?: string;
   // For image preview
   imagePreview?: string;
+  // For repo overview previews
+  stack?: string[];
+  highlights?: string[];
   // For contributions (PRs)
   prNumber?: number;
   prStatus?: "merged" | "open" | "closed";
@@ -63,6 +71,135 @@ const projects: Project[] = [
     prStatus: "merged",
     prTitle: "terminal: Fix terminal split pane opening in wrong directory",
     color: "from-amber-500 to-yellow-500",
+  },
+  // Recent Builds
+  {
+    id: "heimdall",
+    title: "Heimdall",
+    description:
+      "An agentic, context-aware security scanner for source code repositories. It builds a threat model, reasons over the codebase, validates findings in a sandbox, and returns ranked vulnerabilities with patches and proof-of-concept exploits.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/heimdall",
+    type: "service",
+    stack: ["Rust", "AI Agents", "Security", "Postgres"],
+    highlights: [
+      "Threat-model-first repository scanning",
+      "Sandboxed exploit validation pipeline",
+      "Ranked findings with suggested patches",
+    ],
+    color: "from-red-500 to-rose-500",
+  },
+  {
+    id: "montr",
+    title: "Montr",
+    description:
+      "A macOS menu bar app for controlling built-in and external display brightness, color temperature, and display profiles from a compact native popover.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/Montr-Control-Your-Displays",
+    type: "desktop",
+    stack: ["Swift", "macOS", "DDC/CI", "Sparkle"],
+    highlights: [
+      "Per-display brightness controls",
+      "Night Shift-style color temperature",
+      "Profiles and quick menu bar actions",
+    ],
+    color: "from-sky-500 to-cyan-500",
+  },
+  {
+    id: "pastr",
+    title: "Pastr",
+    description:
+      "A native macOS clipboard manager and free alternative for keeping clipboard history close at hand.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/Pastr",
+    type: "desktop",
+    stack: ["Swift", "macOS", "Clipboard", "Xcode"],
+    highlights: [
+      "Native desktop clipboard workflow",
+      "Focused replacement for paid clipboard tools",
+      "Dedicated app, test, and script structure",
+    ],
+    color: "from-fuchsia-500 to-pink-500",
+  },
+  {
+    id: "nexus",
+    title: "Nexus",
+    description:
+      "A modern homelab dashboard built with Rust, Actix Web, HTMX, and Tailwind. It brings service health, system vitals, downloads, weather, and container logs into one live dashboard.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/nexus",
+    type: "service",
+    stack: ["Rust", "Actix Web", "HTMX", "Tailwind"],
+    highlights: [
+      "Live-refreshing homelab widgets",
+      "Docker and qBittorrent integrations",
+      "System vitals and service health checks",
+    ],
+    color: "from-orange-500 to-amber-500",
+  },
+  {
+    id: "mimir",
+    title: "Mimir",
+    description:
+      "An MCP server that lets AI coding agents share session context. It parses Claude Code, Codex, and Gemini session files into structured summaries without storing extra data.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/mimir",
+    type: "service",
+    stack: ["Rust", "MCP", "Codex", "Claude Code"],
+    highlights: [
+      "Cross-agent session discovery",
+      "Structured summaries from local session files",
+      "No storage layer and no LLM calls",
+    ],
+    color: "from-violet-500 to-purple-500",
+  },
+  {
+    id: "what-the-load",
+    title: "WhatTheLoad",
+    description:
+      "A macOS menu bar diagnostics app for fast system visibility across network throughput, CPU, memory, Wi-Fi, disk, processes, timeline history, and battery.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/WhatTheLoad",
+    type: "desktop",
+    stack: ["Swift", "macOS", "Diagnostics", "Menu Bar"],
+    highlights: [
+      "Live menu bar network telemetry",
+      "System health tabs and smart alerts",
+      "Diagnostics bundle export",
+    ],
+    color: "from-emerald-500 to-teal-500",
+  },
+  {
+    id: "emufleet",
+    title: "EmuFleet",
+    description:
+      "A Swift/Xcode desktop app exploring emulator fleet management, with dedicated app, unit test, and UI test targets.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/EmuFleet",
+    type: "desktop",
+    stack: ["Swift", "macOS", "Xcode", "Emulators"],
+    highlights: [
+      "Native Swift app structure",
+      "Unit and UI test targets",
+      "Focused emulator fleet workflow",
+    ],
+    color: "from-cyan-500 to-blue-500",
+  },
+  {
+    id: "memorai",
+    title: "Memorai",
+    description:
+      "A local-first AI memory system with semantic search. It stores memories locally, exposes a REST API and CLI, and uses local embeddings through Ollama.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/memorai",
+    type: "service",
+    stack: ["Rust", "SurrealDB", "Ollama", "Semantic Search"],
+    highlights: [
+      "Local-first semantic memory store",
+      "REST API and CLI access",
+      "Profile generation from stored memories",
+    ],
+    color: "from-lime-500 to-green-500",
   },
   // Mixed Apps & Websites
   {
@@ -289,6 +426,8 @@ const typeIcons: Record<ProjectType, typeof Smartphone> = {
   mobile: Smartphone,
   tablet: Tablet,
   web: Globe,
+  desktop: Monitor,
+  service: Server,
   cli: Terminal,
   library: Package,
   contribution: GitPullRequest,
@@ -298,10 +437,14 @@ const typeLabels: Record<ProjectType, string> = {
   mobile: "Mobile App",
   tablet: "Tablet App",
   web: "Website",
+  desktop: "Desktop App",
+  service: "Backend / Service",
   cli: "CLI / Tool",
   library: "Library",
   contribution: "Open Source",
 };
+
+const appLabUrl = "https://apps.iamngoni.dev";
 
 // Hook to detect mobile viewport
 function useIsMobile(breakpoint: number = 768) {
@@ -602,6 +745,79 @@ function ContributionPreview({
   );
 }
 
+function RepoPreview({ project }: { project: Project }) {
+  const TypeIcon = typeIcons[project.type];
+
+  return (
+    <div className="pr-frame w-full max-w-[440px]">
+      <div className="p-5 border-b border-zinc-800">
+        <div className="flex items-start gap-4">
+          <div
+            className={`flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${project.color} text-white shadow-[0_0_24px_rgba(0,240,255,0.12)]`}
+          >
+            <TypeIcon className="w-5 h-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-surface text-zinc-400 border border-zinc-800">
+                {typeLabels[project.type]}
+              </span>
+              <span className="text-xs font-mono text-zinc-500">
+                {project.date}
+              </span>
+            </div>
+            <h3 className="text-lg font-bold text-zinc-100">
+              {project.title}
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-5 space-y-5">
+        <p className="text-sm leading-relaxed text-zinc-400">
+          {project.description}
+        </p>
+
+        {project.stack && (
+          <div className="flex flex-wrap gap-2">
+            {project.stack.map((item) => (
+              <span
+                key={item}
+                className="px-2.5 py-1 text-xs font-mono text-zinc-400 bg-background-light border border-zinc-800 rounded-full"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {project.highlights && (
+          <div className="space-y-2">
+            {project.highlights.map((highlight) => (
+              <div
+                key={highlight}
+                className="flex items-start gap-3 rounded-lg border border-zinc-800 bg-background/45 px-3 py-2"
+              >
+                <div
+                  className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-r ${project.color}`}
+                />
+                <span className="text-xs leading-relaxed text-zinc-400">
+                  {highlight}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-500">
+          <Github className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">{project.githubUrl}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Preview content component used in both desktop and bottom sheet
 function ProjectPreviewContent({
   project,
@@ -639,6 +855,12 @@ function ProjectPreviewContent({
           repoName="zed-industries/zed"
         />
       )}
+      {project.type !== "mobile" &&
+        project.type !== "tablet" &&
+        project.type !== "web" &&
+        project.type !== "cli" &&
+        project.type !== "library" &&
+        project.type !== "contribution" && <RepoPreview project={project} />}
     </>
   );
 }
@@ -811,12 +1033,33 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                   Show Me The <span className="gradient-text">Code</span>
                 </h2>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 text-zinc-400 hover:text-primary transition-colors rounded-lg hover:bg-zinc-800/50"
-              >
-                <X className="w-6 h-6" />
-              </button>
+              <div className="flex items-center gap-2">
+                <a
+                  href={appLabUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm font-semibold text-primary border border-primary/40 rounded-lg hover:border-primary/70 hover:bg-primary/10 transition-all"
+                >
+                  <AppWindow className="w-4 h-4" />
+                  Visit my apps
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+                <a
+                  href={appLabUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sm:hidden p-2 text-primary border border-primary/40 rounded-lg hover:bg-primary/10 transition-colors"
+                  aria-label="Visit my apps"
+                >
+                  <AppWindow className="w-5 h-5" />
+                </a>
+                <button
+                  onClick={onClose}
+                  className="p-2 text-zinc-400 hover:text-primary transition-colors rounded-lg hover:bg-zinc-800/50"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
 
             {/* Content */}

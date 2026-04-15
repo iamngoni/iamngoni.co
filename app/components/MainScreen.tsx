@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Briefcase } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Github, Linkedin, Mail, Briefcase, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { ProjectsSidebar } from "./ProjectsSidebar";
 import { ExperienceSidebar } from "./ExperienceSidebar";
 import { GitHubContributions } from "./GitHubContributions";
+import { getExperienceYearsLabel } from "~/lib/experience";
 
 // X (Twitter) icon component
 function XIcon({ className }: { className?: string }) {
@@ -44,6 +46,7 @@ const techStack = [
 export function MainScreen() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isExperienceOpen, setIsExperienceOpen] = useState(false);
+  const experienceYears = getExperienceYearsLabel();
 
   return (
     <>
@@ -77,7 +80,7 @@ export function MainScreen() {
                 {/* Avatar image */}
                 <div className="relative w-full h-full rounded-full border-2 border-primary/40 overflow-hidden animate-pulse-glow">
                   <img
-                    src="/images/iamngoni-2.png"
+                    src="/images/ngoni-home.jpg"
                     alt="Ngonidzashe Mangudya"
                     className="w-full h-full object-cover"
                   />
@@ -118,11 +121,11 @@ export function MainScreen() {
                 <span className="text-primary font-semibold">
                   Ngonidzashe Mangudya
                 </span>
-                . 6+ years building high-performance mobile apps, architecting
-                backend systems, and shipping production-ready products across
-                multiple stacks. I work across Flutter, Rust, Python, and
-                TypeScript — designing systems that are scalable, reliable, and
-                intentionally engineered.
+                . {experienceYears} years building high-performance mobile apps,
+                architecting backend systems, and shipping production-ready
+                products across multiple stacks. I work across Flutter, Rust,
+                Python, and TypeScript — designing systems that are scalable,
+                reliable, and intentionally engineered.
               </motion.p>
 
               {/* Tech stack pills */}
@@ -177,6 +180,13 @@ export function MainScreen() {
                       <social.icon className="w-5 h-5" />
                     </a>
                   ))}
+                  <Link
+                    to="/blog"
+                    className="p-2 text-zinc-500 hover:text-primary transition-colors"
+                    aria-label="Writing"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                  </Link>
                 </div>
               </motion.div>
             </div>
@@ -198,6 +208,13 @@ export function MainScreen() {
                 <social.icon className="w-4 h-4" />
               </a>
             ))}
+            <Link
+              to="/blog"
+              className="p-2 text-zinc-600 hover:text-primary transition-colors"
+              aria-label="Writing"
+            >
+              <BookOpen className="w-4 h-4" />
+            </Link>
           </div>
           <p className="text-zinc-600 text-xs font-mono">
             Building the future, one commit at a time
