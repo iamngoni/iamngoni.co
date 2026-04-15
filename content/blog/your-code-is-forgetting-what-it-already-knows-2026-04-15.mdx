@@ -130,6 +130,8 @@ No null checks. No `if (status == "delivered" && deliveredAt != null)`. No `defa
 
 The principle is simple: **parse at the boundary, act on the result.**
 
+Put differently: **use parsing and types to move business logic from runtime discipline into compile-time structure. Not all business logic can be enforced at compile time, but a surprising amount of it can be made impossible to violate accidentally.**
+
 The boundary is wherever untrusted or unstructured data enters your application:
 - API responses (`Map<String, dynamic>` from JSON)
 - Form input (raw strings from `TextEditingController`)
