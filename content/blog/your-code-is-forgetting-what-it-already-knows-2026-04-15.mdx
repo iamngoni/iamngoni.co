@@ -173,6 +173,124 @@ submitRegistration(email); // an Email, not a String
 
 Now `submitRegistration` accepts an `Email`, not a `String`. You literally cannot call it with an unvalidated string — the type system blocks it.
 
+## Parsing Does Not Mean Big Architecture
+
+This doesn't mean every value in your app needs ceremony around it. Not every string needs its own type, and not every API response needs a novel's worth of sealed classes.
+
+The rule I use is simple: **if a value has a rule that other code depends on, parse it into a type.**
+
+A random search query can probably stay a `String`. A display label can stay a `String`. Those values may be empty, partial, duplicated, or user-written, and the rest of the code usually doesn't depend on them having a stricter shape:
+
+```dart
+List<SearchResult> search(String query) {
+  // "pizza", "piz", "", and "pizza near me" are all acceptable input.
+  return searchIndex.lookup(query);
+}
+
+Widget userHeader(String displayName) {
+  // This is presentation text, not an identity boundary.
+  return Text(displayName);
+}
+```
+
+A route parameter that controls which account, order, or workspace you're loading is different. Other code depends on it being a real identifier, so parse it before it travels further:
+
+```dart
+extension type const OrderId(String value) {
+  static OrderId? tryParse(String raw) {
+    if (!RegExp(r'^ord_[a-zA-Z0-9]+$').hasMatch(raw)) return null;
+    return OrderId(raw);
+  }
+}
+```
+
+Authentication is another good example. A successful login shouldn't leave you with the same loose shape plus a `bool isAuthenticated`. It should move the program into a new state:
+
+```dart
+extension type const UserId(String value) {}
+extension type const SessionToken(String value) {}
+
+class UnauthenticatedUser {
+  final Email email;
+  const UnauthenticatedUser(this.email);
+}
+
+class AuthenticatedUser {
+  final UserId id;
+  final Email email;
+  final SessionToken token;
+
+  const AuthenticatedUser._({
+    required this.id,
+    required this.email,
+    required this.token,
+  });
+
+  static AuthenticatedUser? tryParse(Map<String, dynamic> json) {
+    final id = json['id'];
+    final email = json['email'];
+    final token = json['token'];
+
+    if (id is! String || !id.startsWith('usr_')) return null;
+    if (email is! String) return null;
+    if (token is! String || token.isEmpty) return null;
+
+    final parsedEmail = Email.tryParse(email);
+    if (parsedEmail == null) return null;
+
+    return AuthenticatedUser._(
+      id: UserId(id),
+      email: parsedEmail,
+      token: SessionToken(token),
+    );
+  }
+}
+```
+
+After that point, functions that require a logged-in user can ask for an `AuthenticatedUser`. They don't need to check `isAuthenticated`, they don't need to wonder whether a token exists, and they don't need to defensively handle the impossible case.
+
+A plain number is fine when you're counting animation frames or retry attempts. Money is different. It carries rules about currency, precision, and whether negative values are legal:
+
+```dart
+class Money {
+  final int cents;
+  final String currency;
+
+  const Money._({required this.cents, required this.currency});
+
+  static Money? tryParse({
+    required int cents,
+    required String currency,
+  }) {
+    if (cents < 0) return null;
+    if (currency.length != 3) return null;
+    return Money._(cents: cents, currency: currency.toUpperCase());
+  }
+}
+```
+
+And sometimes the right move is not a wrapper at all, but a better shape for the state:
+
+```dart
+// Fine as a local UI detail
+final isExpanded = true;
+
+// Better as a parsed domain state
+sealed class PaymentState {}
+class Unpaid extends PaymentState {}
+class Paid extends PaymentState {
+  final Money amount;
+  Paid(this.amount);
+}
+class Refunded extends PaymentState {
+  final Money amount;
+  final String reason;
+  Refunded({required this.amount, required this.reason});
+}
+```
+
+The goal isn't to make the code look clever. The goal is to stop important assumptions from living only in comments, validators, and developer memory.
+
 ## Some Rules of Thumb
 
 **Be suspicious of functions that return `void` after checking something.** If a function's whole purpose is to verify data and it returns nothing, it's doing work and throwing away the result. Make it return a more precise type.
