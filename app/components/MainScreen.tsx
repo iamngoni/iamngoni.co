@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Github, Linkedin, Mail, Briefcase, BookOpen } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Mail,
+  Briefcase,
+  BookOpen,
+  Feather,
+} from "lucide-react";
 import { useState } from "react";
 import { ProjectsSidebar } from "./ProjectsSidebar";
 import { ExperienceSidebar } from "./ExperienceSidebar";
@@ -187,6 +194,13 @@ export function MainScreen() {
                   >
                     <BookOpen className="w-5 h-5" />
                   </Link>
+                  <Link
+                    to="/poetry"
+                    className="p-2 text-zinc-500 hover:text-primary transition-colors"
+                    aria-label="Poetry"
+                  >
+                    <Feather className="w-5 h-5" />
+                  </Link>
                 </div>
               </motion.div>
             </div>
@@ -214,6 +228,13 @@ export function MainScreen() {
               aria-label="Writing"
             >
               <BookOpen className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/poetry"
+              className="p-2 text-zinc-600 hover:text-primary transition-colors"
+              aria-label="Poetry"
+            >
+              <Feather className="w-4 h-4" />
             </Link>
           </div>
           <p className="text-zinc-600 text-xs font-mono">

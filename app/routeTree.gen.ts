@@ -11,12 +11,21 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PoetryImport } from './routes/poetry'
 import { Route as BlogImport } from './routes/blog'
 import { Route as IndexImport } from './routes/index'
+import { Route as PoetryIndexImport } from './routes/poetry.index'
 import { Route as BlogIndexImport } from './routes/blog.index'
+import { Route as PoetrySlugImport } from './routes/poetry.$slug'
 import { Route as BlogSlugImport } from './routes/blog.$slug'
 
 // Create/Update Routes
+
+const PoetryRoute = PoetryImport.update({
+  id: '/poetry',
+  path: '/poetry',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const BlogRoute = BlogImport.update({
   id: '/blog',
@@ -30,10 +39,22 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PoetryIndexRoute = PoetryIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PoetryRoute,
+} as any)
+
 const BlogIndexRoute = BlogIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
+} as any)
+
+const PoetrySlugRoute = PoetrySlugImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PoetryRoute,
 } as any)
 
 const BlogSlugRoute = BlogSlugImport.update({
@@ -60,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogImport
       parentRoute: typeof rootRoute
     }
+    '/poetry': {
+      id: '/poetry'
+      path: '/poetry'
+      fullPath: '/poetry'
+      preLoaderRoute: typeof PoetryImport
+      parentRoute: typeof rootRoute
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
@@ -67,12 +95,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugImport
       parentRoute: typeof BlogImport
     }
+    '/poetry/$slug': {
+      id: '/poetry/$slug'
+      path: '/$slug'
+      fullPath: '/poetry/$slug'
+      preLoaderRoute: typeof PoetrySlugImport
+      parentRoute: typeof PoetryImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexImport
       parentRoute: typeof BlogImport
+    }
+    '/poetry/': {
+      id: '/poetry/'
+      path: '/'
+      fullPath: '/poetry/'
+      preLoaderRoute: typeof PoetryIndexImport
+      parentRoute: typeof PoetryImport
     }
   }
 }
@@ -91,44 +133,82 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface PoetryRouteChildren {
+  PoetrySlugRoute: typeof PoetrySlugRoute
+  PoetryIndexRoute: typeof PoetryIndexRoute
+}
+
+const PoetryRouteChildren: PoetryRouteChildren = {
+  PoetrySlugRoute: PoetrySlugRoute,
+  PoetryIndexRoute: PoetryIndexRoute,
+}
+
+const PoetryRouteWithChildren =
+  PoetryRoute._addFileChildren(PoetryRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
+  '/poetry': typeof PoetryRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/poetry/$slug': typeof PoetrySlugRoute
   '/blog/': typeof BlogIndexRoute
+  '/poetry/': typeof PoetryIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/poetry/$slug': typeof PoetrySlugRoute
   '/blog': typeof BlogIndexRoute
+  '/poetry': typeof PoetryIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
+  '/poetry': typeof PoetryRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/poetry/$slug': typeof PoetrySlugRoute
   '/blog/': typeof BlogIndexRoute
+  '/poetry/': typeof PoetryIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/blog' | '/blog/$slug' | '/blog/'
+  fullPaths:
+    | '/'
+    | '/blog'
+    | '/poetry'
+    | '/blog/$slug'
+    | '/poetry/$slug'
+    | '/blog/'
+    | '/poetry/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/blog/$slug' | '/blog'
-  id: '__root__' | '/' | '/blog' | '/blog/$slug' | '/blog/'
+  to: '/' | '/blog/$slug' | '/poetry/$slug' | '/blog' | '/poetry'
+  id:
+    | '__root__'
+    | '/'
+    | '/blog'
+    | '/poetry'
+    | '/blog/$slug'
+    | '/poetry/$slug'
+    | '/blog/'
+    | '/poetry/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRouteWithChildren
+  PoetryRoute: typeof PoetryRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRouteWithChildren,
+  PoetryRoute: PoetryRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -142,7 +222,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/blog"
+        "/blog",
+        "/poetry"
       ]
     },
     "/": {
@@ -155,13 +236,28 @@ export const routeTree = rootRoute
         "/blog/"
       ]
     },
+    "/poetry": {
+      "filePath": "poetry.tsx",
+      "children": [
+        "/poetry/$slug",
+        "/poetry/"
+      ]
+    },
     "/blog/$slug": {
       "filePath": "blog.$slug.tsx",
       "parent": "/blog"
     },
+    "/poetry/$slug": {
+      "filePath": "poetry.$slug.tsx",
+      "parent": "/poetry"
+    },
     "/blog/": {
       "filePath": "blog.index.tsx",
       "parent": "/blog"
+    },
+    "/poetry/": {
+      "filePath": "poetry.index.tsx",
+      "parent": "/poetry"
     }
   }
 }

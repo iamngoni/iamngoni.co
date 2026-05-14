@@ -450,6 +450,24 @@
     .blog-excerpt pre code.hljs {
         @apply bg-transparent text-zinc-300;
     }
+
+    .poetry-content {
+        @apply text-zinc-200;
+    }
+
+    .poetry-content .poetry-stanza {
+        @apply my-7 text-lg leading-9 text-zinc-200 md:text-xl md:leading-[2.25rem];
+        white-space: pre-line;
+        font-feature-settings: "liga", "clig", "kern";
+    }
+
+    .poetry-content .poetry-stanza:first-child {
+        @apply mt-0;
+    }
+
+    .poetry-content .poetry-stanza:last-child {
+        @apply mb-0;
+    }
 }
 
 @layer utilities {

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = fileURLToPath(new URL("../", import.meta.url));
 const blogDir = join(rootDir, "content", "blog");
+const poetryDir = join(rootDir, "content", "poetry");
 const siteConfigPath = join(rootDir, "app", "lib", "site.ts");
 const sitemapPath = join(rootDir, "public", "sitemap.xml");
 
@@ -46,7 +47,7 @@ function parseFrontmatter(markdown) {
 }
 
 function splitFilename(filename) {
-  const sourceSlug = filename.replace(/\.mdx$/, "");
+  const sourceSlug = filename.replace(/\.(mdx|md)$/, "");
   const match = sourceSlug.match(/^(.*)-(\d{4}-\d{2}-\d{2})$/);
 
   if (!match) {
@@ -91,14 +92,22 @@ async function getSiteUrl() {
   return match[1].replace(/\/$/, "");
 }
 
-async function getPosts() {
-  const filenames = (await readdir(blogDir)).filter((filename) =>
-    filename.endsWith(".mdx"),
+async function getEntries(dir, extension) {
+  let filenames;
+  try {
+    filenames = await readdir(dir);
+  } catch (error) {
+    if (error.code === "ENOENT") return [];
+    throw error;
+  }
+
+  const matching = filenames.filter((filename) =>
+    filename.endsWith(extension),
   );
 
-  const posts = await Promise.all(
-    filenames.map(async (filename) => {
-      const markdown = await readFile(join(blogDir, filename), "utf8");
+  const entries = await Promise.all(
+    matching.map(async (filename) => {
+      const markdown = await readFile(join(dir, filename), "utf8");
       const metadata = parseFrontmatter(markdown);
       const inferred = splitFilename(filename);
 
@@ -109,19 +118,36 @@ async function getPosts() {
     }),
   );
 
-  return posts.sort((a, b) => {
+  return entries.sort((a, b) => {
     const aTime = a.date ? new Date(a.date).getTime() : 0;
     const bTime = b.date ? new Date(b.date).getTime() : 0;
     return bTime - aTime;
   });
 }
 
+async function getPosts() {
+  return getEntries(blogDir, ".mdx");
+}
+
+async function getPoems() {
+  return getEntries(poetryDir, ".md");
+}
+
 async function main() {
-  const [siteUrl, posts] = await Promise.all([getSiteUrl(), getPosts()]);
+  const [siteUrl, posts, poems] = await Promise.all([
+    getSiteUrl(),
+    getPosts(),
+    getPoems(),
+  ]);
   const latestPostDate = posts.find((post) => post.date)?.date;
+  const latestPoemDate = poems.find((poem) => poem.date)?.date;
+  const latestContentDate = [latestPostDate, latestPoemDate]
+    .filter(Boolean)
+    .sort()
+    .pop();
   const urls = [
     entry("/", {
-      lastmod: latestPostDate,
+      lastmod: latestContentDate,
       changefreq: "weekly",
       priority: "1.0",
     }),
@@ -133,6 +159,18 @@ async function main() {
     ...posts.map((post) =>
       entry(`/blog/${post.slug}`, {
         lastmod: post.date,
+        changefreq: "monthly",
+        priority: "0.7",
+      }),
+    ),
+    entry("/poetry", {
+      lastmod: latestPoemDate,
+      changefreq: "weekly",
+      priority: "0.8",
+    }),
+    ...poems.map((poem) =>
+      entry(`/poetry/${poem.slug}`, {
+        lastmod: poem.date,
         changefreq: "monthly",
         priority: "0.7",
       }),
