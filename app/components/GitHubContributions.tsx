@@ -69,18 +69,18 @@ async function fetchGitHubContributions(
 // Color levels - base and bright versions
 const levelColors = {
   base: [
-    "rgba(123, 47, 255, 0.03)",
-    "rgba(123, 47, 255, 0.15)",
-    "rgba(123, 47, 255, 0.30)",
-    "rgba(123, 47, 255, 0.50)",
-    "rgba(123, 47, 255, 0.75)",
+    "hsl(154 12% 70% / 0.08)",
+    "hsl(154 18% 58% / 0.18)",
+    "hsl(150 24% 42% / 0.26)",
+    "hsl(148 34% 30% / 0.34)",
+    "hsl(22 48% 48% / 0.42)",
   ],
   bright: [
-    "rgba(123, 47, 255, 0.15)",
-    "rgba(123, 47, 255, 0.40)",
-    "rgba(123, 47, 255, 0.60)",
-    "rgba(123, 47, 255, 0.80)",
-    "rgba(123, 47, 255, 1)",
+    "hsl(154 12% 70% / 0.20)",
+    "hsl(154 18% 52% / 0.34)",
+    "hsl(150 28% 36% / 0.46)",
+    "hsl(148 38% 24% / 0.58)",
+    "hsl(22 53% 48% / 0.72)",
   ],
 };
 
@@ -129,8 +129,8 @@ function GridCell({ day, mouseX, mouseY, gridRef }: GridCellProps) {
           : levelColors.base[day.level],
         scale: isHovered ? 1.5 : 1,
         boxShadow: isHovered
-          ? "0 0 20px rgba(123, 47, 255, 0.6)"
-          : "0 0 0px rgba(123, 47, 255, 0)",
+          ? "0 8px 20px hsl(22 48% 48% / 0.18)"
+          : "0 0 0px hsl(154 12% 70% / 0)",
       }}
       transition={{ duration: 0.2 }}
       onMouseEnter={() => setIsHovered(true)}
@@ -198,7 +198,7 @@ export function GitHubContributions() {
   if (contributions.length === 0) return null;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+    <div className="absolute inset-0 hidden items-center justify-center overflow-hidden pointer-events-none sm:flex">
       <motion.div
         ref={gridRef}
         animate={{
@@ -207,7 +207,7 @@ export function GitHubContributions() {
         }}
         transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         onMouseMove={handleMouseMove}
-        className="flex gap-[3px] opacity-25 pointer-events-auto"
+        className="mt-28 flex gap-[3px] opacity-55 pointer-events-auto"
       >
         {contributions.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-[3px]">

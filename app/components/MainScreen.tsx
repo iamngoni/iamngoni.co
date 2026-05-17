@@ -7,6 +7,8 @@ import {
   Briefcase,
   BookOpen,
   Feather,
+  Code2,
+  ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
 import { ProjectsSidebar } from "./ProjectsSidebar";
@@ -57,21 +59,13 @@ export function MainScreen() {
 
   return (
     <>
-      <main className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* GitHub contributions background */}
+      <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-portfolio-ivory text-portfolio-ink">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_45%,hsl(40_38%_92%/0.86),hsl(42_48%_96%)_48%,hsl(40_35%_91%))]" />
         <GitHubContributions />
 
-        {/* Animated background grid */}
-        <div className="absolute inset-0 bg-cyber-grid bg-grid opacity-20" />
-
-        {/* Gradient orbs */}
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/15 rounded-full blur-[128px] animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/15 rounded-full blur-[128px] animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[128px]" />
-
         {/* Content */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pb-32 sm:pb-16">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 pb-28 sm:py-20 sm:pb-28">
+          <div className="flex flex-col lg:flex-row items-center gap-8 sm:gap-12 lg:gap-20">
             {/* Avatar */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -79,17 +73,16 @@ export function MainScreen() {
               transition={{ duration: 0.6 }}
               className="relative flex-shrink-0"
             >
-              <div className="relative w-48 h-48 md:w-56 md:h-56">
-                {/* Glow rings */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary via-accent to-secondary opacity-30 blur-2xl animate-pulse" />
-                <div className="absolute inset-2 rounded-full bg-gradient-to-r from-secondary via-primary to-accent opacity-20 blur-xl animate-pulse" />
+              <div className="relative w-36 h-36 sm:w-48 sm:h-48 md:w-60 md:h-60">
+                <div className="absolute -inset-3 rounded-full border border-portfolio-copper/30" />
+                <div className="absolute -inset-1 rounded-full border border-portfolio-line bg-portfolio-paper/50" />
 
                 {/* Avatar image */}
-                <div className="relative w-full h-full rounded-full border-2 border-primary/40 overflow-hidden animate-pulse-glow">
+                <div className="relative w-full h-full rounded-full border-2 border-portfolio-copper/80 overflow-hidden shadow-[0_24px_60px_hsl(22_34%_36%/0.16)]">
                   <img
                     src="/images/ngoni-home.jpg"
                     alt="Ngonidzashe Mangudya"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover saturate-[0.78] contrast-[1.05]"
                   />
                 </div>
               </div>
@@ -102,7 +95,7 @@ export function MainScreen() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
-                <span className="inline-block px-3 py-1 mb-4 text-xs font-mono text-primary border border-primary/30 rounded-full">
+                <span className="inline-block px-4 py-1.5 mb-4 sm:mb-5 text-xs sm:text-sm font-mono text-portfolio-ink border border-portfolio-copper/70 rounded-full bg-portfolio-ivory/80">
                   Backend & Mobile Developer
                 </span>
               </motion.div>
@@ -111,21 +104,23 @@ export function MainScreen() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight"
+                className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.94] sm:leading-[0.92] mb-5 sm:mb-6"
               >
-                <span className="text-zinc-100">Talk is cheap.</span>
+                <span>Talk is cheap.</span>
                 <br />
-                <span className="gradient-text">Show me the code.</span>
+                <span>
+                  Show me the <span className="text-portfolio-copper">code.</span>
+                </span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-base text-zinc-400 mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+                className="text-sm sm:text-base md:text-lg text-portfolio-soft mb-6 max-w-2xl mx-auto lg:mx-0 leading-7 sm:leading-8"
               >
                 Hi, I'm{" "}
-                <span className="text-primary font-semibold">
+                <span className="text-portfolio-forest font-bold">
                   Ngonidzashe Mangudya
                 </span>
                 . {experienceYears} years building high-performance mobile apps,
@@ -140,12 +135,12 @@ export function MainScreen() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="flex flex-wrap gap-2 mb-8 justify-center lg:justify-start"
+                className="flex flex-wrap gap-2.5 mb-8 sm:mb-10 justify-center lg:justify-start"
               >
                 {techStack.map((tech) => (
                   <span
                     key={tech}
-                    className="px-3 py-1 text-xs font-mono text-zinc-400 bg-surface/50 border border-zinc-800 rounded-full hover:border-primary/30 hover:text-primary transition-colors cursor-default"
+                    className="px-4 py-1.5 text-xs font-mono text-portfolio-ink bg-portfolio-ivory/70 border border-portfolio-line rounded-full hover:border-portfolio-copper/60 hover:text-portfolio-copperDark transition-colors cursor-default"
                   >
                     {tech}
                   </span>
@@ -157,21 +152,23 @@ export function MainScreen() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start"
+                className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-center lg:justify-start"
               >
                 <button
                   onClick={() => setIsSidebarOpen(true)}
-                  className="px-8 py-4 bg-primary text-background font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]"
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-portfolio-forest px-8 py-4 font-semibold text-portfolio-ivory shadow-[0_16px_34px_hsl(148_42%_18%/0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-portfolio-moss focus:outline-none focus:ring-2 focus:ring-portfolio-forest/30 sm:w-auto"
                 >
+                  <Code2 className="w-5 h-5" />
                   Show me the code
                 </button>
 
                 <button
                   onClick={() => setIsExperienceOpen(true)}
-                  className="px-6 py-4 border border-zinc-700 text-zinc-300 font-semibold rounded-lg hover:border-primary/50 hover:text-primary transition-all duration-300 flex items-center gap-2"
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-portfolio-moss/50 bg-portfolio-ivory/40 px-7 py-4 font-semibold text-portfolio-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-portfolio-copper/80 hover:text-portfolio-copperDark focus:outline-none focus:ring-2 focus:ring-portfolio-copper/25 sm:w-auto"
                 >
                   <Briefcase className="w-4 h-4" />
                   Experience
+                  <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <div className="hidden sm:flex items-center gap-4">
@@ -181,7 +178,7 @@ export function MainScreen() {
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-zinc-500 hover:text-primary transition-colors"
+                      className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
                       aria-label={social.label}
                     >
                       <social.icon className="w-5 h-5" />
@@ -189,14 +186,14 @@ export function MainScreen() {
                   ))}
                   <Link
                     to="/blog"
-                    className="p-2 text-zinc-500 hover:text-primary transition-colors"
+                    className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
                     aria-label="Writing"
                   >
                     <BookOpen className="w-5 h-5" />
                   </Link>
                   <Link
                     to="/poetry"
-                    className="p-2 text-zinc-500 hover:text-primary transition-colors"
+                    className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
                     aria-label="Poetry"
                   >
                     <Feather className="w-5 h-5" />
@@ -216,7 +213,7 @@ export function MainScreen() {
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-zinc-600 hover:text-primary transition-colors"
+                className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
                 aria-label={social.label}
               >
                 <social.icon className="w-4 h-4" />
@@ -224,20 +221,25 @@ export function MainScreen() {
             ))}
             <Link
               to="/blog"
-              className="p-2 text-zinc-600 hover:text-primary transition-colors"
+              className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
               aria-label="Writing"
             >
               <BookOpen className="w-4 h-4" />
             </Link>
             <Link
               to="/poetry"
-              className="p-2 text-zinc-600 hover:text-primary transition-colors"
+              className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
               aria-label="Poetry"
             >
               <Feather className="w-4 h-4" />
             </Link>
           </div>
-          <p className="text-zinc-600 text-xs font-mono">
+          <div className="mx-auto mb-4 hidden max-w-xs items-center justify-center gap-3 sm:flex">
+            <span className="h-px flex-1 bg-portfolio-line" />
+            <span className="h-2 w-2 rounded-full bg-portfolio-copper" />
+            <span className="h-px flex-1 bg-portfolio-line" />
+          </div>
+          <p className="text-portfolio-soft text-xs font-mono">
             Building the future, one commit at a time
           </p>
         </div>

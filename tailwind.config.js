@@ -12,9 +12,22 @@ export default {
         secondary: "#7b2fff",
         surface: "#1a1a2e",
         muted: "#71717a",
+        portfolio: {
+          ivory: "hsl(42 48% 96%)",
+          paper: "hsl(40 38% 92%)",
+          ink: "hsl(162 23% 12%)",
+          soft: "hsl(38 16% 43%)",
+          line: "hsl(40 18% 78%)",
+          forest: "hsl(148 42% 18%)",
+          moss: "hsl(150 24% 32%)",
+          sage: "hsl(154 12% 70%)",
+          copper: "hsl(22 53% 48%)",
+          copperDark: "hsl(20 45% 32%)",
+        },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        display: ["Instrument Serif", "Georgia", "serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       animation: {
@@ -45,6 +58,10 @@ export default {
         "cyber-grid": `
           linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
           linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px)
+        `,
+        "portfolio-grid": `
+          linear-gradient(hsl(154 12% 70% / 0.18) 1px, transparent 1px),
+          linear-gradient(90deg, hsl(154 12% 70% / 0.18) 1px, transparent 1px)
         `,
       },
       backgroundSize: {

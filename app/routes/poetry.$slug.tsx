@@ -68,17 +68,17 @@ function PoetryPost() {
 
   if (!poem) {
     return (
-      <main className="min-h-screen bg-background px-6 py-10 text-zinc-100">
+      <main className="min-h-screen bg-portfolio-ivory px-6 py-10 text-portfolio-ink">
         <div className="mx-auto max-w-3xl">
           <Link
             to="/poetry"
-            className="mb-12 inline-flex items-center gap-2 text-sm font-mono text-zinc-500 transition-colors hover:text-primary"
+            className="mb-12 inline-flex items-center gap-2 text-sm font-mono text-portfolio-soft transition-colors hover:text-portfolio-copper"
           >
             <ArrowLeft className="h-4 w-4" />
             Poetry
           </Link>
-          <h1 className="text-4xl font-bold">Poem not found</h1>
-          <p className="mt-4 text-zinc-400">
+          <h1 className="font-display text-5xl">Poem not found</h1>
+          <p className="mt-4 text-portfolio-soft">
             That file does not exist in the poetry directory.
           </p>
         </div>
@@ -89,30 +89,30 @@ function PoetryPost() {
   const stanzas = poem.body.split(/\n\s*\n/).map((stanza) => stanza.trimEnd());
 
   return (
-    <main className="min-h-screen bg-background text-zinc-100">
-      <div className="absolute inset-0 bg-cyber-grid bg-grid opacity-20" />
+    <main className="relative min-h-screen overflow-hidden bg-portfolio-ivory text-portfolio-ink">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_14%,hsl(40_38%_92%/0.95),transparent_34%),radial-gradient(circle_at_84%_78%,hsl(154_12%_70%/0.18),transparent_34%)]" />
       <article className="relative mx-auto max-w-3xl px-6 py-10 lg:py-16">
         <Link
           to="/poetry"
-          className="mb-12 inline-flex items-center gap-2 text-sm font-mono text-zinc-500 transition-colors hover:text-primary"
+          className="mb-12 inline-flex items-center gap-2 text-sm font-mono text-portfolio-soft transition-colors hover:text-portfolio-copper"
         >
           <ArrowLeft className="h-4 w-4" />
           Poetry
         </Link>
 
-        <header className="mb-12 border-b border-zinc-800 pb-10">
-          <div className="mb-5 flex flex-wrap items-center gap-3 text-xs font-mono text-zinc-500">
+        <header className="mb-12 border-b border-portfolio-line pb-10">
+          <div className="mb-5 flex flex-wrap items-center gap-3 text-xs font-mono text-portfolio-soft">
             <span className="inline-flex items-center gap-1.5">
               <CalendarDays className="h-3.5 w-3.5" />
               {poem.formattedDate}
             </span>
-            <span className="text-zinc-700">/</span>
+            <span className="text-portfolio-copper/60">/</span>
             <span className="inline-flex items-center gap-1.5">
               <AlignLeft className="h-3.5 w-3.5" />
               {poem.lineCount} lines
             </span>
           </div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+          <h1 className="font-display text-5xl leading-none md:text-7xl">
             {poem.title}
           </h1>
         </header>

@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: defaultTitle },
       { name: "description", content: description },
-      { name: "theme-color", content: "#0a0a0f" },
+      { name: "theme-color", content: "#f8f3e8" },
       {
         name: "keywords",
         content:
@@ -110,7 +110,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-screen bg-background">
+      <body className="min-h-screen bg-portfolio-ivory">
         {children}
         <Scripts />
       </body>

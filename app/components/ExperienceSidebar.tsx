@@ -23,7 +23,7 @@ const experiences: Experience[] = [
     type: "Contract",
     period: "Apr 2024 - Present",
     duration: "1 yr 9 mos",
-    location: "South Africa · Hybrid",
+    location: "Ethiopia · South Africa · Japan · Hybrid",
     description:
       "Building secure, scalable, and user-centric applications using Flutter for web and desktop platforms. Working across the full software development lifecycle — from gathering complex requirements and architecting solutions, to coding, deploying, and supporting production systems.",
     highlights: [
@@ -31,9 +31,22 @@ const experiences: Experience[] = [
       "Ensuring seamless handover and adoption",
       "Actively maintain and evolve deployed systems based on real-time client feedback",
       "Build reusable components and tools to accelerate future government-related deployments",
+      "Participated in live operational support during critical production periods with high availability requirements.",
+      "Developed resilient sync and patching infrastructure with focus on fault tolerance, retry handling, conflict resolution, operational reliability, zero/minimal downtime deployments",
     ],
-    skills: ["Flutter", ".NET Framework", "Android", "UIX", "Windows", "WebSocket", "Encryption", "Flutter Desktop", "Flutter Web", "Hardware Integration"],
-    color: "from-cyan-500 to-blue-500",
+    skills: [
+      "Flutter",
+      ".NET Framework",
+      "Android",
+      "UIX",
+      "Windows",
+      "WebSocket",
+      "Encryption",
+      "Flutter Desktop",
+      "Flutter Web",
+      "Hardware Integration",
+    ],
+    color: "from-portfolio-moss to-portfolio-forest",
   },
   {
     id: "merlin",
@@ -51,8 +64,14 @@ const experiences: Experience[] = [
       "Real-time data synchronization between mobile apps and backend",
       "Implementing UI/UX best practices and solving performance issues",
     ],
-    skills: ["Android Development", "REST APIs", "Flutter", "iOS Development", "Figma"],
-    color: "from-purple-500 to-pink-500",
+    skills: [
+      "Android Development",
+      "REST APIs",
+      "Flutter",
+      "iOS Development",
+      "Figma",
+    ],
+    color: "from-rose-600 to-portfolio-copper",
   },
   {
     id: "africai",
@@ -69,8 +88,18 @@ const experiences: Experience[] = [
       "Pioneered the African Folktales app with AI-generated imagery and infinite coloring book powered by GPT-4",
       "Led development of payments platform for ZivAi credits with Stripe integration",
     ],
-    skills: ["Django REST Framework", "iOS", "Redis", "FastAPI", "Python", "GPT-4", "Docker", "Flutter", "ChatGPT"],
-    color: "from-violet-500 to-purple-500",
+    skills: [
+      "Django REST Framework",
+      "iOS",
+      "Redis",
+      "FastAPI",
+      "Python",
+      "GPT-4",
+      "Docker",
+      "Flutter",
+      "ChatGPT",
+    ],
+    color: "from-slate-600 to-portfolio-forest",
   },
   {
     id: "afriblocks",
@@ -87,8 +116,17 @@ const experiences: Experience[] = [
       "Web-Based Social Space for Meditation and Accommodation (bookhuru.space) - React, Python Django, Redis",
       "Online Therapy Platform connecting users with therapists - Next.js, Python Django, Redis, Flutter",
     ],
-    skills: ["Django REST Framework", "Redis", "Python", "Firebase", "PostgreSQL", "Flutter", "WebSocket", "React.js"],
-    color: "from-green-500 to-emerald-500",
+    skills: [
+      "Django REST Framework",
+      "Redis",
+      "Python",
+      "Firebase",
+      "PostgreSQL",
+      "Flutter",
+      "WebSocket",
+      "React.js",
+    ],
+    color: "from-portfolio-forest to-portfolio-moss",
   },
   {
     id: "intelliafrica",
@@ -107,8 +145,15 @@ const experiences: Experience[] = [
       "Developed custom web chat solution using native web sockets",
       "Served as Customer Support Officer for the ZB WhatsApp chatbot",
     ],
-    skills: ["Database Administration", "Django REST Framework", "Systems Design", "Python", "PostgreSQL", "Flutter"],
-    color: "from-blue-500 to-indigo-500",
+    skills: [
+      "Database Administration",
+      "Django REST Framework",
+      "Systems Design",
+      "Python",
+      "PostgreSQL",
+      "Flutter",
+    ],
+    color: "from-slate-600 to-portfolio-copper",
   },
   {
     id: "freshideas",
@@ -125,8 +170,16 @@ const experiences: Experience[] = [
       "Led migration of existing mobile applications from React Native web views to Flutter",
       "Participated in development of capital crowdfunding solution for agriculture sector",
     ],
-    skills: ["iOS", "Firebase", "Android Studio", "Node.js", "Mobile Application Development", "Flutter", "React Native"],
-    color: "from-lime-500 to-green-500",
+    skills: [
+      "iOS",
+      "Firebase",
+      "Android Studio",
+      "Node.js",
+      "Mobile Application Development",
+      "Flutter",
+      "React Native",
+    ],
+    color: "from-emerald-700 to-portfolio-moss",
   },
   {
     id: "lads",
@@ -145,8 +198,15 @@ const experiences: Experience[] = [
       "Requirements gathering and deployment support for local authorities",
       "Developed benchmarking solution for local authorities performance comparison",
     ],
-    skills: ["Laravel", "PHP", "MySQL", "JavaScript", "Mobile Application Development", "Systems Design"],
-    color: "from-orange-500 to-red-500",
+    skills: [
+      "Laravel",
+      "PHP",
+      "MySQL",
+      "JavaScript",
+      "Mobile Application Development",
+      "Systems Design",
+    ],
+    color: "from-orange-700 to-portfolio-copper",
   },
 ];
 
@@ -166,7 +226,7 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-portfolio-ink/35 backdrop-blur-sm z-40"
           />
 
           {/* Sidebar */}
@@ -175,21 +235,21 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 left-0 h-full w-full md:w-[55%] bg-background border-r border-primary/20 z-50 overflow-hidden"
+            className="fixed top-0 left-0 h-full w-full md:w-[55%] bg-portfolio-ivory text-portfolio-ink border-r border-portfolio-line z-50 overflow-hidden shadow-[24px_0_60px_hsl(148_42%_18%/0.14)]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+            <div className="flex items-center justify-between p-6 border-b border-portfolio-line bg-portfolio-paper/45">
               <div>
-                <span className="text-primary font-mono text-xs block mb-1">
+                <span className="text-portfolio-copper font-mono text-xs block mb-1">
                   // EXPERIENCE
                 </span>
-                <h2 className="text-2xl font-bold">
+                <h2 className="font-display text-3xl leading-none">
                   Career <span className="gradient-text">Journey</span>
                 </h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-zinc-400 hover:text-primary transition-colors rounded-lg hover:bg-zinc-800/50"
+                className="p-2 text-portfolio-soft hover:text-portfolio-copper transition-colors rounded-lg hover:bg-portfolio-paper"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -199,7 +259,7 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
             <div className="h-[calc(100%-88px)] overflow-y-auto p-6">
               <div className="relative">
                 {/* Timeline line */}
-                <div className="absolute left-[11px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-accent to-secondary opacity-30" />
+                <div className="absolute left-[11px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-portfolio-forest via-portfolio-copper to-portfolio-sage opacity-35" />
 
                 {/* Experience items */}
                 <div className="space-y-8">
@@ -212,30 +272,37 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
                       className="relative pl-10"
                     >
                       {/* Timeline dot */}
-                      <div className={`absolute left-0 top-1 w-6 h-6 rounded-full bg-gradient-to-r ${exp.color} flex items-center justify-center`}>
-                        <Briefcase className="w-3 h-3 text-white" />
+                      <div
+                        className={`absolute left-0 top-1 w-6 h-6 rounded-full bg-gradient-to-r ${exp.color} flex items-center justify-center`}
+                      >
+                        <Briefcase className="w-3 h-3 text-portfolio-ivory" />
                       </div>
 
                       {/* Content */}
-                      <div className="bg-surface/30 border border-zinc-800 rounded-lg p-5 hover:border-primary/30 transition-colors">
+                      <div className="bg-portfolio-paper/55 border border-portfolio-line rounded-lg p-5 hover:border-portfolio-copper/55 transition-colors">
                         {/* Header */}
                         <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                           <div>
-                            <h3 className="text-lg font-semibold text-zinc-100">
+                            <h3 className="text-lg font-semibold text-portfolio-ink">
                               {exp.title}
                             </h3>
-                            <p className="text-primary font-medium">
+                            <p className="text-portfolio-forest font-medium">
                               {exp.company}
-                              <span className="text-zinc-500 font-normal"> · {exp.type}</span>
+                              <span className="text-portfolio-soft font-normal">
+                                {" "}
+                                · {exp.type}
+                              </span>
                             </p>
                           </div>
-                          <span className={`px-2 py-1 text-xs rounded-full bg-gradient-to-r ${exp.color} text-white`}>
+                          <span
+                            className={`px-2 py-1 text-xs rounded-full bg-gradient-to-r ${exp.color} text-portfolio-ivory`}
+                          >
                             {exp.duration}
                           </span>
                         </div>
 
                         {/* Meta */}
-                        <div className="flex flex-wrap gap-4 text-xs text-zinc-500 mb-4">
+                        <div className="flex flex-wrap gap-4 text-xs text-portfolio-soft mb-4">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             {exp.period}
@@ -247,7 +314,7 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
                         </div>
 
                         {/* Description */}
-                        <p className="text-sm text-zinc-400 mb-4">
+                        <p className="text-sm text-portfolio-soft mb-4">
                           {exp.description}
                         </p>
 
@@ -256,8 +323,13 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
                           <div className="mb-4">
                             <ul className="space-y-1">
                               {exp.highlights.map((highlight, i) => (
-                                <li key={i} className="text-xs text-zinc-400 flex items-start gap-2">
-                                  <span className="text-primary mt-1">•</span>
+                                <li
+                                  key={i}
+                                  className="text-xs text-portfolio-soft flex items-start gap-2"
+                                >
+                                  <span className="text-portfolio-copper mt-1">
+                                    •
+                                  </span>
                                   {highlight}
                                 </li>
                               ))}
@@ -270,13 +342,13 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
                           {exp.skills.slice(0, 6).map((skill) => (
                             <span
                               key={skill}
-                              className="px-2 py-0.5 text-xs font-mono text-zinc-500 bg-zinc-800/50 rounded"
+                              className="px-2 py-0.5 text-xs font-mono text-portfolio-forest bg-portfolio-ivory/75 border border-portfolio-line rounded"
                             >
                               {skill}
                             </span>
                           ))}
                           {exp.skills.length > 6 && (
-                            <span className="px-2 py-0.5 text-xs font-mono text-zinc-600">
+                            <span className="px-2 py-0.5 text-xs font-mono text-portfolio-soft">
                               +{exp.skills.length - 6} more
                             </span>
                           )}
