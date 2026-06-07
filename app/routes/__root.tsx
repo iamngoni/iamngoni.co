@@ -94,12 +94,81 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  errorComponent: RootErrorComponent,
 });
 
 function RootComponent() {
   return (
     <RootDocument>
       <Outlet />
+    </RootDocument>
+  );
+}
+
+function isModuleImportError(error: unknown) {
+  const message =
+    error instanceof Error ? error.message : String(error ?? "");
+
+  return (
+    message.includes("Importing a module script failed") ||
+    message.includes("Failed to fetch dynamically imported module") ||
+    message.includes("error loading dynamically imported module")
+  );
+}
+
+function refreshAfterStaleAssetError() {
+  if (typeof window === "undefined") return false;
+
+  const refreshKey = "iamngoni:module-refresh";
+  const currentUrl = new URL(window.location.href);
+
+  if (currentUrl.searchParams.has("__refresh")) {
+    return false;
+  }
+
+  let lastRefresh: string | null = null;
+  const now = Date.now();
+
+  try {
+    lastRefresh = window.sessionStorage.getItem(refreshKey);
+  } catch {
+    lastRefresh = null;
+  }
+
+  if (lastRefresh && now - Number(lastRefresh) < 10_000) {
+    return false;
+  }
+
+  try {
+    window.sessionStorage.setItem(refreshKey, String(now));
+  } catch {
+    // Storage may be unavailable in some browser privacy modes.
+  }
+
+  currentUrl.searchParams.set("__refresh", String(now));
+  window.location.replace(currentUrl.toString());
+  return true;
+}
+
+function RootErrorComponent({ error }: { error: unknown }) {
+  const isRecoverableModuleError = isModuleImportError(error);
+
+  if (isRecoverableModuleError && refreshAfterStaleAssetError()) {
+    return null;
+  }
+
+  return (
+    <RootDocument>
+      <main className="min-h-screen bg-portfolio-ivory px-6 py-10 text-portfolio-ink">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="font-display text-5xl">Something went wrong</h1>
+          <p className="mt-4 text-portfolio-soft">
+            {isRecoverableModuleError
+              ? "The site updated while this page was open. Refresh the page to load the latest version."
+              : "The page could not be loaded."}
+          </p>
+        </div>
+      </main>
     </RootDocument>
   );
 }
