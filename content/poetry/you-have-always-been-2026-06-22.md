@@ -74,9 +74,14 @@ Answer with your roar.
 
 Maita, Shumba.
 
-Maita, vakare.
-Maita, imi makauya pamberi pedu.
-Maita, imi makachengeta zita
+Mazviita, Matikaha.
+Hekani, mutsika-panyoro.
+Anomuka odzvova,
+otsika nyika yoziva
+kuti shumba yapfuura.
+
+Zvaitwa, vari pamberi pedu.
+Zvaonekwa, vakachengeta zita
 kusvikira rasvika kwatiri.
 
 Nhasi tinomira naro.
