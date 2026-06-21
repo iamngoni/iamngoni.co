@@ -101,7 +101,9 @@ function PoetryIndex() {
                   <div className="mt-2 flex flex-wrap items-center gap-2 font-mono text-xs text-portfolio-soft">
                     <time dateTime={poem.date}>{poem.formattedDate}</time>
                     <span className="text-portfolio-copper/60">/</span>
-                    <span>{poem.lineCount} lines</span>
+                    <span>
+                      {poem.protected ? "Protected" : `${poem.lineCount} lines`}
+                    </span>
                   </div>
                 </div>
                 <ArrowUpRight className="hidden h-4 w-4 text-portfolio-moss transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-portfolio-copper sm:block" />

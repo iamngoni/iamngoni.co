@@ -114,15 +114,18 @@ async function getEntries(dir, extension) {
       return {
         slug: metadata.slug ?? inferred.slug,
         date: metadata.date ?? inferred.date,
+        hidden: metadata.listed === "false" || metadata.noindex === "true",
       };
     }),
   );
 
-  return entries.sort((a, b) => {
-    const aTime = a.date ? new Date(a.date).getTime() : 0;
-    const bTime = b.date ? new Date(b.date).getTime() : 0;
-    return bTime - aTime;
-  });
+  return entries
+    .filter((item) => !item.hidden)
+    .sort((a, b) => {
+      const aTime = a.date ? new Date(a.date).getTime() : 0;
+      const bTime = b.date ? new Date(b.date).getTime() : 0;
+      return bTime - aTime;
+    });
 }
 
 async function getPosts() {

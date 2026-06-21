@@ -1,6 +1,8 @@
+import { useState, type FormEvent } from "react";
 import { Link, createFileRoute, redirect } from "@tanstack/react-router";
-import { ArrowLeft, CalendarDays, AlignLeft } from "lucide-react";
-import { getPoemBySlug } from "~/lib/poetry";
+import { ArrowLeft, CalendarDays, AlignLeft, Lock } from "lucide-react";
+import { decryptProtectedContent } from "~/lib/protected-content";
+import { getPoemBySlug, type Poem } from "~/lib/poetry";
 import {
   defaultOgImage,
   pageTitle,
@@ -48,22 +50,27 @@ export const Route = createFileRoute("/poetry/$slug")({
     }
 
     const title = pageTitle(poem.title);
-    const image = poem.image
-      ? new URL(poem.image, siteUrl).toString()
-      : defaultOgImage;
+    const image =
+      !poem.protected && poem.image
+        ? new URL(poem.image, siteUrl).toString()
+        : defaultOgImage;
     const imageType =
-      poem.image?.endsWith(".jpg") || poem.image?.endsWith(".jpeg")
+      !poem.protected &&
+      (poem.image?.endsWith(".jpg") || poem.image?.endsWith(".jpeg"))
         ? "image/jpeg"
         : "image/png";
     const meta = [
       { title },
       { name: "description", content: poem.description },
+      ...(poem.protected
+        ? [{ name: "robots", content: "noindex, nofollow" }]
+        : []),
       { property: "og:type", content: "article" },
       { property: "og:url", content: url },
       { property: "og:title", content: title },
       { property: "og:description", content: poem.description },
       { property: "og:image", content: image },
-      ...(poem.image
+      ...(!poem.protected && poem.image
         ? [
             { property: "og:image:secure_url", content: image },
             { property: "og:image:type", content: imageType },
@@ -121,8 +128,6 @@ function PoetryPost() {
     );
   }
 
-  const stanzas = poem.body.split(/\n\s*\n/).map((stanza) => stanza.trimEnd());
-
   return (
     <main className="relative min-h-screen overflow-hidden bg-portfolio-ivory text-portfolio-ink">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_14%,hsl(40_38%_92%/0.95),transparent_34%),radial-gradient(circle_at_84%_78%,hsl(154_12%_70%/0.18),transparent_34%)]" />
@@ -143,8 +148,17 @@ function PoetryPost() {
             </span>
             <span className="text-portfolio-copper/60">/</span>
             <span className="inline-flex items-center gap-1.5">
-              <AlignLeft className="h-3.5 w-3.5" />
-              {poem.lineCount} lines
+              {poem.protected ? (
+                <>
+                  <Lock className="h-3.5 w-3.5" />
+                  Protected
+                </>
+              ) : (
+                <>
+                  <AlignLeft className="h-3.5 w-3.5" />
+                  {poem.lineCount} lines
+                </>
+              )}
             </span>
           </div>
           <h1 className="font-display text-5xl leading-none md:text-7xl">
@@ -152,14 +166,100 @@ function PoetryPost() {
           </h1>
         </header>
 
-        <div className="poetry-content">
-          {stanzas.map((stanza, index) => (
-            <p key={index} className="poetry-stanza">
-              {stanza}
-            </p>
-          ))}
-        </div>
+        {poem.protected ? (
+          <ProtectedPoem poem={poem} />
+        ) : (
+          <PoemBody body={poem.body} />
+        )}
       </article>
     </main>
+  );
+}
+
+function PoemBody({ body }: { body: string }) {
+  const stanzas = body.split(/\n\s*\n/).map((stanza) => stanza.trimEnd());
+
+  return (
+    <div className="poetry-content">
+      {stanzas.map((stanza, index) => (
+        <p key={index} className="poetry-stanza">
+          {stanza}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function ProtectedPoem({ poem }: { poem: Poem }) {
+  const [password, setPassword] = useState("");
+  const [unlockedBody, setUnlockedBody] = useState("");
+  const [error, setError] = useState("");
+  const [isUnlocking, setIsUnlocking] = useState(false);
+
+  async function handleUnlock(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!poem.protectedContent) {
+      setError("This piece cannot be opened right now.");
+      return;
+    }
+
+    setError("");
+    setIsUnlocking(true);
+
+    try {
+      const content = await decryptProtectedContent(
+        poem.protectedContent,
+        password,
+      );
+      setUnlockedBody(content);
+      setPassword("");
+    } catch {
+      setError("That word did not open this piece.");
+    } finally {
+      setIsUnlocking(false);
+    }
+  }
+
+  if (unlockedBody) {
+    return <PoemBody body={unlockedBody} />;
+  }
+
+  return (
+    <section className="max-w-xl border-y border-portfolio-line py-10">
+      <Lock className="mb-6 h-5 w-5 text-portfolio-copper" />
+      <h2 className="font-display text-3xl leading-tight text-portfolio-ink">
+        This piece is not public.
+      </h2>
+      <p className="mt-4 text-base leading-8 text-portfolio-soft">
+        If it was meant for you, you already know the word.
+      </p>
+      <form onSubmit={handleUnlock} className="mt-8 space-y-4">
+        <label className="block">
+          <span className="mb-2 block font-mono text-xs uppercase tracking-[0.18em] text-portfolio-soft">
+            Word
+          </span>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            autoComplete="off"
+            required
+            className="w-full rounded-md border border-portfolio-line bg-portfolio-paper px-4 py-3 text-base text-portfolio-ink outline-none transition-colors placeholder:text-portfolio-soft/55 focus:border-portfolio-copper"
+            placeholder="Enter it here"
+          />
+        </label>
+        {error && (
+          <p className="font-mono text-sm text-portfolio-copper">{error}</p>
+        )}
+        <button
+          type="submit"
+          disabled={isUnlocking}
+          className="inline-flex items-center justify-center rounded-md bg-portfolio-ink px-5 py-3 font-mono text-sm text-portfolio-ivory transition-colors hover:bg-portfolio-copper disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isUnlocking ? "Opening..." : "Open"}
+        </button>
+      </form>
+    </section>
   );
 }

@@ -1,3 +1,5 @@
+import type { ProtectedContent } from "./protected-content";
+
 export interface Poem {
   sourcePath: string;
   slug: string;
@@ -10,6 +12,10 @@ export interface Poem {
   imageAlt?: string;
   preview: string;
   lineCount: number;
+  listed: boolean;
+  protected: boolean;
+  protectedPrompt?: string;
+  protectedContent?: ProtectedContent;
   body: string;
 }
 
@@ -97,6 +103,18 @@ function countLines(body: string) {
   return body.split("\n").filter((line) => line.trim().length > 0).length;
 }
 
+function booleanFromMetadata(value: string | undefined, fallback = false) {
+  if (!value) return fallback;
+  return value === "true";
+}
+
+function numberFromMetadata(value: string | undefined, fallback: number) {
+  if (!value) return fallback;
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 export function formatPoemDate(date?: string) {
   if (!date) return "Undated";
 
@@ -120,11 +138,25 @@ function normalizePoem(path: string, source: unknown): Poem {
   const slug = metadata.slug ?? inferred.slug;
   const date = metadata.date ?? inferred.date;
   const title = metadata.title ?? titleFromSlug(inferred.slug);
-  const content = body.trimEnd();
-  const preview = previewFromBody(content);
+  const isProtected = booleanFromMetadata(metadata.protected);
+  const content = isProtected ? "" : body.trimEnd();
+  const encryptedBody = isProtected ? body.trim() : undefined;
+  const preview = isProtected
+    ? (metadata.preview ?? "")
+    : previewFromBody(content);
   const description = truncateDescription(
     metadata.description ?? preview ?? title,
   );
+  const protectedContent =
+    isProtected && encryptedBody
+      ? {
+          kdf: metadata.kdf ?? "PBKDF2-SHA-256",
+          iterations: numberFromMetadata(metadata.iterations, 250000),
+          salt: metadata.salt ?? "",
+          iv: metadata.iv ?? "",
+          ciphertext: encryptedBody,
+        }
+      : undefined;
 
   return {
     sourcePath,
@@ -137,23 +169,33 @@ function normalizePoem(path: string, source: unknown): Poem {
     image: metadata.image,
     imageAlt: metadata.imageAlt,
     preview,
-    lineCount: countLines(content),
+    lineCount: isProtected
+      ? numberFromMetadata(metadata.lineCount, 0)
+      : countLines(content),
+    listed: metadata.listed !== "false",
+    protected: isProtected,
+    protectedPrompt: metadata.protectedPrompt,
+    protectedContent,
     body: content,
   };
 }
 
-export function getAllPoems() {
-  return Object.entries(poemSources)
+export function getAllPoems(options: { includeUnlisted?: boolean } = {}) {
+  const poems = Object.entries(poemSources)
     .map(([path, markdown]) => normalizePoem(path, markdown))
     .sort((a, b) => {
       const aTime = a.date ? new Date(a.date).getTime() : 0;
       const bTime = b.date ? new Date(b.date).getTime() : 0;
       return bTime - aTime;
     });
+
+  if (options.includeUnlisted) return poems;
+
+  return poems.filter((poem) => poem.listed);
 }
 
 export function getPoemBySlug(slug: string) {
-  return getAllPoems().find(
+  return getAllPoems({ includeUnlisted: true }).find(
     (poem) => poem.slug === slug || poem.sourceSlug === slug,
   );
 }
