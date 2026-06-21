@@ -71,3 +71,17 @@ And when the world asks who you are,
 do not answer with your fears.
 
 Answer with your roar.
+
+Maita, Shumba.
+
+Maita, vakare.
+Maita, imi makauya pamberi pedu.
+Maita, imi makachengeta zita
+kusvikira rasvika kwatiri.
+
+Nhasi tinomira naro.
+Nhasi tinorirangarira.
+Nhasi hatipinduri nekutya.
+
+Tinopindura
+nemudzvovo weshumba.
