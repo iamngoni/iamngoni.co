@@ -1,8 +1,9 @@
 ---
-title: Mothers...
+title: Trust on Loan
+slug: trust-on-loan
 date: 2026-06-21
-description: A Father's Day poem on the different kinds of love mothers and fathers give, and the boys who grow into understanding.
-image: /images/poetry/mothers-2026-06-21.jpg
+description: A Father's Day poem on the room fathers give, the discipline behind that freedom, and the boys who grow into understanding.
+image: /images/poetry/trust-on-loan-2026-06-21.jpg
 imageAlt: A boy walks along a low garden wall while his mother watches from the doorway and his father waits calmly ahead.
 ---
 

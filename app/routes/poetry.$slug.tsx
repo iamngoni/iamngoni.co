@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { ArrowLeft, CalendarDays, AlignLeft } from "lucide-react";
 import { getPoemBySlug } from "~/lib/poetry";
 import {
@@ -9,7 +9,21 @@ import {
   twitterCreator,
 } from "~/lib/site";
 
+const poemSlugRedirects: Record<string, string> = {
+  mothers: "trust-on-loan",
+};
+
 export const Route = createFileRoute("/poetry/$slug")({
+  beforeLoad: ({ params }) => {
+    const canonicalSlug = poemSlugRedirects[params.slug];
+
+    if (canonicalSlug) {
+      throw redirect({
+        href: `/poetry/${canonicalSlug}`,
+        statusCode: 301,
+      });
+    }
+  },
   head: ({ params }) => {
     const poem = getPoemBySlug(params.slug);
     const url = `${siteUrl}/poetry/${poem?.slug ?? params.slug}`;
