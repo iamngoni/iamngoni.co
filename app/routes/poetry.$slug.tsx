@@ -34,6 +34,13 @@ export const Route = createFileRoute("/poetry/$slug")({
     }
 
     const title = pageTitle(poem.title);
+    const image = poem.image
+      ? new URL(poem.image, siteUrl).toString()
+      : defaultOgImage;
+    const imageType =
+      poem.image?.endsWith(".jpg") || poem.image?.endsWith(".jpeg")
+        ? "image/jpeg"
+        : "image/png";
     const meta = [
       { title },
       { name: "description", content: poem.description },
@@ -41,14 +48,28 @@ export const Route = createFileRoute("/poetry/$slug")({
       { property: "og:url", content: url },
       { property: "og:title", content: title },
       { property: "og:description", content: poem.description },
-      { property: "og:image", content: defaultOgImage },
+      { property: "og:image", content: image },
+      ...(poem.image
+        ? [
+            { property: "og:image:secure_url", content: image },
+            { property: "og:image:type", content: imageType },
+            { property: "og:image:width", content: "1200" },
+            { property: "og:image:height", content: "630" },
+          ]
+        : []),
       { property: "og:site_name", content: siteName },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:url", content: url },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: poem.description },
-      { name: "twitter:image", content: defaultOgImage },
+      { name: "twitter:image", content: image },
       { name: "twitter:creator", content: twitterCreator },
+      ...(poem.imageAlt
+        ? [
+            { property: "og:image:alt", content: poem.imageAlt },
+            { name: "twitter:image:alt", content: poem.imageAlt },
+          ]
+        : []),
       ...(poem.date
         ? [{ property: "article:published_time", content: poem.date }]
         : []),

@@ -6,6 +6,8 @@ export interface Poem {
   date?: string;
   formattedDate: string;
   description: string;
+  image?: string;
+  imageAlt?: string;
   preview: string;
   lineCount: number;
   body: string;
@@ -132,6 +134,8 @@ function normalizePoem(path: string, source: unknown): Poem {
     date,
     formattedDate: formatPoemDate(date),
     description,
+    image: metadata.image,
+    imageAlt: metadata.imageAlt,
     preview,
     lineCount: countLines(content),
     body: content,
