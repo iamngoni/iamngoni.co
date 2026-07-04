@@ -317,7 +317,7 @@ Jabu.
 CJ.
 
 In our first year,
-he lost his mother.
+we lost our mother.
 
 That was my first heartbreak.
 
