@@ -209,6 +209,57 @@ The kind of family you choose
 before you even know
 that choosing family is a thing.
 
+And in between all this,
+I made friends.
+
+Lifetime friends, even.
+
+High school has a strange way
+of handing you people
+before you have the language
+to understand what they will mean.
+
+Willard.
+
+Baba Amani now.
+
+Man,
+I am proud of that friend.
+
+Proud in a way
+that almost becomes prayer.
+
+I wish him nothing
+but the very best.
+
+And if life ever came for him,
+I think some part of me
+would stand up first
+before fear had finished speaking.
+
+Then there is KD.
+
+No full names.
+
+Some people are not for
+public indexing.
+
+He is special.
+
+My business partner, yes.
+
+But before anyone starts hearing
+Jeff Bezos music in the background,
+understand this:
+
+he was my friend first.
+
+Lifetime friend
+before business.
+
+Brother
+before brand.
+
 It disturbed me also.
 
 Because somewhere in those corridors,
