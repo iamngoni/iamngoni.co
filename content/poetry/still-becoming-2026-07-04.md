@@ -395,7 +395,7 @@ Shoutout, CJ.
 Actually brothers.
 
 Then there was Panashe,
-a brother from Chipinge High,
+a brother from Chipinge Primary,
 also doing Software with me.
 
 Distinction again.
