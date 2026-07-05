@@ -530,8 +530,11 @@ Because what else must I do?
 
 In 2023,
 a week after my final exams,
-I jumped ship to South Africa
-for an opportunity.
+I flew to South Africa,
+that same country
+that somehow consumes
+so many men from home
+and still calls it opportunity.
 
 Maybe that sentence sounds brave.
 Maybe it was just hunger
