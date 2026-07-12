@@ -3,7 +3,7 @@ title: The Devil You Know
 slug: the-devil-you-know
 date: 2026-07-12
 description: A poem about familiar fear, self-sabotage, and the voice within us that resists becoming.
-image: /images/poetry/the-devil-you-know-mirror-share-card-2026-07-12.jpg
+image: /images/poetry/the-devil-you-know-mirror-reflection-og-2026-07-12.jpg
 imageAlt: A man stares into a dim mirror where his reflection appears as a shadowed devilish version of himself.
 ---
 
