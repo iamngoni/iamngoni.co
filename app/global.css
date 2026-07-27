@@ -6,6 +6,7 @@
 
 @layer base {
     html {
+        --deployment-revision: "2026-07-28-rollback";
         scroll-behavior: smooth;
     }
 
