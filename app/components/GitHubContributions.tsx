@@ -1,228 +1,284 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import {
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 interface ContributionDay {
   date: string;
   count: number;
-  level: number; // 0-4
+  level: number;
 }
 
 interface ContributionWeek {
   days: ContributionDay[];
 }
 
-// Fetch real GitHub contributions
-async function fetchGitHubContributions(
-  username: string,
-): Promise<ContributionWeek[]> {
+interface ContributionCache {
+  savedAt: number;
+  contributions: ContributionDay[];
+}
+
+interface ActiveCell {
+  day: ContributionDay;
+  x: number;
+  y: number;
+}
+
+const USERNAME = "iamngoni";
+const CONTRIBUTIONS_ENDPOINT = `https://github-contributions-api.jogruber.de/v4/${USERNAME}?y=last`;
+const CACHE_KEY = `github-contributions:${USERNAME}:last`;
+const CACHE_TTL = 15 * 60 * 1000;
+
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+});
+
+function isContributionDay(value: unknown): value is ContributionDay {
+  if (!value || typeof value !== "object") return false;
+
+  const day = value as Partial<ContributionDay>;
+  return (
+    typeof day.date === "string" &&
+    typeof day.count === "number" &&
+    typeof day.level === "number"
+  );
+}
+
+function readCachedContributions(): ContributionDay[] | null {
   try {
-    // Use GitHub's GraphQL API via a proxy or public endpoint
-    // We'll scrape the contribution calendar from the GitHub profile page
-    const response = await fetch(
-      `https://github-contributions-api.jogruber.de/v4/${username}?y=last`,
-    );
+    const rawCache = window.localStorage.getItem(CACHE_KEY);
+    if (!rawCache) return null;
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch contributions");
+    const cache = JSON.parse(rawCache) as Partial<ContributionCache>;
+    if (
+      typeof cache.savedAt !== "number" ||
+      Date.now() - cache.savedAt > CACHE_TTL ||
+      !Array.isArray(cache.contributions) ||
+      !cache.contributions.every(isContributionDay)
+    ) {
+      return null;
     }
 
-    const data = await response.json();
-
-    // Transform the API response into our format
-    const weeks: ContributionWeek[] = [];
-    let currentWeek: ContributionDay[] = [];
-
-    // The API returns contributions array with date, count, level
-    const contributions = data.contributions || [];
-
-    contributions.forEach(
-      (
-        contrib: { date: string; count: number; level: number },
-        index: number,
-      ) => {
-        currentWeek.push({
-          date: contrib.date,
-          count: contrib.count,
-          level: contrib.level,
-        });
-
-        // Every 7 days, start a new week
-        if (currentWeek.length === 7) {
-          weeks.push({ days: currentWeek });
-          currentWeek = [];
-        }
-      },
-    );
-
-    // Add any remaining days as the last week
-    if (currentWeek.length > 0) {
-      weeks.push({ days: currentWeek });
-    }
-
-    return weeks;
-  } catch (error) {
-    console.error("Error fetching GitHub contributions:", error);
-    return [];
+    return cache.contributions;
+  } catch {
+    return null;
   }
 }
 
-// Color levels - base and bright versions
-const levelColors = {
-  base: [
-    "hsl(154 12% 70% / 0.08)",
-    "hsl(154 18% 58% / 0.18)",
-    "hsl(150 24% 42% / 0.26)",
-    "hsl(148 34% 30% / 0.34)",
-    "hsl(22 48% 48% / 0.42)",
-  ],
-  bright: [
-    "hsl(154 12% 70% / 0.20)",
-    "hsl(154 18% 52% / 0.34)",
-    "hsl(150 28% 36% / 0.46)",
-    "hsl(148 38% 24% / 0.58)",
-    "hsl(22 53% 48% / 0.72)",
-  ],
-};
-
-interface GridCellProps {
-  day: ContributionDay;
-  mouseX: any;
-  mouseY: any;
-  gridRef: React.RefObject<HTMLDivElement | null>;
+function cacheContributions(contributions: ContributionDay[]) {
+  try {
+    window.localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({ savedAt: Date.now(), contributions }),
+    );
+  } catch {
+    // Storage is an enhancement. The live field still works without it.
+  }
 }
 
-function GridCell({ day, mouseX, mouseY, gridRef }: GridCellProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const cellRef = useRef<HTMLDivElement>(null);
+async function fetchGitHubContributions(signal: AbortSignal) {
+  const response = await fetch(CONTRIBUTIONS_ENDPOINT, { signal });
+  if (!response.ok) {
+    throw new Error(`GitHub activity request failed with ${response.status}`);
+  }
 
-  // Calculate distance from mouse to create ripple effect
-  const x = useTransform(mouseX, (val: number) => {
-    if (!cellRef.current || !gridRef.current) return 0;
-    const rect = cellRef.current.getBoundingClientRect();
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const cellCenterX = rect.left + rect.width / 2 - gridRect.left;
-    return (val - cellCenterX) / 50;
-  });
+  const payload = (await response.json()) as { contributions?: unknown[] };
+  const contributions = (payload.contributions ?? []).filter(isContributionDay);
 
-  const y = useTransform(mouseY, (val: number) => {
-    if (!cellRef.current || !gridRef.current) return 0;
-    const rect = cellRef.current.getBoundingClientRect();
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const cellCenterY = rect.top + rect.height / 2 - gridRect.top;
-    return (val - cellCenterY) / 50;
-  });
+  if (contributions.length === 0) {
+    throw new Error("GitHub activity response did not contain contribution days");
+  }
 
-  const springConfig = { stiffness: 150, damping: 15 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
+  return contributions.map((day) => ({
+    ...day,
+    level: Math.max(0, Math.min(4, day.level)),
+  }));
+}
 
-  return (
-    <motion.div
-      ref={cellRef}
-      style={{
-        x: springX,
-        y: springY,
-      }}
-      animate={{
-        backgroundColor: isHovered
-          ? levelColors.bright[day.level]
-          : levelColors.base[day.level],
-        scale: isHovered ? 1.5 : 1,
-        boxShadow: isHovered
-          ? "0 8px 20px hsl(22 48% 48% / 0.18)"
-          : "0 0 0px hsl(154 12% 70% / 0)",
-      }}
-      transition={{ duration: 0.2 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="w-[10px] h-[10px] rounded-sm cursor-pointer"
-      title={`${day.date}: ${day.count} contributions`}
-    />
-  );
+function groupIntoWeeks(contributions: ContributionDay[]) {
+  const weeks: ContributionWeek[] = [];
+
+  for (let index = 0; index < contributions.length; index += 7) {
+    weeks.push({ days: contributions.slice(index, index + 7) });
+  }
+
+  return weeks;
+}
+
+function formatContributionLabel(day: ContributionDay) {
+  const date = dateFormatter.format(new Date(`${day.date}T12:00:00`));
+  const contributionLabel = day.count === 1 ? "contribution" : "contributions";
+  return `${date} · ${day.count} ${contributionLabel}`;
 }
 
 export function GitHubContributions() {
-  const [contributions, setContributions] = useState<ContributionWeek[]>([]);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  // Mouse position relative to grid
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Floating animation offset - much larger range now
-  const [floatOffset, setFloatOffset] = useState({ x: 0, y: 0 });
+  const [contributions, setContributions] = useState<ContributionDay[]>([]);
+  const [status, setStatus] = useState<"loading" | "live" | "stale">("loading");
+  const [activeCell, setActiveCell] = useState<ActiveCell | null>(null);
+  const [rovingIndex, setRovingIndex] = useState(0);
+  const fieldRef = useRef<HTMLElement>(null);
+  const cellRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
-    fetchGitHubContributions("iamngoni").then(setContributions);
+    const controller = new AbortController();
+    const cached = readCachedContributions();
+
+    if (cached) {
+      setContributions(cached);
+      setRovingIndex(cached.length - 1);
+      setStatus("live");
+    }
+
+    fetchGitHubContributions(controller.signal)
+      .then((days) => {
+        setContributions(days);
+        setRovingIndex(days.length - 1);
+        setStatus("live");
+        cacheContributions(days);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setStatus(cached ? "stale" : "loading");
+      });
+
+    return () => controller.abort();
   }, []);
 
-  // Handle mouse move for parallax effect
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!gridRef.current) return;
-      const rect = gridRef.current.getBoundingClientRect();
-      mouseX.set(e.clientX - rect.left);
-      mouseY.set(e.clientY - rect.top);
+  const weeks = useMemo(() => groupIntoWeeks(contributions), [contributions]);
+
+  const showTooltip = useCallback(
+    (day: ContributionDay, cell: HTMLButtonElement) => {
+      const field = fieldRef.current;
+      if (!field) return;
+
+      const fieldRect = field.getBoundingClientRect();
+      const cellRect = cell.getBoundingClientRect();
+      const rawX = cellRect.left - fieldRect.left + cellRect.width / 2;
+
+      setActiveCell({
+        day,
+        x: Math.max(112, Math.min(fieldRect.width - 112, rawX)),
+        y: Math.max(72, cellRect.top - fieldRect.top - 12),
+      });
     },
-    [mouseX, mouseY],
+    [],
   );
 
-  // Floating animation - moves across a large portion of the screen
-  useEffect(() => {
-    let animationId: number;
-    let time = 0;
+  const moveFocus = useCallback(
+    (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+      const keyOffsets: Record<string, number> = {
+        ArrowLeft: -7,
+        ArrowRight: 7,
+        ArrowUp: -1,
+        ArrowDown: 1,
+      };
+      const offset = keyOffsets[event.key];
+      if (!offset) return;
 
-    const animate = () => {
-      time += 0.002; // Slower movement
-
-      // Large floating range: ~300px in X, ~200px in Y
-      // Multiple sine waves at different frequencies for organic movement
-      const x =
-        Math.sin(time) * 150 +
-        Math.sin(time * 0.7) * 80 +
-        Math.sin(time * 0.3) * 50;
-
-      const y =
-        Math.cos(time * 0.8) * 100 +
-        Math.cos(time * 0.5) * 60 +
-        Math.sin(time * 0.2) * 40;
-
-      setFloatOffset({ x, y });
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-
-  if (contributions.length === 0) return null;
+      event.preventDefault();
+      const nextIndex = Math.max(
+        0,
+        Math.min(contributions.length - 1, index + offset),
+      );
+      setRovingIndex(nextIndex);
+      cellRefs.current[nextIndex]?.focus();
+    },
+    [contributions.length],
+  );
 
   return (
-    <div className="absolute inset-0 hidden items-center justify-center overflow-hidden pointer-events-none sm:flex">
-      <motion.div
-        ref={gridRef}
-        animate={{
-          x: floatOffset.x,
-          y: floatOffset.y,
-        }}
-        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-        onMouseMove={handleMouseMove}
-        className="mt-28 flex gap-[3px] opacity-55 pointer-events-auto"
+    <>
+      <section
+        ref={fieldRef}
+        className="contribution-field"
+        aria-label="Live GitHub contribution activity"
       >
-        {contributions.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex flex-col gap-[3px]">
-            {week.days.map((day) => (
-              <GridCell
-                key={day.date}
-                day={day}
-                mouseX={mouseX}
-                mouseY={mouseY}
-                gridRef={gridRef}
-              />
-            ))}
+        <div className="contribution-field__label" aria-hidden="true">
+          <span className={`contribution-field__pulse is-${status}`} />
+          <span>{status === "stale" ? "CACHED" : "LIVE"}</span>
+          <span aria-hidden="true">/</span>
+          <span>GITHUB ACTIVITY</span>
+        </div>
+
+        <span className="sr-only" aria-live="polite">
+          {status === "live"
+            ? "Live GitHub activity loaded"
+            : status === "stale"
+              ? "Showing cached GitHub activity"
+              : "Loading GitHub activity"}
+        </span>
+
+        <div className="contribution-field__viewport">
+          {weeks.length > 0 ? (
+            <div
+              className="contribution-field__plane"
+              role="grid"
+              aria-label="One year of GitHub contributions. Use arrow keys to explore."
+            >
+              {weeks.map((week, weekIndex) => (
+                <div
+                  className="contribution-field__week"
+                  role="row"
+                  key={week.days[0]?.date ?? weekIndex}
+                >
+                  {week.days.map((day, dayIndex) => {
+                    const index = weekIndex * 7 + dayIndex;
+                    const label = formatContributionLabel(day);
+
+                    return (
+                      <button
+                        ref={(cell) => {
+                          cellRefs.current[index] = cell;
+                        }}
+                        type="button"
+                        role="gridcell"
+                        key={day.date}
+                        tabIndex={index === rovingIndex ? 0 : -1}
+                        className={`contribution-field__cell level-${day.level}`}
+                        aria-label={label}
+                        onMouseEnter={(event) =>
+                          showTooltip(day, event.currentTarget)
+                        }
+                        onMouseLeave={() => setActiveCell(null)}
+                        onFocus={(event) => {
+                          setRovingIndex(index);
+                          showTooltip(day, event.currentTarget);
+                        }}
+                        onBlur={() => setActiveCell(null)}
+                        onClick={(event) =>
+                          showTooltip(day, event.currentTarget)
+                        }
+                        onKeyDown={(event) => moveFocus(event, index)}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="contribution-field__skeleton" aria-hidden="true">
+              {Array.from({ length: 212 }, (_, index) => (
+                <span key={index} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {activeCell ? (
+          <div
+            className="contribution-field__tooltip"
+            role="tooltip"
+            style={{ left: activeCell.x, top: activeCell.y }}
+          >
+            {formatContributionLabel(activeCell.day)}
           </div>
-        ))}
-      </motion.div>
-    </div>
+        ) : null}
+      </section>
+    </>
   );
 }
