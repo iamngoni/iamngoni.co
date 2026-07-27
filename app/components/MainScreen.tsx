@@ -1,21 +1,22 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import {
-  ArrowRight,
-  BookOpen,
-  Briefcase,
-  Code2,
-  Feather,
   Github,
   Linkedin,
   Mail,
+  Briefcase,
+  BookOpen,
+  Feather,
+  Code2,
+  ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
+import { ProjectsSidebar } from "./ProjectsSidebar";
 import { ExperienceSidebar } from "./ExperienceSidebar";
 import { GitHubContributions } from "./GitHubContributions";
-import { ProjectsSidebar } from "./ProjectsSidebar";
 import { getExperienceYearsLabel } from "~/lib/experience";
 
+// X (Twitter) icon component
 function XIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -25,16 +26,16 @@ function XIcon({ className }: { className?: string }) {
 }
 
 const socialLinks = [
-  { icon: Github, href: "https://github.com/iamngoni", label: "GitHub" },
+  { icon: Github, url: "https://github.com/iamngoni", label: "GitHub" },
   {
     icon: Linkedin,
-    href: "https://www.linkedin.com/in/ngonidzashe-mangudya-ba084a174/",
+    url: "https://www.linkedin.com/in/ngonidzashe-mangudya-ba084a174/",
     label: "LinkedIn",
   },
-  { icon: XIcon, href: "https://x.com/iamngoni", label: "X" },
+  { icon: XIcon, url: "https://x.com/iamngoni", label: "X" },
   {
     icon: Mail,
-    href: "mailto:ngmangudya@codecraftsolutions.co.za",
+    url: "mailto:ngmangudya@codecraftsolutions.co.za",
     label: "Email",
   },
 ];
@@ -51,150 +52,204 @@ const techStack = [
   "+ more",
 ];
 
-const revealTransition = (delay: number, reduceMotion: boolean | null) =>
-  reduceMotion
-    ? {}
-    : {
-        initial: { opacity: 0, y: 18 },
-        animate: { opacity: 1, y: 0 },
-        transition: {
-          duration: 0.62,
-          delay,
-          ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-        },
-      };
-
 export function MainScreen() {
-  const [isProjectsOpen, setIsProjectsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isExperienceOpen, setIsExperienceOpen] = useState(false);
-  const reduceMotion = useReducedMotion();
   const experienceYears = getExperienceYearsLabel();
 
   return (
     <>
-      <main className="home-page" id="main-content">
-        <section className="home-hero" aria-labelledby="home-title">
-          <div className="home-copy">
-            <motion.p
-              className="home-role"
-              {...revealTransition(0.04, reduceMotion)}
-            >
-              <span aria-hidden="true">[</span>
-              Senior Software Engineer
-              <span aria-hidden="true">]</span>
-            </motion.p>
+      <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-portfolio-ivory text-portfolio-ink">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_45%,hsl(40_38%_92%/0.86),hsl(42_48%_96%)_48%,hsl(40_35%_91%))]" />
+        <GitHubContributions />
 
-            <motion.h1
-              id="home-title"
-              className="home-title"
-              {...revealTransition(0.1, reduceMotion)}
-            >
-              Talk is cheap.
-              <br />
-              Show me the <span>code.</span>
-            </motion.h1>
-
-            <motion.p
-              className="home-intro"
-              {...revealTransition(0.16, reduceMotion)}
-            >
-              Hi, I&apos;m <strong>Ngonidzashe Mangudya</strong>. {experienceYears}{" "}
-              years building high-performance mobile apps, architecting backend
-              systems, and shipping production-ready products across multiple
-              stacks. I work across Flutter, Rust, Python, and TypeScript —
-              designing systems that are scalable, reliable, and intentionally
-              engineered.
-            </motion.p>
-
-            <motion.ul
-              className="home-stack"
-              aria-label="Technology stack"
-              {...revealTransition(0.22, reduceMotion)}
-            >
-              {techStack.map((tech, index) => (
-                <li className={index === 0 ? "is-active" : undefined} key={tech}>
-                  {tech}
-                </li>
-              ))}
-            </motion.ul>
-
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-10 pb-28 sm:py-20 sm:pb-28">
+          <div className="flex flex-col lg:flex-row items-center gap-8 sm:gap-12 lg:gap-20">
+            {/* Avatar */}
             <motion.div
-              className="home-actions"
-              {...revealTransition(0.28, reduceMotion)}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
+              className="relative flex-shrink-0"
             >
-              <button
-                type="button"
-                className="home-button home-button--primary"
-                onClick={() => setIsProjectsOpen(true)}
-              >
-                <Code2 aria-hidden="true" />
-                <span>Show me the code</span>
-              </button>
+              <div className="relative w-36 h-36 sm:w-48 sm:h-48 md:w-60 md:h-60">
+                <div className="absolute -inset-3 rounded-full border border-portfolio-copper/30" />
+                <div className="absolute -inset-1 rounded-full border border-portfolio-line bg-portfolio-paper/50" />
 
-              <button
-                type="button"
-                className="home-button home-button--secondary"
-                onClick={() => setIsExperienceOpen(true)}
-              >
-                <Briefcase aria-hidden="true" />
-                <span>Experience</span>
-                <ArrowRight aria-hidden="true" />
-              </button>
+                {/* Avatar image */}
+                <div className="relative w-full h-full rounded-full border-2 border-portfolio-copper/80 overflow-hidden shadow-[0_24px_60px_hsl(22_34%_36%/0.16)]">
+                  <img
+                    src="/images/ngoni-home.jpg"
+                    alt="Ngonidzashe Mangudya"
+                    className="w-full h-full object-cover saturate-[0.78] contrast-[1.05]"
+                  />
+                </div>
+              </div>
             </motion.div>
-          </div>
 
-          <motion.figure
-            className="home-portrait"
-            {...revealTransition(0.12, reduceMotion)}
-          >
-            <img
-              src="/images/ngoni-home-reference.webp"
-              alt="Ngonidzashe Mangudya"
-              width="1024"
-              height="1536"
-              fetchPriority="high"
-            />
-          </motion.figure>
+            {/* Info */}
+            <div className="flex-1 text-center lg:text-left">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <span className="inline-block px-4 py-1.5 mb-4 sm:mb-5 text-xs sm:text-sm font-mono text-portfolio-ink border border-portfolio-copper/70 rounded-full bg-portfolio-ivory/80">
+                  Backend & Mobile Developer
+                </span>
+              </motion.div>
 
-          <GitHubContributions />
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.94] sm:leading-[0.92] mb-5 sm:mb-6"
+              >
+                <span>Talk is cheap.</span>
+                <br />
+                <span>
+                  Show me the <span className="text-portfolio-copper">code.</span>
+                </span>
+              </motion.h1>
 
-          <footer className="home-footer">
-            <nav className="home-socials" aria-label="Social links">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target={social.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    social.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  className="home-social-link"
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-sm sm:text-base md:text-lg text-portfolio-soft mb-6 max-w-2xl mx-auto lg:mx-0 leading-7 sm:leading-8"
+              >
+                Hi, I'm{" "}
+                <span className="text-portfolio-forest font-bold">
+                  Ngonidzashe Mangudya
+                </span>
+                . {experienceYears} years building high-performance mobile apps,
+                architecting backend systems, and shipping production-ready
+                products across multiple stacks. I work across Flutter, Rust,
+                Python, and TypeScript — designing systems that are scalable,
+                reliable, and intentionally engineered.
+              </motion.p>
+
+              {/* Tech stack pills */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="flex flex-wrap gap-2.5 mb-8 sm:mb-10 justify-center lg:justify-start"
+              >
+                {techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-4 py-1.5 text-xs font-mono text-portfolio-ink bg-portfolio-ivory/70 border border-portfolio-line rounded-full hover:border-portfolio-copper/60 hover:text-portfolio-copperDark transition-colors cursor-default"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </motion.div>
+
+              {/* CTA and socials */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 justify-center lg:justify-start"
+              >
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-portfolio-forest px-8 py-4 font-semibold text-portfolio-ivory shadow-[0_16px_34px_hsl(148_42%_18%/0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-portfolio-moss focus:outline-none focus:ring-2 focus:ring-portfolio-forest/30 sm:w-auto"
                 >
-                  <social.icon aria-hidden="true" />
-                  <span>{social.label}</span>
-                </a>
-              ))}
-              <Link to="/blog" className="home-social-link">
-                <BookOpen aria-hidden="true" />
-                <span>Writing</span>
-              </Link>
-              <Link to="/poetry" className="home-social-link">
-                <Feather aria-hidden="true" />
-                <span>Poetry</span>
-              </Link>
-            </nav>
+                  <Code2 className="w-5 h-5" />
+                  Show me the code
+                </button>
 
-            <p>Building the future, one commit at a time</p>
-          </footer>
-        </section>
+                <button
+                  onClick={() => setIsExperienceOpen(true)}
+                  className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg border border-portfolio-moss/50 bg-portfolio-ivory/40 px-7 py-4 font-semibold text-portfolio-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-portfolio-copper/80 hover:text-portfolio-copperDark focus:outline-none focus:ring-2 focus:ring-portfolio-copper/25 sm:w-auto"
+                >
+                  <Briefcase className="w-4 h-4" />
+                  Experience
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <div className="hidden sm:flex items-center gap-4">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
+                      aria-label={social.label}
+                    >
+                      <social.icon className="w-5 h-5" />
+                    </a>
+                  ))}
+                  <Link
+                    to="/blog"
+                    className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
+                    aria-label="Writing"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    to="/poetry"
+                    className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
+                    aria-label="Poetry"
+                  >
+                    <Feather className="w-5 h-5" />
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="absolute bottom-6 left-0 right-0 text-center px-4">
+          <div className="flex sm:hidden items-center justify-center gap-4 mb-2">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
+                aria-label={social.label}
+              >
+                <social.icon className="w-4 h-4" />
+              </a>
+            ))}
+            <Link
+              to="/blog"
+              className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
+              aria-label="Writing"
+            >
+              <BookOpen className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/poetry"
+              className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
+              aria-label="Poetry"
+            >
+              <Feather className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="mx-auto mb-4 hidden max-w-xs items-center justify-center gap-3 sm:flex">
+            <span className="h-px flex-1 bg-portfolio-line" />
+            <span className="h-2 w-2 rounded-full bg-portfolio-copper" />
+            <span className="h-px flex-1 bg-portfolio-line" />
+          </div>
+          <p className="text-portfolio-soft text-xs font-mono">
+            Building the future, one commit at a time
+          </p>
+        </div>
       </main>
 
       <ProjectsSidebar
-        isOpen={isProjectsOpen}
-        onClose={() => setIsProjectsOpen(false)}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
+
       <ExperienceSidebar
         isOpen={isExperienceOpen}
         onClose={() => setIsExperienceOpen(false)}
