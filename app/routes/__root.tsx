@@ -16,13 +16,12 @@ import {
   twitterCreator,
 } from "~/lib/site";
 
-const experienceYears = getExperienceYearsLabel();
-const description =
-  `Ngonidzashe Mangudya - Backend & Mobile Developer with ${experienceYears} years of mobile and backend experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.`;
-
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
+  head: () => {
+    const experienceYears = getExperienceYearsLabel();
+    const description = `Ngonidzashe Mangudya - Backend & Mobile Developer with ${experienceYears} years of mobile and backend experience. Building scalable backends and beautiful mobile apps. Talk is cheap. Show me the code.`;
+    return {
+      meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: defaultTitle },
@@ -92,7 +91,8 @@ export const Route = createRootRoute({
         }),
       },
     ],
-  }),
+    };
+  },
   component: RootComponent,
   errorComponent: RootErrorComponent,
 });
