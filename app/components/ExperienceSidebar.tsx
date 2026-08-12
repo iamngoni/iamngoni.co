@@ -7,12 +7,55 @@ interface Experience {
   company: string;
   type: string;
   period: string;
-  duration: string;
   location: string;
   description: string;
   highlights: string[];
   skills: string[];
   color: string;
+}
+
+const monthMap: Record<string, number> = {
+  Jan: 0,
+  Feb: 1,
+  Mar: 2,
+  Apr: 3,
+  May: 4,
+  Jun: 5,
+  Jul: 6,
+  Aug: 7,
+  Sep: 8,
+  Oct: 9,
+  Nov: 10,
+  Dec: 11,
+};
+
+function parseMonthYear(input: string): Date {
+  const [mon, yearStr] = input.trim().split(" ");
+  const month = monthMap[mon];
+  const year = Number(yearStr);
+  return new Date(year, month ?? 0, 1);
+}
+
+function formatDuration(totalMonths: number): string {
+  if (totalMonths < 1) totalMonths = 1;
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  if (years === 0) return `${months} mo${months === 1 ? "" : "s"}`;
+  if (months === 0) return `${years} yr${years === 1 ? "" : "s"}`;
+  return `${years} yr${years === 1 ? "" : "s"} ${months} mo${months === 1 ? "" : "s"}`;
+}
+
+function getDuration(period: string): string {
+  const [startStr, endStrRaw] = period.split(" - ").map((s) => s.trim());
+  const start = parseMonthYear(startStr);
+  const end =
+    endStrRaw === "Present" ? new Date() : parseMonthYear(endStrRaw);
+  // inclusive month count – matches resume convention (Apr 2021 - Dec 2021 = 9 mos)
+  const totalMonths =
+    (end.getFullYear() - start.getFullYear()) * 12 +
+    (end.getMonth() - start.getMonth()) +
+    1;
+  return formatDuration(totalMonths);
 }
 
 const experiences: Experience[] = [
@@ -22,54 +65,58 @@ const experiences: Experience[] = [
     company: "TOPPAN Security",
     type: "Contract",
     period: "Apr 2024 - Present",
-    duration: "1 yr 9 mos",
-    location: "Ethiopia · South Africa · Japan · Hybrid",
+    location: "Ethiopia · Namibia · South Africa · Japan · Hybrid",
     description:
-      "Building secure, scalable, and user-centric applications using Flutter for web and desktop platforms. Working across the full software development lifecycle — from gathering complex requirements and architecting solutions, to coding, deploying, and supporting production systems.",
+      "Building secure, scalable government identity platforms with Flutter for web and desktop and .NET services. Working across the full lifecycle — from requirements and architecture to deployment and live operational support — for ePassports, visas and election-related biometric systems.",
     highlights: [
-      "Delivered secure ePassport and visa system now in use nationwide in Ethiopia",
-      "Ensuring seamless handover and adoption",
-      "Actively maintain and evolve deployed systems based on real-time client feedback",
-      "Build reusable components and tools to accelerate future government-related deployments",
-      "Participated in live operational support during critical production periods with high availability requirements.",
-      "Developed resilient sync and patching infrastructure with focus on fault tolerance, retry handling, conflict resolution, operational reliability, zero/minimal downtime deployments",
+      "Delivered Ethiopia's first locally manufactured ICAO-compliant ePassport and digital visa system (TOPPAN Gravity Ethiopia JV with ICS & EIH, Bole-Lemi facility, Addis Ababa) — biometrics, advanced encryption, tamper-proof materials, now in nationwide use",
+      "Contributing to election and national ID biometrics footprint via TOPPAN FaceTech (acquired Face Technologies) — biometric voter registration kits (MVRKs), AFIS deduplication and voter verification devices, including support around Namibia's 2024 general elections (27–30 Nov 2024)",
+      "Developed resilient sync and patching infrastructure for low-connectivity field environments — fault tolerance, retry handling, conflict resolution, zero/minimal-downtime deployments",
+      "Build reusable components and tooling to accelerate future government deployments and ensure seamless handover and adoption",
+      "Actively maintain and evolve deployed systems based on real-time client feedback and provide live operational support during critical production periods with high availability requirements",
+      "Hardware integration, WebSocket and encryption across Flutter Web/Desktop and Windows platforms",
     ],
     skills: [
       "Flutter",
       ".NET Framework",
+      "Flutter Web",
+      "Flutter Desktop",
       "Android",
-      "UIX",
       "Windows",
       "WebSocket",
       "Encryption",
-      "Flutter Desktop",
-      "Flutter Web",
       "Hardware Integration",
+      "UIX",
     ],
     color: "from-portfolio-moss to-portfolio-forest",
   },
   {
     id: "merlin",
-    title: "Software Developer – Mobile Apps",
-    company: "Merlin Software for Vacation Ownership",
+    title: "Software Developer",
+    company: "Merlin Software for Vacation Ownership (QuickMerlin)",
     type: "Contract",
     period: "Jul 2023 - Present",
-    duration: "2 yrs 6 mos",
     location: "South Africa · Malaysia · Remote",
     description:
-      "Building companion apps for vacation ownership software using Flutter. Developing mobile applications that serve different aspects of the business, including housekeeping, maintenance, and guest services. Working closely with .NET API services, ensuring seamless integration and real-time data synchronization.",
+      "Part of the QuickMerlin Work Platform team — Merlin's end-to-end cloud platform for vacation ownership. Working across companion mobile apps and the core system: modernizing legacy web services, shipping new platform features and keeping mobile ↔ core in real-time sync.",
     highlights: [
-      "Developing mobile applications for housekeeping, maintenance, and guest services",
-      "Seamless integration with .NET API services",
-      "Real-time data synchronization between mobile apps and backend",
-      "Implementing UI/UX best practices and solving performance issues",
+      "Modernizing legacy ASP.NET / WCF / SOAP web services to modern REST APIs (.NET) and evolving the core domain — reservations, owner/member management, levies, accounting and sales contracts",
+      "Shipping new platform capabilities across Merlin CORE and modular web apps (Sales Contract, MiniVac, owner Portal/self-service) linked to the central cloud database",
+      "Building and enhancing companion Flutter apps for housekeeping, maintenance and guest services with focus on offline resilience and performance",
+      "Ensuring seamless, real-time data synchronization between mobile apps and .NET backend — REST APIs, WebSocket and background sync",
+      "Implementing UI/UX best practices and collaborating cross-functionally with international teams across design, backend and operations",
     ],
     skills: [
-      "Android Development",
-      "REST APIs",
       "Flutter",
+      ".NET",
+      "ASP.NET Web API",
+      "REST APIs",
+      "MS SQL",
+      "Dart",
+      "Android",
       "iOS Development",
       "Figma",
+      "WebSocket",
     ],
     color: "from-rose-600 to-portfolio-copper",
   },
@@ -79,7 +126,6 @@ const experiences: Experience[] = [
     company: "AfricAi Project",
     type: "Part-time",
     period: "May 2023 - Aug 2023",
-    duration: "4 mos",
     location: "City of Johannesburg, Gauteng, South Africa · Remote",
     description:
       "Mobile and Backend Engineer exploring technology's potential to empower underserved populations in Africa through GPT models.",
@@ -107,7 +153,6 @@ const experiences: Experience[] = [
     company: "AfriBlocks",
     type: "Freelance",
     period: "Jan 2022 - Nov 2023",
-    duration: "1 yr 11 mos",
     location: "Harare, Zimbabwe",
     description:
       "Freelance work with Afriblocks and ModestNerds, actively involved in diverse projects across various domains.",
@@ -134,7 +179,6 @@ const experiences: Experience[] = [
     company: "Intelli Africa Solutions",
     type: "Full-time",
     period: "Oct 2021 - Jun 2022",
-    duration: "9 mos",
     location: "Harare, Zimbabwe",
     description:
       "Mobile App Design and Development with Flutter, Process Optimization for Exceptional UX, and Collaborative Backend Services Development.",
@@ -161,7 +205,6 @@ const experiences: Experience[] = [
     company: "Fresh Ideas Studio",
     type: "Contract",
     period: "Apr 2021 - Dec 2021",
-    duration: "9 mos",
     location: "Harare, Zimbabwe · Remote",
     description:
       "Creating mobile applications to complement and enhance e-commerce web products during three consecutive contracts.",
@@ -187,7 +230,6 @@ const experiences: Experience[] = [
     company: "LADS Africa",
     type: "Full-time",
     period: "Sep 2020 - Oct 2021",
-    duration: "1 yr 2 mos",
     location: "Harare, Zimbabwe · On-site",
     description:
       "Design and Development of Core ERP Modules for local authorities, contributing to the nation's digital transformation.",
@@ -297,7 +339,7 @@ export function ExperienceSidebar({ isOpen, onClose }: ExperienceSidebarProps) {
                           <span
                             className={`px-2 py-1 text-xs rounded-full bg-gradient-to-r ${exp.color} text-portfolio-ivory`}
                           >
-                            {exp.duration}
+                            {getDuration(exp.period)}
                           </span>
                         </div>
 
