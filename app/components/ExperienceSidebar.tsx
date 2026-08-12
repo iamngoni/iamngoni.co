@@ -192,11 +192,11 @@ const experiences: Experience[] = [
     description:
       "Full-time Software Developer — Flutter mobile, UX optimization and collaborative backend development for fintech and telco integrations.",
     highlights: [
-      "Designed and built Tumai Mobile and other Flutter apps with focus on performance and exceptional UX",
-      "Collaborated with frontend team on Zimswitch website — Zimbabwe's national payment switch",
-      "Enhanced high-volume SMS & Email Gateway with Econet and NetOne integrations",
-      "Built custom web chat solution with native WebSockets for real-time support",
-      "Provided customer support operations for ZB Bank WhatsApp chatbot, triaging and resolving user journeys",
+      "Led Flutter architecture for Tumai Mobile and companion apps — modularization, state management and performance tuning for exceptional UX on low-end Android",
+      "Integrated frontend with backend services for Zimswitch (national payment switch) — secure APIs, data mapping and reconciliation flows",
+      "Re-engineered high-volume SMS & Email Gateway with Econet/NetOne — delivery guarantees, retry/backoff and throughput optimization",
+      "Designed real-time web chat on native WebSockets — presence, message ordering and reconnection resilience",
+      "Drove WhatsApp chatbot reliability for ZB Bank — triage automation, failure-mode handling and support ops tooling",
     ],
     skills: [
       "Flutter",
@@ -218,9 +218,9 @@ const experiences: Experience[] = [
     description:
       "Contract Mobile Developer — building companion e-commerce apps across three consecutive contracts, extending web storefronts to native mobile.",
     highlights: [
-      "Built native apps for Fresh In A Box, Till-point, Munch Zimbabwe, Golden Harmony and Nyamabantu",
-      "Led migration from React Native WebViews to Flutter for performance and single-codebase maintainability",
-      "Contributed to capital crowdfunding solution for agriculture sector — investor onboarding, KYC and payments",
+      "Led 5 companion e-commerce apps (Fresh In A Box, Till-point, Munch Zimbabwe, Golden Harmony, Nyamabantu) — cart, checkout, payments and order tracking, bridging web storefronts to native Flutter",
+      "Led migration from React Native WebViews → Flutter — unified codebase, reduced bundle size and startup time, improved offline caching and native plugin integration",
+      "Architected capital crowdfund flow for agriculture — investor onboarding, KYC verification and payment disbursement with audit-ready state transitions",
     ],
     skills: [
       "Flutter",
