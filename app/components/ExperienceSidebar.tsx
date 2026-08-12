@@ -71,8 +71,8 @@ const experiences: Experience[] = [
     highlights: [
       "Delivered Ethiopia's first locally manufactured ICAO-compliant ePassport and digital visa system (TOPPAN Gravity Ethiopia JV with ICS & EIH, Bole-Lemi facility, Addis Ababa) — biometrics, advanced encryption, tamper-proof materials, now in nationwide use",
       "Contributing to election and national ID biometrics footprint via TOPPAN FaceTech (acquired Face Technologies) — biometric voter registration kits (MVRKs), AFIS deduplication and voter verification devices, including support around Namibia's 2024 general elections (27–30 Nov 2024)",
-      "Led development of internal support and database patching tool for Immigration Management System — React + Node based, handling data integrity fixes, diagnostics, bulk operations, perso pipeline and audit logging for operational support teams",
-      "Led development of mobile biometric app for special services (Flutter) handling fingerprints, facial, iris, signatures and WSQ imaging",
+      "Led development of internal support and database patching tool for Immigration Management System — React + Node based, handling data integrity fixes, diagnostics, bulk operations, personalization pipeline and audit logging for operational support teams",
+      "Led mobile biometrics hardware integrations on Android kits — writing Flutter + Kotlin/Java SDKs and method channels for fingerprint, facial, iris, signature and WSQ hardware",
       "Led development of offline-capable solutions for embassy operations — enhancing reliability and continuity in constrained, low-connectivity environments",
       "Part of ongoing platform modernization: transitioning legacy .NET/Flutter stack toward Java microservices and modern web architecture",
       "Developed resilient sync and patching infrastructure for low-connectivity field environments — fault tolerance, retry handling, conflict resolution, zero/minimal-downtime deployments; reusable components for future government deployments",
