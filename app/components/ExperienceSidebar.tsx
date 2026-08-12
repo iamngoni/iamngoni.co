@@ -55,7 +55,7 @@ const experiences: Experience[] = [
     type: "Contract",
     period: "Jul 2023 - Present",
     duration: "2 yrs 6 mos",
-    location: "South Africa · Remote",
+    location: "South Africa · Malaysia · Remote",
     description:
       "Building companion apps for vacation ownership software using Flutter. Developing mobile applications that serve different aspects of the business, including housekeeping, maintenance, and guest services. Working closely with .NET API services, ensuring seamless integration and real-time data synchronization.",
     highlights: [
