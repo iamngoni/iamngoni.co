@@ -1,7 +1,7 @@
 ---
 title: Mwana Asingacheme Arikugaya Horror.
 date: 2026-08-21
-description: A poem about quiet deterioration, avoidance, memory, and finally sitting with the hand you have always understood.
+description:  quiet deterioration, avoidance, memory, and finally sitting with the hand you have always understood.
 image: /images/poetry/mwana-asingacheme-arikugaya-horror-og-2026-08-21.jpg
 imageAlt: A man sits smoking beside a weathered window, with a glass of whisky on the table and storm clouds gathering over the city outside.
 ---
