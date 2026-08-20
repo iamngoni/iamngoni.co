@@ -1,5 +1,5 @@
 ---
-title: mwana asingacheme arikugaya horror.
+title: Mwana Asingacheme Arikugaya Horror.
 date: 2026-08-21
 description: A poem about quiet deterioration, avoidance, memory, and finally sitting with the hand you have always understood.
 image: /images/poetry/mwana-asingacheme-arikugaya-horror-og-2026-08-21.jpg
