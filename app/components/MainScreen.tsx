@@ -192,9 +192,9 @@ export function MainScreen() {
                     <BookOpen className="w-5 h-5" />
                   </Link>
                   <Link
-                    to="/poetry"
+                    to="/thoughts"
                     className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
-                    aria-label="Poetry"
+                    aria-label="Intrusive Thoughts"
                   >
                     <Feather className="w-5 h-5" />
                   </Link>
@@ -227,9 +227,9 @@ export function MainScreen() {
               <BookOpen className="w-4 h-4" />
             </Link>
             <Link
-              to="/poetry"
+              to="/thoughts"
               className="p-2 text-portfolio-forest/75 hover:text-portfolio-copper transition-colors"
-              aria-label="Poetry"
+              aria-label="Intrusive Thoughts"
             >
               <Feather className="w-4 h-4" />
             </Link>

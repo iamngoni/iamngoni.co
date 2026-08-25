@@ -166,13 +166,13 @@ async function main() {
         priority: "0.7",
       }),
     ),
-    entry("/poetry", {
+    entry("/thoughts", {
       lastmod: latestPoemDate,
       changefreq: "weekly",
       priority: "0.8",
     }),
     ...poems.map((poem) =>
-      entry(`/poetry/${poem.slug}`, {
+      entry(`/thoughts/${poem.slug}`, {
         lastmod: poem.date,
         changefreq: "monthly",
         priority: "0.7",

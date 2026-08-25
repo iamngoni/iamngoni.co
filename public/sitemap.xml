@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://iamngoni.dev/</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -25,55 +25,61 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry</loc>
-    <lastmod>2026-08-21</lastmod>
+    <loc>https://iamngoni.dev/thoughts</loc>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/mwana-asingacheme-arikugaya-horror</loc>
+    <loc>https://iamngoni.dev/thoughts/scared</loc>
+    <lastmod>2026-08-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://iamngoni.dev/thoughts/mwana-asingacheme-arikugaya-horror</loc>
     <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/social-experiment</loc>
+    <loc>https://iamngoni.dev/thoughts/social-experiment</loc>
     <lastmod>2026-07-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/the-devil-you-know</loc>
+    <loc>https://iamngoni.dev/thoughts/the-devil-you-know</loc>
     <lastmod>2026-07-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/still-becoming</loc>
+    <loc>https://iamngoni.dev/thoughts/still-becoming</loc>
     <lastmod>2026-07-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/you-have-always-been</loc>
+    <loc>https://iamngoni.dev/thoughts/you-have-always-been</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/trust-on-loan</loc>
+    <loc>https://iamngoni.dev/thoughts/trust-on-loan</loc>
     <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/maybe-i-just-grew-up</loc>
+    <loc>https://iamngoni.dev/thoughts/maybe-i-just-grew-up</loc>
     <lastmod>2026-05-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://iamngoni.dev/poetry/your-inevitable-demise</loc>
+    <loc>https://iamngoni.dev/thoughts/your-inevitable-demise</loc>
     <lastmod>2026-05-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

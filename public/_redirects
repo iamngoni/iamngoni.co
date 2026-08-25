@@ -1,1 +1,3 @@
-/poetry/mothers /poetry/trust-on-loan 301
+/poetry/mothers /thoughts/trust-on-loan 301
+/poetry/:slug /thoughts/:slug 301
+/poetry /thoughts 301

@@ -15,20 +15,20 @@ const poemSlugRedirects: Record<string, string> = {
   mothers: "trust-on-loan",
 };
 
-export const Route = createFileRoute("/poetry/$slug")({
+export const Route = createFileRoute("/thoughts/$slug")({
   beforeLoad: ({ params }) => {
     const canonicalSlug = poemSlugRedirects[params.slug];
 
     if (canonicalSlug) {
       throw redirect({
-        href: `/poetry/${canonicalSlug}`,
+        href: `/thoughts/${canonicalSlug}`,
         statusCode: 301,
       });
     }
   },
   head: ({ params }) => {
     const poem = getPoemBySlug(params.slug);
-    const url = `${siteUrl}/poetry/${poem?.slug ?? params.slug}`;
+    const url = `${siteUrl}/thoughts/${poem?.slug ?? params.slug}`;
 
     if (!poem) {
       const title = pageTitle("Poem not found");
@@ -101,10 +101,10 @@ export const Route = createFileRoute("/poetry/$slug")({
       links: [{ rel: "canonical", href: url }],
     };
   },
-  component: PoetryPost,
+  component: ThoughtsPost,
 });
 
-function PoetryPost() {
+function ThoughtsPost() {
   const { slug } = Route.useParams();
   const poem = getPoemBySlug(slug);
 
@@ -113,11 +113,11 @@ function PoetryPost() {
       <main className="min-h-screen bg-portfolio-ivory px-6 py-10 text-portfolio-ink">
         <div className="mx-auto max-w-3xl">
           <Link
-            to="/poetry"
+            to="/thoughts"
             className="mb-12 inline-flex items-center gap-2 text-sm font-mono text-portfolio-soft transition-colors hover:text-portfolio-copper"
           >
             <ArrowLeft className="h-4 w-4" />
-            Poetry
+            Intrusive Thoughts
           </Link>
           <h1 className="font-display text-5xl">Poem not found</h1>
           <p className="mt-4 text-portfolio-soft">
@@ -133,11 +133,11 @@ function PoetryPost() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_14%,hsl(40_38%_92%/0.95),transparent_34%),radial-gradient(circle_at_84%_78%,hsl(154_12%_70%/0.18),transparent_34%)]" />
       <article className="relative mx-auto max-w-3xl px-6 py-10 lg:py-16">
         <Link
-          to="/poetry"
+          to="/thoughts"
           className="mb-12 inline-flex items-center gap-2 text-sm font-mono text-portfolio-soft transition-colors hover:text-portfolio-copper"
         >
           <ArrowLeft className="h-4 w-4" />
-          Poetry
+          Intrusive Thoughts
         </Link>
 
         <header className="mb-12 border-b border-portfolio-line pb-10">

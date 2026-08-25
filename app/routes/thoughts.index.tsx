@@ -10,12 +10,12 @@ import {
   twitterCreator,
 } from "~/lib/site";
 
-const title = pageTitle("Poetry");
+const title = pageTitle("Intrusive Thoughts");
 const description =
   "Verses on mortality, memory, and the quiet weather of being alive — poems written in the margins of code.";
-const url = `${siteUrl}/poetry`;
+const url = `${siteUrl}/thoughts`;
 
-export const Route = createFileRoute("/poetry/")({
+export const Route = createFileRoute("/thoughts/")({
   head: () => ({
     meta: [
       { title },
@@ -35,10 +35,10 @@ export const Route = createFileRoute("/poetry/")({
     ],
     links: [{ rel: "canonical", href: url }],
   }),
-  component: PoetryIndex,
+  component: ThoughtsIndex,
 });
 
-function PoetryIndex() {
+function ThoughtsIndex() {
   const poems = getAllPoems();
 
   return (
@@ -60,7 +60,7 @@ function PoetryIndex() {
             transition={{ duration: 0.5 }}
             className="mb-4 block font-mono text-sm text-portfolio-copper"
           >
-            // POETRY
+            // INTRUSIVE THOUGHTS
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
@@ -90,7 +90,7 @@ function PoetryIndex() {
               transition={{ duration: 0.45, delay: 0.05 * index }}
             >
               <Link
-                to="/poetry/$slug"
+                to="/thoughts/$slug"
                 params={{ slug: poem.slug }}
                 className="group grid gap-3 py-5 transition-colors duration-300 hover:text-portfolio-copper sm:grid-cols-[1fr_auto] sm:items-center md:py-6"
               >
