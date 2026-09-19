@@ -16,9 +16,9 @@ If Codex runs on GPT-6 Astra (`gpt-6-astra`) and sends every subtask to GPT-6 As
 
 Most of those tasks already have a destination. A primary agent can inspect the repository, make the architectural decision, and write a precise brief. A cheaper, faster model can then implement that brief, run the tests, fix a failure, and respond to review. The extra turns stay affordable because the executor is not spending premium reasoning tokens on decisions it does not need to make.
 
-You will run one Rust router, connect Codex and Claude Code to their protocol-compatible edges, add lower-cost models to the pickers, and give bounded execution work to GPT-5.6 Luna (`gpt-5.6-luna`), DeepSeek V4.1 Flash (`deepseek-flash`), or GLM 5.3 Flash (`glm-5.3-flash`).
+I fixed this for myself by putting one Rust router in front of both Codex and Claude Code. GPT-6 Astra or Claude Fable 5.1 remains the lead: it reads the repository, reasons through the architecture, and decides what done looks like. A lower-cost model—GPT-5.6 Luna (`gpt-5.6-luna`), DeepSeek V4.1 Flash (`deepseek-flash`), or GLM 5.3 Flash (`glm-5.3-flash`)—works underneath it as the executor, handling bounded edits, tests, and repair turns.
 
-The router turns that model split into a working configuration. The primary model owns judgment. The cheaper model gets a clear brief and affordable turns to finish it.
+That hierarchy matters. The expensive model is still in control; I’ve stopped paying it to do every mechanical step. The router makes the handoff practical by giving both coding agents access to the same pool of lower-cost workers.
 
 ## One router, two protocol edges
 
