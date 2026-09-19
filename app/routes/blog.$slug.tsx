@@ -42,6 +42,7 @@ export const Route = createFileRoute("/blog/$slug")({
     }
 
     const title = pageTitle(post.title);
+    const image = post.image ? `${siteUrl}${post.image}` : defaultOgImage;
     const meta = [
       { title },
       { name: "description", content: post.description },
@@ -49,13 +50,19 @@ export const Route = createFileRoute("/blog/$slug")({
       { property: "og:url", content: url },
       { property: "og:title", content: title },
       { property: "og:description", content: post.description },
-      { property: "og:image", content: defaultOgImage },
+      { property: "og:image", content: image },
+      ...(post.imageWidth && post.imageHeight
+        ? [
+            { property: "og:image:width", content: post.imageWidth },
+            { property: "og:image:height", content: post.imageHeight },
+          ]
+        : []),
       { property: "og:site_name", content: siteName },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:url", content: url },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: post.description },
-      { name: "twitter:image", content: defaultOgImage },
+      { name: "twitter:image", content: image },
       { name: "twitter:creator", content: twitterCreator },
       ...(post.date
         ? [{ property: "article:published_time", content: post.date }]

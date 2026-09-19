@@ -6,6 +6,9 @@ export interface BlogPost {
   date?: string;
   formattedDate: string;
   description: string;
+  image?: string;
+  imageWidth?: string;
+  imageHeight?: string;
   preview: string;
   readingMinutes: number;
   tags: string[];
@@ -176,6 +179,9 @@ function normalizePost(path: string, source: unknown): BlogPost {
     date,
     formattedDate: formatPostDate(date),
     description,
+    image: metadata.image,
+    imageWidth: metadata.imageWidth,
+    imageHeight: metadata.imageHeight,
     preview,
     readingMinutes: readingMinutes(content),
     tags,
