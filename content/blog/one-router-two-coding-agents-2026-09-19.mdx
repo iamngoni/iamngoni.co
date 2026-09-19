@@ -1,7 +1,7 @@
 ---
 title: One Router, Two Coding Agents, Lower Costs
 date: 2026-09-19
-description: How I keep GPT-6 Astra or Claude Fable 5.1 in charge while routing well-defined subagent work to lower-cost models through one Codex and Claude Code gateway.
+description: Configure Codex and Claude Code to share one model router, keep expensive reasoning for decisions, and send well-defined execution work to cheaper models.
 image: /images/one-router-two-coding-agents-og.png
 imageWidth: 1730
 imageHeight: 909
@@ -10,25 +10,19 @@ tags: AI, Codex, Claude Code, Rust, Infrastructure
 
 # One Router, Two Coding Agents, Lower Costs
 
-AI coding gets expensive when every task uses the most capable model in the stack.
+Coding agents become expensive when every delegated task uses the most expensive model available.
 
-If Codex is running on GPT-6 Astra (`gpt-6-astra`) and every subagent also runs on GPT-6 Astra, I am paying premium reasoning rates for everything: architecture decisions, yes, but also file searches, mechanical edits, test runs, and other work whose destination is already clear. The same thing happens when Claude Code runs Claude Fable 5.1 (`claude-fable-5-1`) and spins up more Fable 5.1 agents for every delegated task.
+If Codex runs on GPT-6 Astra (`gpt-6-astra`) and sends every subtask to GPT-6 Astra too, premium reasoning pays for file searches, routine edits, test runs, and small repairs. Claude Code has the same problem when Claude Fable 5.1 (`claude-fable-5-1`) delegates every task to another Fable 5.1 session.
 
-That is unnecessary.
+Most of those tasks already have a destination. A primary agent can inspect the repository, make the architectural decision, and write a precise brief. A cheaper, faster model can then implement that brief, run the tests, fix a failure, and respond to review. The extra turns stay affordable because the executor is not spending premium reasoning tokens on decisions it does not need to make.
 
-Most developers are not running an AI lab with unlimited inference credits. We want the leverage of parallel agents without turning one ordinary coding session into a premium-model bill multiplied by every delegation.
+You will run one Rust router, connect Codex and Claude Code to their protocol-compatible edges, add lower-cost models to the pickers, and give bounded execution work to GPT-5.6 Luna (`gpt-5.6-luna`), DeepSeek V4.1 Flash (`deepseek-flash`), or GLM 5.3 Flash (`glm-5.3-flash`).
 
-I want GPT-6 Astra or Claude Fable 5.1 in charge of work that needs judgment: understanding the repository, planning the change, resolving ambiguity, reviewing the result, and deciding whether it is actually complete. Once that thinking produces a clear brief, GPT-5.6 Luna (`gpt-5.6-luna`), DeepSeek V4.1 Flash (`deepseek-flash`), or GLM 5.3 Flash (`glm-5.3-flash`) can handle much of the execution at a lower cost. They are good at doing specified work. What I do not ask them to do is invent the specification, reason through a messy architecture, or make the final call on their own output.
+The router turns that model split into a working configuration. The primary model owns judgment. The cheaper model gets a clear brief and affordable turns to finish it.
 
-That is why I built a model router. This is not about filling a model picker to show how many AI providers I know. It is about making serious agent workflows affordable: use expensive reasoning where it changes the outcome, and stop paying for it where the thinking has already been done.
+## One router, two protocol edges
 
-The result is one Codex picker, with models from several providers living beside the defaults, and one gateway that gives Claude Code the same routing strategy. Every selection goes through the gateway, which decides where it belongs and adapts the request to the API shape that provider expects.
-
-This post shows the setup I run today: a Responses edge for Codex, a Messages edge for Claude Code, and one route table behind both. The companion implementation is [codex-router](https://github.com/iamngoni/codex-router). Run your own instance and keep your own provider credentials.
-
-## The idea: clients speak their own dialects; the router speaks provider dialects
-
-Codex and Claude Code are both coding agents, but they do not make the same HTTP requests.
+Codex and Claude Code do not send the same API shape. Codex uses the OpenAI Responses API. Claude Code uses the Anthropic Messages API. The router gives each client the edge it expects, then selects a provider from the model name.
 
 ```text
 Codex ── Responses ─▶ /backend-api/codex ──┬─▶ OpenAI Responses
@@ -43,38 +37,62 @@ Claude Code ── Messages ─▶ /backend-api/claude/v1/messages
                                            └─▶ Z.ai Messages
 ```
 
-The key design choice is to keep routing independent of the client. A model name, a provider capability record, and a translation strategy belong to the gateway. Whether the caller was Codex or Claude Code belongs at the outer edge.
+The implementation used in this guide is [codex-router](https://github.com/iamngoni/codex-router). It keeps provider credentials on the router, chooses a route from the model prefix, and translates only where a provider needs another request format.
 
-That prevents the architecture from turning into a tangle of one-off bridges such as “Codex-to-GLM” and “Claude-to-DeepSeek.” Instead, add two client adapters and a small set of provider adapters.
+## Prerequisites
 
-## The cost model: not every task deserves the same amount of thinking
+You need:
 
-The reason to build a router is not only to collect model names in one picker. It is to spend reasoning where reasoning changes the outcome.
+- Rust and Cargo
+- Codex, Claude Code, or both
+- An API key for each provider you intend to use
+- A model catalog for the Codex picker if you want custom Codex entries
 
-A precisely scoped task—implement this component, apply this mechanical migration, run this focused test suite, make this documented change—often benefits from a fast model with less reasoning. It has a clear destination. The model’s job is execution: read the brief, make the change, and show the result. That is where a lower-reasoning route keeps cost and latency sensible without making the work careless.
+Keep the router on `127.0.0.1` while you are setting it up. Store provider keys outside the repository. The router reads these conventional paths:
 
-The savings compound across turns. Real delegated work rarely ends with one response: the executor inspects the files, makes the change, runs the tests, fixes what failed, and responds to review. A fast, low-cost model makes that whole loop affordable. I can give an implementation task the extra turns it needs without paying premium reasoning rates every time it comes back for another pass.
+```text
+~/.config/deepseek/key
+~/.config/zai/key
+~/.config/openrouter/key
+~/.config/meta/key
+```
 
-The expensive reasoning belongs elsewhere: understanding an unfamiliar system, resolving competing requirements, designing an interface between protocols, diagnosing a failure with incomplete evidence, or deciding whether a change is actually safe to ship. Those are judgment tasks. They deserve a model that can hold ambiguity, challenge assumptions, and make a defensible call.
+Make those files readable only by your user. Do not put keys in `config.toml`, a model catalog, a launch agent, or a shell command that will remain in history.
 
-I use the router to make that distinction operational:
+For example, create the DeepSeek key file with an editor, then lock down its permissions:
 
-| Work | Route it to | Why |
-| --- | --- | --- |
-| Focused implementation and routine edits | a fast, lower-reasoning model | The task is already specified; execution speed and cost matter. |
-| Test, repair, and review-feedback loops | a fast, lower-reasoning model | Several execution turns stay affordable instead of multiplying premium-model costs. |
-| Repetitive analysis, extraction, and test runs | a fast, lower-reasoning model | The model follows an established method and returns evidence. |
-| Architecture, diagnosis, reviews, and acceptance decisions | a higher-reasoning model | The hard part is deciding what the work means and what should happen next. |
+```sh
+install -d -m 700 "$HOME/.config/deepseek"
+${EDITOR:-vi} "$HOME/.config/deepseek/key"
+chmod 600 "$HOME/.config/deepseek/key"
+```
 
-The boundary matters. A lower-reasoning model is not a substitute for thinking through the problem. It is a good executor once the thinking has been done. The router lets the picker reflect that division of labour instead of treating every request as if it needs the same costly internal debate.
+Repeat that pattern only for the providers you plan to use.
 
-## What my Codex router does today
+### Terminal 1: build and run the router
 
-My active Codex provider points at a loopback URL. The router inspects the request’s `model` field and uses prefixes to select the upstream.
+```sh
+git clone https://github.com/iamngoni/codex-router.git
+cd codex-router
+cargo build --release
+./target/release/codex-router
+```
+
+Leave that process running. The default local listener is `127.0.0.1:4141`.
+
+### Terminal 2: check the local service
+
+```sh
+curl http://127.0.0.1:4141/healthz
+```
+
+The response should be `ok`. If it is not, fix the router process before configuring either coding agent.
+
+## Connect Codex
+
+Add a provider entry to `~/.codex/config.toml`:
 
 ```toml
-# ~/.codex/config.toml
-
 model_provider = "router"
 model_catalog_json = "/absolute/path/to/model-catalog.json"
 
@@ -85,149 +103,87 @@ wire_api = "responses"
 requires_openai_auth = true
 ```
 
-`requires_openai_auth = true` is intentional in this arrangement: unmatched model names fall through to Codex’s existing ChatGPT-backed OpenAI route. It is not a general `api.openai.com` API-key proxy. The model catalog controls what Codex offers in the picker; I keep it as a separate JSON file referenced by the user-level configuration above.
+The router’s Codex edge speaks Responses. `requires_openai_auth = true` keeps the existing Codex authentication path available for models that remain on the ChatGPT-backed route. This is a Codex provider configuration, not a general OpenAI API-key proxy.
 
-The router has a deliberately small routing table:
-
-| Model name selected in Codex | Upstream | Treatment |
-| --- | --- | --- |
-| `gpt-*` | OpenAI | pass through |
-| `deepseek-*` | DeepSeek | pass through after tool-schema hygiene |
-| `muse-*` | Meta Muse | pass through after tool-schema hygiene |
-| `openrouter/<vendor>/<model>` | OpenRouter | strip the local `openrouter/` namespace, then pass through |
-| `glm-*` | Z.ai | translate Responses API to Chat Completions and back |
-
-The Claude edge uses the same prefixes but speaks Messages end to end:
-
-| Model name selected in Claude Code | Upstream | Treatment |
-| --- | --- | --- |
-| `claude-*` | Anthropic | preserve the caller's Claude credential and pass Messages through |
-| `deepseek-*` | DeepSeek | replace caller authentication with the local DeepSeek key and pass Messages through |
-| `openrouter/<vendor>/<model>` | OpenRouter | replace authentication, strip `openrouter/`, and pass Messages through |
-| `glm-*` | Z.ai | replace authentication and pass Messages through |
-| `muse-*` | none | return an explicit unsupported-model error |
-
-There is no made-up Claude-to-OpenAI conversion in that path. DeepSeek, OpenRouter, and Z.ai each expose a Messages-compatible endpoint, so the router keeps the request and streamed response in the protocol Claude Code already understands.
-
-The `openrouter/` prefix is only a local routing convention. For example, Codex can send `openrouter/anthropic/claude-sonnet-4.5`; the router forwards `anthropic/claude-sonnet-4.5` to OpenRouter. That keeps the picker unambiguous without asking the upstream to understand my naming scheme.
-
-This approach uses Codex’s configuration model correctly: custom providers and a JSON model catalog are user-level configuration, not something a checked-out project can override. Use the [official Codex configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) to match the current fields to your installed version.
-
-### Minimal local installation
-
-Build and start the router:
-
-```sh
-git clone https://github.com/iamngoni/codex-router.git
-cd codex-router
-cargo build --release
-./target/release/codex-router
-
-curl http://127.0.0.1:4141/healthz
-```
-
-The health probe should return `ok`. Store credentials outside the checkout—for this router, the conventional paths are `~/.config/deepseek/key`, `~/.config/zai/key`, `~/.config/meta/key`, and `~/.config/openrouter/key`—with permissions that only your user can read. Do not paste any provider key into `config.toml`, a model catalog, a launch agent, or a shell history.
-
-Merge routes into an existing catalog rather than replacing it with a hand-written one. Its top-level value is an object with a `models` array; this is the kind of entry that produces the friendly picker label:
+Add custom models to the catalog referenced above. Merge the entry into your existing catalog instead of replacing the whole file. Use a complete entry: Codex reads the capability fields as well as the name and context window.
 
 ```json
 {
   "models": [
     {
-      "slug": "deepseek-v4-pro",
-      "display_name": "DeepSeek V4 Pro",
+      "slug": "deepseek-flash",
+      "display_name": "DeepSeek V4.1 Flash",
+      "description": "DeepSeek V4.1 Flash through your DeepSeek API account.",
+      "default_reasoning_level": "low",
+      "supported_reasoning_levels": [
+        {
+          "effort": "low",
+          "description": "Low reasoning"
+        },
+        {
+          "effort": "high",
+          "description": "High reasoning"
+        },
+        {
+          "effort": "max",
+          "description": "Max reasoning"
+        }
+      ],
+      "shell_type": "shell_command",
+      "visibility": "list",
+      "supported_in_api": true,
+      "priority": 1,
+      "base_instructions": "You are a coding assistant. Complete the specified task accurately, use the available tools, and verify your changes.",
       "context_window": 1048576,
       "max_context_window": 1048576,
-      "effective_context_window_percent": 95
+      "effective_context_window_percent": 95,
+      "truncation_policy": {
+        "mode": "tokens",
+        "limit": 10000
+      },
+      "input_modalities": [
+        "text",
+        "image"
+      ],
+      "apply_patch_tool_type": "freeform",
+      "support_verbosity": true,
+      "default_verbosity": "low",
+      "default_reasoning_summary": "none",
+      "supports_parallel_tool_calls": true,
+      "use_responses_lite": false,
+      "prefer_websockets": false,
+      "experimental_supported_tools": []
     }
   ]
 }
 ```
 
-Catalog metadata declares a route. A model earns a picker entry once its provider allowlist, billing state, context policy, and tool contract work through the router.
+This entry uses low reasoning by default because its job is execution from a clear brief. You can still select `high` or `max` for a task that needs more judgment. Catalog fields can change between Codex releases, so if your installed catalog uses a newer shape, copy a complete built-in entry from that release and preserve its capability fields.
 
-The picker gives Codex the routes. The project guidance gives those routes a job. My policy is deliberately plain:
+The catalog controls what Codex shows. The router still has to accept the selected model, the provider has to allow it, and the account has to be able to pay for it. A picker entry alone does not prove that a route works.
 
-```md
-Use GPT-6 Astra for planning, architecture, difficult diagnosis, and final review.
+The router uses the model prefix to choose the upstream. `deepseek-*` goes to DeepSeek, `openrouter/*` goes to OpenRouter after the local prefix is removed, and `glm-*` goes to Z.ai. Codex passes DeepSeek and OpenRouter Responses traffic through with tool-schema cleanup. The GLM path translates Responses to Chat Completions and translates the response back. Codex pass-through responses currently buffer before returning, so this edge is compatible with the Responses contract but does not provide token-by-token streaming for those routes.
 
-Delegate bounded implementation to GPT-5.6 Luna by default. DeepSeek V4.1
-Flash and GLM 5.3 Flash are lower-cost alternatives for clearly specified
-work. Let those executors make, test, and repair the change across several
-turns. Bring architectural ambiguity and the final acceptance decision back
-to Astra.
-```
+Select `deepseek-flash` from the Codex model picker and run a short task. Once that works, add the other provider entries one at a time.
 
-That guidance belongs in `AGENTS.md` or whichever user-level policy drives your Codex setup. The exact agent names are less important than the ownership boundary: one model decides what should be built; another can affordably keep working until it is built.
+## Connect Claude Code
 
-## A proxy is not just a URL rewriter
-
-The pleasant part is matching a prefix. The engineering is everything around it.
-
-### 1. Keep secrets outside the repository
-
-The router reads each provider key from a file outside its source tree, with restrictive permissions. The source code has no keys, and authorization headers are not written to the request log.
-
-This matters more with coding agents than with a conventional chat UI. Requests may contain repository context, command output, screenshots, tool inputs, and conversation history. The current router logs up to the first 2 KiB of a Codex request, which means a smaller request can appear in full, and it saves complete provider error bodies. Treat those files as sensitive. Tighten that logging before using this pattern beyond your own machine.
-
-### 2. Make tool compatibility explicit
-
-“OpenAI-compatible” rarely means every tool feature is compatible. My router removes OpenAI-hosted tool types that a third-party provider cannot execute, and sanitizes schemas that known providers reject. GLM gets a proper request and response translation because it speaks Chat Completions rather than Responses.
-
-That is intentionally conservative. A provider that cannot execute a tool should not receive a made-up tool shape and quietly fail halfway through an agent turn.
-
-The current GLM translation is text and function-call focused. It is not evidence that every Responses feature—images, encrypted reasoning items, or every hosted tool—works across every provider. Design your catalog and your provider capability flags around what you have actually tested.
-
-### 3. Treat streaming as a protocol contract
-
-An agent needs more than final text: tool-call arguments, stop reasons, usage, reasoning blocks, and a particular sequence of server-sent events.
-
-The Codex edge normalizes OpenRouter’s event labels because Codex expects labelled Responses events. That edge currently buffers the complete upstream body before returning it, and the GLM route makes a non-streaming upstream call before synthesizing a Responses-shaped event sequence. That is useful compatibility, but it is not token-by-token streaming.
-
-The Claude edge is different. It forwards provider-native Messages streams incrementally. A live DeepSeek turn through Claude Code produced `message_start`, keepalive pings, thinking and text deltas, `message_delta`, and `message_stop`; a real Read tool call then completed the `tool_use` → `tool_result` → final-answer round trip. That is the contract Claude Code needs for actual agent work.
-
-### 4. Defend the provider edge, not just context limits
-
-One provider edge in my Codex setup rejects bodies above a measured byte limit. A long agent history can be enormous in bytes even when its token count looks reasonable—especially once screenshots and tool output are involved.
-
-The Codex-to-DeepSeek path handles this before forwarding: it first removes opaque foreign reasoning payloads, then older images, then trims large tool output while preserving call/result pairing. If the request still cannot fit, it returns a structured local error explaining the limit instead of making the agent retry an opaque upstream HTML error.
-
-That trim pipeline does not run on the Claude Messages edge. Messages requests are accepted beneath the router’s general 100 MiB body ceiling and forwarded unchanged, so the selected provider still decides whether a large history is acceptable. The lesson is not that one guard protects everything. Context-window budgeting, HTTP payload-size budgeting, and each client edge need their own deliberate limits.
-
-## Build the Codex side first
-
-Build this in the smallest reliable sequence.
-
-1. Run the router on `127.0.0.1`, not a public interface.
-2. Point a single custom Codex provider at it with `wire_api = "responses"`.
-3. Add one catalog entry and one route, then test a plain reply, a tool call, and an error response.
-4. Add structured request logging with redaction and one health endpoint.
-5. Add each provider only after proving its real request shape, streaming behaviour, tool support, and limits.
-
-Do not interpret a model appearing in the picker as proof that it is reachable. Billing state, provider allowlists, privacy settings, context limits, and route-specific feature support are separate concerns. My own OpenRouter experiments made that painfully clear: a catalog entry can be valid while an upstream provider route is unavailable.
-
-## Adding Claude Code: a second client edge, not a second router
-
-Claude Code should not be pointed at the Codex `/responses` endpoint. It needs an Anthropic Messages-compatible edge. The router exposes both client protocols under matching namespaces:
-
-```text
-Codex base URL:       http://127.0.0.1:4141/backend-api/codex
-Claude Code base URL: http://127.0.0.1:4141/backend-api/claude
-```
-
-`/backend-api/claude` is the base URL—the Claude-speaking side of the router. Claude Code appends its standard path, so requests arrive at `POST /backend-api/claude/v1/messages?beta=true`. The router also accepts direct `POST /backend-api/claude` and root-level `POST /v1/messages` calls, but the namespaced base URL is the clean fit for this design.
-
-Point Claude Code at that base URL:
+Claude Code needs the router’s Messages edge. Set the base URL like this:
 
 ```sh
 export ANTHROPIC_BASE_URL="http://127.0.0.1:4141/backend-api/claude"
-
 claude --model deepseek-flash
 ```
 
-Keep the router on loopback. For `deepseek-*`, `glm-*`, and `openrouter/*`, it discards the incoming Claude authorization, API-key, and cookie headers and inserts the key for the selected provider. For `claude-*`, it preserves the caller’s Anthropic credential so normal Claude authentication still works. Unknown paths under the Claude namespace fail locally instead of falling through to the Codex/OpenAI handler.
+The value is a base URL. Claude Code appends the standard Anthropic path, so the request reaches:
 
-To expose friendly non-default choices in Claude Code’s `/model` picker, add them to the user-level `~/.claude/settings.json`:
+```text
+POST /backend-api/claude/v1/messages
+```
+
+That `/v1/messages` suffix identifies the Messages operation. Do not add it to `ANTHROPIC_BASE_URL`, or Claude Code will append it twice.
+
+You can add custom choices to Claude Code’s model picker in `~/.claude/settings.json`:
 
 ```json
 {
@@ -237,29 +193,44 @@ To expose friendly non-default choices in Claude Code’s `/model` picker, add t
       {
         "model": "deepseek-flash",
         "label": "DeepSeek V4.1 Flash",
-        "description": "DeepSeek via my local router",
+        "description": "DeepSeek through the local router",
         "behavesAs": "claude-sonnet-5"
       },
       {
         "model": "glm-5.3-flash",
         "label": "GLM 5.3 Flash",
-        "description": "Z.ai via my local router",
-        "behavesAs": "claude-sonnet-5"
+        "description": "Z.ai through the local router",
+        "behavesAs": "claude-sonnet-4-5"
       },
       {
         "model": "openrouter/openai/gpt-5-nano",
-        "label": "GPT-5 Nano via OpenRouter",
-        "description": "OpenRouter via my local router",
-        "behavesAs": "claude-sonnet-5"
+        "label": "GPT-5 Nano through OpenRouter",
+        "description": "OpenRouter through the local router",
+        "behavesAs": "claude-sonnet-4-5"
       }
     ]
   }
 }
 ```
 
-The gateway receives the `model` value verbatim. `behavesAs` tells this Claude Code release which known capability profile to apply to a custom provider ID; it does not change the model the router receives. Match it to a built-in model ID your installed Claude Code version knows, and set the custom route’s real context limit rather than assuming the borrowed profile is also correct for pricing or context.
+The exact picker options vary between Claude Code releases, so keep the model strings aligned with the router’s route prefixes. The gateway receives `model` and uses it to choose the provider. `behavesAs` gives the custom model a capability profile Claude Code already understands; it does not change the model ID sent to the router. That profile also affects context, compaction, tool, and effort assumptions, so choose one whose limits do not exceed the real upstream model. `replaceBuiltInOptions: false` keeps the standard Claude choices beside the custom routes.
 
-For a simple default where Claude stays in charge and delegated work uses the cheaper route, set the subagent model separately:
+The Claude edge sends native Messages traffic to DeepSeek, GLM, and OpenRouter. It does not flatten a tool call into plain text or translate the request through the Codex Responses format. That preserves the content blocks and server-sent events Claude Code expects.
+
+## Send execution work to cheaper models
+
+The model split belongs in the instructions that guide your agents. In a Codex `AGENTS.md`, use a policy like this:
+
+```md
+Use GPT-6 Astra for planning, architecture, difficult diagnosis, and final review.
+
+Delegate bounded implementation to GPT-5.6 Luna by default. DeepSeek V4.1
+Flash and GLM 5.3 Flash are lower-cost alternatives for clearly specified work.
+Let those executors implement, test, and repair the change across several turns.
+Return architectural ambiguity and the final acceptance decision to Astra.
+```
+
+The same idea works in Claude Code with its subagent model setting:
 
 ```sh
 export ANTHROPIC_BASE_URL="http://127.0.0.1:4141/backend-api/claude"
@@ -268,58 +239,81 @@ export CLAUDE_CODE_SUBAGENT_MODEL="deepseek-flash"
 claude --model fable
 ```
 
-That is the same cost boundary as the Codex setup: the primary model owns ambiguity and acceptance; lower-cost subagents get well-defined execution work. If a task needs a different executor, select that model explicitly instead of changing the whole router.
+The primary Claude model can stay on the `fable` alias for Claude Fable 5.1 (`claude-fable-5-1`) while the environment variable makes DeepSeek V4.1 Flash the default for subagents that do not choose another model. An explicit model in a tool call or agent definition takes precedence. Replace `deepseek-flash` with `glm-5.3-flash` when that route fits the task better.
 
-Claude Code evolves quickly. Match the settings keys, built-in model IDs, headers, and beta features to the current [Claude Code gateway protocol](https://code.claude.com/docs/en/llm-gateway-protocol) and your installed CLI version.
+Lower reasoning is a cost decision, not a claim that every task is interchangeable. A model with less reasoning is useful when the destination is explicit: edit these files, implement this function, run these tests, or repair this reported failure. Give it an ambiguous architecture problem and you are asking it to invent the specification as well as execute it. Keep that work with the primary model.
 
-## What the Messages edge actually preserves
+The savings show up across turns. An executor may need one turn to inspect files, another to implement, another to run tests, and another to repair a failure. Fast lower-cost models make that loop affordable. The point is to stop paying for premium reasoning after the hard decision has already been made.
 
-The implementation does not flatten Messages into text. It forwards:
+Give the executor a brief with a destination, constraints, and a definition of done. For example:
 
-- `text` blocks;
-- `tool_use` and `tool_result` blocks, including IDs and JSON arguments;
-- thinking or reasoning blocks provided by the selected route;
-- `stop_reason` and usage;
-- Anthropic server-sent events such as `message_start`, `content_block_start`, `content_block_delta`, `content_block_stop`, `message_delta`, and `message_stop`.
+```md
+Implement the approved session-timeout change in `src/auth/session.rs`.
 
-The supported upstreams already speak Messages, so this edge does not translate them through a common OpenAI-shaped representation. It resolves the route, replaces credentials where required, strips the local OpenRouter prefix, and streams the provider’s status, safe headers, and body bytes back to Claude Code. `count_tokens` is proxied for DeepSeek, GLM, and Anthropic; OpenRouter receives a clear local unsupported response because its Messages API does not expose that endpoint.
-
-I exercised the real CLI against the live router, not just `curl`. DeepSeek completed a streamed reply and then a real Read tool call: Claude Code sent `tool_use`, returned the file as `tool_result`, and received the final answer on the second API turn. GLM 5.3 Flash and GPT-5 Nano through OpenRouter also completed from the real Claude Code client.
-
-Native Claude took the same route. Claude Code sent `claude-fable-5-1`, the router preserved its Anthropic credential, and Anthropic returned the account’s `credits_required` response. That is an account limit, not a hidden fallback. The error came back to Claude Code unchanged.
-
-## One route table, two protocol paths
-
-The published implementation keeps the provider prefixes in Rust, in `src/routes.rs`. Each `Route` records the Codex endpoint, translation mode, key file, body limit, prefix handling, and Responses streaming quirks. Two methods on that same route add only the native Messages paths the provider has actually passed:
-
-```rust
-pub fn messages_path(&self) -> Option<&'static str> {
-    match self.name {
-        "deepseek" => Some("/anthropic/v1/messages"),
-        "openrouter" => Some("/api/v1/messages"),
-        "glm" => Some("/api/anthropic/v1/messages"),
-        "muse" => None,
-        _ => None,
-    }
-}
+- Keep the public API unchanged.
+- Do not edit unrelated authentication code.
+- Add tests for an expired session and a valid session.
+- Run the focused auth tests and report the command and result.
+- If the approved design cannot work, stop and return the exact conflict.
 ```
 
-The route table is explicit code, and `None` is a real decision: Muse does not get a Claude Code route until its native Messages behaviour is proven.
+That is the kind of work GPT-5.6 Luna, DeepSeek V4.1 Flash, or GLM 5.3 Flash can carry through several implementation and repair turns without making every turn a premium-model decision.
 
-The proof boundary is equally explicit. The checks above cover plain Claude Code replies through DeepSeek, GLM, and OpenRouter; one complete DeepSeek tool round trip; incremental Messages streaming; credential isolation; Anthropic passthrough; and local rejection of unknown Claude paths. They do not cover parallel tool calls, disconnect cancellation, Messages-side history trimming, or a successful Fable generation while the Anthropic account is at its limit. Add those tests before adding those claims.
+## Run a plain check and a tool check
 
-The repository keeps real-provider tests opt-in because they need credentials and spend money. That separation matters. Mocks prove header and body handling; live tests prove that the provider standing behind a supposedly compatible endpoint accepts what the client actually sends.
+With the router running, verify the Claude edge from a third terminal or shell session:
 
-## A few boundaries worth keeping
+```sh
+export ANTHROPIC_BASE_URL="http://127.0.0.1:4141/backend-api/claude"
 
-- Keep the gateway on loopback by default. If you expose it remotely, put it behind proper authentication, TLS, rate limits, and an allowlist of clients.
-- Do not make a provider fallback silent when it changes data-handling or tool capability expectations. Log the chosen route and surface meaningful failures.
-- Do not forward credentials from the incoming client to arbitrary upstreams. Replace authentication per route.
-- Treat request previews and saved provider errors as sensitive until you have reduced them to the redacted summaries and request IDs you actually need.
-- Do not claim parity from a successful “hello.” Tool calls, streaming, large histories, and failures are the product surface for coding agents.
+claude --model deepseek-flash -p 'Reply with exactly: router-ok'
+```
 
-## The payoff
+Then ask Claude Code to use a tool:
 
-The end state is not “Claude Code running DeepSeek” or “Codex running OpenRouter.” It is a model gateway that gives each coding agent the protocol it expects while retaining one place to manage routes, credentials, observability, provider limits, and model choice.
+```sh
+claude --model deepseek-flash -p 'Read README.md and tell me its first heading.'
+```
 
-That is what makes a picker like mine useful instead of decorative. The selected model is a real, testable route—not a promise that the rest of the agent loop will survive.
+The second command checks more than text generation. It exercises Claude Code’s Messages request, the streamed `tool_use` block, the returned `tool_result`, and the follow-up API turn.
+
+In the live router, DeepSeek completed both checks. The streamed response included `message_start`, keepalive pings, thinking and text deltas, `message_delta`, and `message_stop`. The Read tool call completed as a real `tool_use` → `tool_result` → final-answer round trip.
+
+GLM 5.3 Flash and GPT-5 Nano through OpenRouter returned plain Claude Code responses through the same Messages edge. That confirms those routes and their streaming responses; it does not claim that their tool-use paths have been tested here.
+
+Native Claude follows the same edge. A `claude-fable-5-1` request reached Anthropic with the caller’s credential. The account returned `credits_required`, so successful Fable generation was blocked by account credits rather than by the router.
+
+## What the router changes on each path
+
+The route is selected from the model name, but the protocol and credential rules stay separate:
+
+| Client and model | Upstream behavior | Authentication and streaming |
+| --- | --- | --- |
+| Codex + `deepseek-*` or `openrouter/*` | Responses pass-through with request cleanup | Provider key replaces the incoming credential; responses buffer before return |
+| Codex + `glm-*` | Responses to Chat Completions and back | Provider key replaces the incoming credential; translated response is buffered |
+| Claude Code + `deepseek-*`, `glm-*`, or `openrouter/*` | Native Anthropic Messages request and response | Provider key replaces Claude auth; Messages SSE streams incrementally |
+| Claude Code + `claude-*` | Native Anthropic Messages pass-through | Caller’s Anthropic credential is preserved |
+
+On the Claude Messages edge, the router strips incoming cookies, `x-api-key`, and caller authorization before a third-party route receives the request. It inserts the key belonging to the selected provider. Native Claude routes are the exception because preserving the caller’s Anthropic credential is what lets normal Claude authentication work.
+
+The `openrouter/` prefix is local naming. `openrouter/openai/gpt-5-nano` becomes `openai/gpt-5-nano` at OpenRouter. The `muse-*` namespace has no Claude Messages route and returns an explicit unsupported-model error.
+
+## Troubleshooting
+
+**Claude Code returns a 404.** Set `ANTHROPIC_BASE_URL` to `/backend-api/claude`, without `/v1/messages`. Claude Code appends that path. An unknown path under the Claude namespace is rejected locally rather than falling through to the Codex handler.
+
+**A provider returns an authentication error.** Check the selected model prefix and the matching key file. Third-party Claude routes use the router’s provider key, while `claude-*` routes use the caller’s Anthropic credential.
+
+**The model appears in the picker but fails on its first request.** Check provider allowlists, account credits, billing, context limits, and the route’s actual API support. A catalog entry is metadata, not a connectivity test.
+
+**A tool call works on DeepSeek but not on another provider.** Treat tool support as route-specific. The live proof above covers a DeepSeek Claude tool round trip, not GLM or OpenRouter tool use. Start with a plain response, then test the exact tool flow you need.
+
+**A long Claude conversation fails while Codex handles a similar history.** The Codex DeepSeek trim pipeline does not apply to the Claude Messages edge. Claude Messages requests pass beneath the router’s general 100 MiB body ceiling and the selected provider decides whether the history fits. Images, tool output, and thinking blocks all count toward the real request size.
+
+**Logs contain more than expected.** Request previews and complete provider error bodies can contain repository context, tool output, or credentials accidentally included by an upstream. Treat the logs as sensitive and reduce them to redacted summaries before exposing the router beyond your machine.
+
+## The practical next step
+
+Start with one route and one client. Put Codex or Claude Code behind the local edge, run the plain check, then run the tool check. Add a second provider only after you have confirmed its request shape, authentication, streaming behavior, and tool contract.
+
+Once the route works, move the cost boundary into your agent instructions: premium reasoning for planning and acceptance, lower-cost execution for a brief with a clear destination. That gives you more room for the turns real software work needs without making every turn pay the highest model price.
