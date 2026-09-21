@@ -1,0 +1,73 @@
+---
+title: I Used to Know What Kind of Engineer I Was
+date: 2026-09-21
+description: A reflection on using AI to build across boundaries faster than my old engineering identity can keep up.
+image: /images/i-used-to-know-what-kind-of-engineer-i-was-og.png
+imageWidth: 1730
+imageHeight: 909
+tags: Engineering, AI, Architecture, Software Development
+---
+
+# I Used to Know What Kind of Engineer I Was
+
+I used to know what kind of engineer I was.
+
+I was a mobile engineer. That sentence carried more than a job title. I knew where my work started, where it ended, and what good judgment looked like inside that space. I also had a sharp sense of what a backend and an architecture should look like, even when I was not writing every service.
+
+That clarity was useful. It gave me a standard to work toward. It gave me a way to recognise work that was technically impressive but structurally wrong. It helped me decide which details mattered and which ones could wait.
+
+Then AI became a much bigger part of how I work.
+
+The change is easy to describe as speed, but speed is only the surface. I can move through unfamiliar code more quickly. I can ask for a first pass, challenge it, reshape it, and keep moving. I can cross boundaries that used to require a deliberate change of context. My ability to build has expanded faster than my understanding of myself as an engineer has caught up.
+
+That is the part I keep returning to. I want to say I am still deciding what should exist and why. I am certainly still accountable for the shape of the system. Yet the distance between an idea and a working implementation has collapsed so quickly that I sometimes wonder what, exactly, my job has become.
+
+## The strange part is how well it works
+
+I need to get one thing out of the way: this is not a complaint that AI has ruined engineering or made me worse at it. The unsettling thing would be easier to dismiss if AI were mostly useless. It is not.
+
+More and more of the work now happens through a prompt. I see a problem, describe it, inspect what comes back, prompt again, and keep moving. I once described it as prompting every nonsense away. It is powerful precisely because so much of the friction disappears.
+
+There is real leverage in that. Existing knowledge compounds with the machine's ability to generate and revise. The architectural instinct I already had gives me something to judge. Experience with mobile systems, backend boundaries, data flow, and failure modes gives me questions to ask. AI gives me the reach to try an answer while the problem is still fresh.
+
+The result is that I can build things that would previously have demanded a different version of myself. I can work across more of the stack without pretending that every unfamiliar area is already second nature. I can stay with a problem longer because the cost of exploring a direction has fallen.
+
+If anything, combined with the abilities I already had, AI has made me a beast. I mean that positively. I feel more capable than I have ever felt. But capability has its own pressure. Once the range of what I can produce expands, the old labels begin to feel too small, while a new label still feels premature.
+
+## What happens to the filter?
+
+Engineering identity used to be partly a filter. It determined what I paid attention to. A mobile engineer notices different risks from someone responsible for a distributed backend.
+
+When AI helps me move between those perspectives, the filter becomes less stable. The harder admission is that I am no longer sure whether my judgment is growing as quickly as my output. I can get something working. Can I still reliably tell what is good, what is merely plausible, and what is quietly becoming a problem for later?
+
+I can generate an implementation in an area where I do not yet have deep intuition. That is useful, but it also creates a responsibility that generation alone cannot satisfy. The code may be plausible. It may compile. It may even pass the tests that were written for it. None of that tells me whether the design belongs in the system, whether the boundary is in the right place, or whether the behaviour matches the people who have to live with it.
+
+Those questions still need an owner.
+
+This is where the identity question becomes uncomfortable. If I am just prompting every nonsense away, am I really in charge? If the implementation arrives faster than I can explain every line, what does authorship mean? Is the engineer the person who wrote the prompt, reviewed the result, or chose the constraints before the prompt existed?
+
+I do not think the answer is found in counting keystrokes. A system is not mine because I typed every character. It feels like mine when I can account for its important decisions, explain its trade-offs, recognise where it can fail, and change it without treating the generated code as a sacred object.
+
+That standard is harder to maintain as the tools get better. AI makes it cheap to move forward, which means it also makes it cheap to avoid deciding. A vague request can produce an impressive amount of motion. The danger is confusing motion with direction.
+
+## The decisions I still want to own
+
+I want to own the problem definition. Before asking for code, I want to understand whose problem is being solved and what would actually solve it. I do not want to outsource the reason for building the thing.
+
+I want to own the boundaries. Where does one responsibility end and another begin? Which state is authoritative? What should happen when a dependency is slow, unavailable, or wrong? Those choices determine the character of a system long after the first implementation has been replaced.
+
+I want to own the level of trust. Some generated work can be accepted after a focused review. Some deserves a deeper read, a test, or an experiment against the real integration. The model can help produce that evidence, but I have to care whether it exists.
+
+I want to own the final refusal. There are times when a neat implementation is the wrong answer, when the requested abstraction hides the real problem, or when the cost of adding another layer is greater than the benefit. Having AI available should make it easier to say no to bad work, not harder because a plausible solution is already sitting in front of me.
+
+I have even formalised part of this split. In [One Router, Two Coding Agents, Lower Costs](/blog/one-router-two-coding-agents), I wrote about keeping stronger reasoning around decisions while delegating bounded execution to cheaper models. That arrangement makes the work affordable and puts an explicit boundary between judgment and execution. It still does not settle the larger question of who I am becoming as that boundary keeps moving.
+
+The old identity still matters to me. Being a mobile engineer gave me more than a job title. It gave me instincts about users, constraints, interfaces, and the difference between a feature that exists and a feature that holds together. My architectural sense is still part of the filter I bring to generated work, even when it reaches into places I would not have entered as quickly on my own.
+
+Maybe the next identity will not be a wider title. Maybe it will be a clearer account of responsibility: using a machine to extend my reach while remaining answerable for the choices that give the work its direction.
+
+I used to know what kind of engineer I was because the boundaries were familiar. Now the boundaries are moving, and I am moving with them. The uncertainty is real. So is the opportunity.
+
+For now, I have a question instead of a new title. If the AI disappeared from the room for ten minutes, would I still know where the work should go next? I do not need to remember how to type every line. I need to know what we are building, why the system is taking this shape, and which direction I would refuse to follow.
+
+I do not have a clean answer every time. I do know I want to keep asking before the machine becomes so good at moving that I mistake its direction for my own.
