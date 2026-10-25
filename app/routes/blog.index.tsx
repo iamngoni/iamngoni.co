@@ -43,7 +43,7 @@ function BlogIndex() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-portfolio-ivory text-portfolio-ink">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_18%,hsl(40_38%_92%/0.95),transparent_36%),radial-gradient(circle_at_82%_72%,hsl(154_12%_70%/0.20),transparent_32%)]" />
+      <div className="absolute inset-0 bg-portfolio-ivory" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col px-6 py-10 lg:py-16">
         <Link
           to="/"

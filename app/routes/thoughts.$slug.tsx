@@ -130,7 +130,7 @@ function ThoughtsPost() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-portfolio-ivory text-portfolio-ink">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_14%,hsl(40_38%_92%/0.95),transparent_34%),radial-gradient(circle_at_84%_78%,hsl(154_12%_70%/0.18),transparent_34%)]" />
+      <div className="absolute inset-0 bg-portfolio-ivory" />
       <article className="relative mx-auto max-w-3xl px-6 py-10 lg:py-16">
         <Link
           to="/thoughts"

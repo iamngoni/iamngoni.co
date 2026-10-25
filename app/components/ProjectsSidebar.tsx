@@ -16,9 +16,14 @@ import {
   GitMerge,
   CircleDot,
   ChevronDown,
+  Download,
   Eye,
+  Lock,
+  Star,
+  Play,
+  Apple,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 type ProjectType =
   | "mobile"
@@ -35,8 +40,19 @@ interface Project {
   title: string;
   description: string;
   date: string;
-  githubUrl: string;
+  // Omit for closed-source work; link its public face via liveUrl / store URLs instead
+  githubUrl?: string;
   type: ProjectType;
+  // Public faces of the project
+  liveUrl?: string;
+  playStoreUrl?: string;
+  appStoreUrl?: string;
+  releasesUrl?: string;
+  // Live site rendered in the browser preview (only for sites that allow framing)
+  sitePreview?: string;
+  // Short public status, e.g. "Live", "On Google Play"
+  status?: string;
+  featured?: boolean;
   // For mobile/web apps
   appPath?: string;
   // For CLI tools
@@ -74,12 +90,408 @@ const projects: Project[] = [
   },
   // Recent Builds
   {
+    id: "rerout",
+    title: "Rerout",
+    description:
+      "A branded-link platform for short links on verified custom domains, brandable QR codes, social previews and click analytics. It ships as a Cloudflare Worker API with a React dashboard, native iOS and Android apps, SDKs, a CLI and an MCP server.",
+    date: "2026",
+    liveUrl: "https://rerout.co",
+    sitePreview: "https://rerout.co",
+    appStoreUrl: "https://apps.apple.com/app/rerout-links-qr-codes/id6774961559",
+    playStoreUrl:
+      "https://play.google.com/store/apps/details?id=za.co.codecraftsolutions.rerout",
+    status: "Live · Web, iOS, Android",
+    featured: true,
+    type: "web",
+    stack: ["Rust", "Cloudflare Workers", "React", "Swift", "Kotlin"],
+    highlights: [
+      "Verified custom domains with per-link social preview controls",
+      "Signed webhooks, link scheduling and destination health checks",
+      "Official SDKs in ten languages, a CLI and a workspace MCP server",
+    ],
+    color: "from-portfolio-copperDark to-portfolio-copper",
+  },
+  {
+    id: "dueo",
+    title: "Dueo",
+    description:
+      "An app for couples to plan shared commitments, payments, income and savings goals in one space. Flutter clients run on a Rust Cloudflare Worker with D1, private R2 storage for receipts and scheduled reminders.",
+    date: "2026",
+    liveUrl: "https://dueo.space",
+    playStoreUrl:
+      "https://play.google.com/store/apps/details?id=cc.antonlabs.dueo",
+    status: "Google Play · iOS in review",
+    featured: true,
+    type: "mobile",
+    stack: ["Flutter", "Rust", "Cloudflare D1 + R2", "FCM"],
+    highlights: [
+      "Partner invites with expiring single-use codes",
+      "Bank statement import and receipt reading with suggested amounts",
+      "Offline ledger with retries and conflict detection",
+    ],
+    color: "from-rose-600 to-portfolio-copper",
+  },
+  {
+    id: "otis",
+    title: "Otis",
+    description:
+      "A native iOS portfolio tracker that treats your own holdings records as the source of truth, with live prices, dividends and FX layered on top. A Rust Cloudflare Worker caches market data and sends news push notifications.",
+    date: "2026",
+    liveUrl: "https://otis.money",
+    sitePreview: "https://otis.money",
+    appStoreUrl:
+      "https://apps.apple.com/za/app/otis-a-friend-to-your-stocks/id6766045265",
+    status: "App Store",
+    featured: true,
+    type: "mobile",
+    stack: ["Swift", "SwiftUI", "WidgetKit", "Rust Workers"],
+    highlights: [
+      "Home-screen widgets for your holdings",
+      "Screenshot import of transactions with on-device OCR",
+      "Ticker and topic news push with deduplication",
+    ],
+    color: "from-portfolio-forest to-emerald-600",
+  },
+  {
+    id: "pushlog",
+    title: "PushLog",
+    description:
+      "A push-up training app that turns a long-term goal into an adjustable 8, 12 or 16-week plan with fast daily logging and friend leaderboards. Flutter on the phone, a Rust Cloudflare Worker behind it, and watch apps on both platforms.",
+    date: "2026",
+    appStoreUrl: "https://apps.apple.com/za/app/pushlog-push-log-repeat/id6762145570",
+    playStoreUrl:
+      "https://play.google.com/store/apps/details?id=za.co.codecraftsolutions.pushlog",
+    status: "App Store · Google Play",
+    type: "mobile",
+    stack: ["Flutter", "Rust", "watchOS", "Wear OS"],
+    highlights: [
+      "TrueDepth rep counting on iPhone",
+      "Apple Watch and Wear OS workouts with heart rate",
+      "Friend requests and daily, weekly and all-time leaderboards",
+    ],
+    color: "from-orange-700 to-portfolio-copper",
+  },
+  {
+    id: "fettle",
+    title: "Fettle",
+    description:
+      "A macOS menu-bar utility that bundles focused system tools behind one icon: keep awake, keyboard lock for cleaning, global mic mute, per-app volume and window snapping. It updates itself through Sparkle.",
+    date: "2026",
+    liveUrl: "https://fettle.iamngoni.dev",
+    sitePreview: "https://fettle.iamngoni.dev",
+    status: "Live · v1.2",
+    type: "desktop",
+    stack: ["Swift", "SwiftUI", "Core Audio", "Sparkle"],
+    highlights: [
+      "Per-app volume mixer using Core Audio process taps",
+      "Window snapping with edge targets and shortcuts",
+      "Notch cockpit showing live Codex and Claude Code sessions",
+    ],
+    color: "from-portfolio-moss to-portfolio-forest",
+  },
+  {
+    id: "shipit",
+    title: "Ship It",
+    description:
+      "A free multiplayer tech card game where players solve architecture problems together or against each other. A Rust game core compiled to WebAssembly runs on Cloudflare, with in-table voice chat.",
+    date: "2026",
+    liveUrl: "https://shipit.antonlabs.cc",
+    sitePreview: "https://shipit.antonlabs.cc",
+    status: "Live · Play now",
+    type: "web",
+    stack: ["Rust → WASM", "React Three Fiber", "Cloudflare D1", "RealtimeKit"],
+    highlights: [
+      "Friend matches, computer opponents and practice mode",
+      "Opt-in voice chat with push-to-talk",
+      "Public leaderboard from human multiplayer matches only",
+    ],
+    color: "from-portfolio-copper to-amber-600",
+  },
+  {
+    id: "kanvoya",
+    title: "Kanvoya",
+    description:
+      "A post-order fulfilment platform that coordinates delivery jobs, driver assignment, tracking and proof of delivery across a merchant's own drivers and partners. A modular Rust backend runs on Cloudflare Workers over Postgres.",
+    date: "2026",
+    liveUrl: "https://kanvoya.com",
+    sitePreview: "https://kanvoya.com",
+    status: "Pre-launch",
+    type: "service",
+    stack: ["Rust", "Cloudflare Workers", "Postgres", "PWA"],
+    highlights: [
+      "Offline-first driver app with encrypted proof-of-delivery queue",
+      "Public customer tracking pages",
+      "Merchant CSV import with row-level validation",
+    ],
+    color: "from-slate-600 to-portfolio-copper",
+  },
+  {
+    id: "kanso",
+    title: "Kanso",
+    description:
+      "A local-first Markdown notes app for macOS, Windows and Linux, built in Rust on GPUI. End-to-end encrypted sync runs through a Cloudflare Worker, and a local REST API and MCP endpoint let AI agents work with your notes.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/kanso",
+    releasesUrl: "https://github.com/iamngoni/kanso/releases",
+    liveUrl: "https://kansoapp.app",
+    status: "Live · v0.8",
+    featured: true,
+    type: "desktop",
+    stack: ["Rust", "GPUI", "SQLite", "Cloudflare Workers"],
+    highlights: [
+      "Wiki-links, backlinks, Mermaid, math and Excalidraw previews",
+      "End-to-end encrypted sync, locked notes and encrypted share links",
+      "Imports from Obsidian, Notion, Evernote, Bear and more, plus 60 themes",
+    ],
+    color: "from-portfolio-forest to-portfolio-moss",
+  },
+  {
+    id: "gridops",
+    title: "GridOps",
+    description:
+      "A self-hosted control plane for GitHub Actions runners. It connects through a GitHub App and runs autoscaled pools of ephemeral Docker or Apple Silicon macOS runners, with a Rust backend and React dashboard.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/gridops",
+    status: "v0.1 released",
+    featured: true,
+    type: "service",
+    stack: ["Rust", "Axum", "React", "Docker", "Tart"],
+    highlights: [
+      "Queue-driven autoscaling with busy-safe rolling replacement",
+      "Host capacity guardrails and per-pool circuit breaking",
+      "Fix agent that diagnoses failed jobs and opens a draft PR",
+    ],
+    color: "from-slate-600 to-portfolio-forest",
+  },
+  {
+    id: "mac-computer-use",
+    title: "Mac Computer Use",
+    description:
+      "A native macOS app that exposes computer-use tools over MCP, so agents like Claude Code and Codex can see and control Mac apps. It works through Accessibility and ScreenCaptureKit without taking over your mouse.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/mac-computer-use",
+    status: "Notarized · v0.9",
+    featured: true,
+    type: "desktop",
+    stack: ["Swift", "MCP", "ScreenCaptureKit", "Accessibility"],
+    highlights: [
+      "Background clicks that leave the real cursor alone",
+      "Animated agent cursor with point, annotate and guided-tour tools",
+      "Human brakes: Esc pauses agents, countdown before risky actions",
+    ],
+    color: "from-portfolio-copperDark to-portfolio-copper",
+  },
+  {
+    id: "porthole",
+    title: "Porthole",
+    description:
+      "Streams a single Mac window to an iPad, iPhone or Android device over WebRTC at up to 120 fps, with touch, mouse and keyboard control. A Swift menu-bar host captures the window and a Flutter client drives it.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/porthole",
+    type: "desktop",
+    stack: ["Swift", "WebRTC", "Flutter", "ScreenCaptureKit"],
+    highlights: [
+      "Bonjour discovery and Tailscale reach with live window cards",
+      "Encrypted pairing with a 6-digit code and DTLS media",
+      "Property tests on both the Swift and Dart sides",
+    ],
+    color: "from-slate-600 to-portfolio-moss",
+  },
+  {
+    id: "sift-mail",
+    title: "Sift Mail",
+    description:
+      "A calm, keyboard-first desktop email client built in Rust on GPUI. It sorts mail into views like Needs you and Newsletters, and its AI features run through your existing Claude Code or Codex install, with no API keys.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/sift-mail",
+    type: "desktop",
+    stack: ["Rust", "GPUI", "SQLite", "IMAP / OAuth"],
+    highlights: [
+      "Microsoft 365, Google and IMAP accounts with OS keychain storage",
+      "Rule-based triage, snooze and a Ctrl+K command palette",
+      "Calendar from invitations with RSVP and Find a time",
+    ],
+    color: "from-portfolio-moss to-portfolio-forest",
+  },
+  {
+    id: "veyra",
+    title: "Veyra",
+    description:
+      "A provider-neutral trading service in Rust that turns structured LLM judgements into MetaTrader 4 orders. Every order passes a deterministic, fail-closed risk gate, and operators watch it from a web console.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/veyra",
+    type: "service",
+    stack: ["Rust", "Actix Web", "TanStack Start", "MT4"],
+    highlights: [
+      "Fail-closed risk gate: kill switch, allowlists, volume caps",
+      "Autopilot loop with ATR and economic-calendar blackouts",
+      "Break-even, trailing-stop and profit-harvest management",
+    ],
+    color: "from-portfolio-forest to-emerald-600",
+  },
+  {
+    id: "agent-runtime",
+    title: "agent-runtime",
+    description:
+      "A Rust LLM agent core that keeps HTTP transport separate from provider logic, so the same agent code runs natively or inside Cloudflare Workers (wasm32). It handles streaming, tool calling, sub-agents and sessions across major providers.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/agent-runtime",
+    type: "library",
+    stack: ["Rust", "wasm32", "Cloudflare Workers", "LLMs"],
+    highlights: [
+      "Pluggable HTTP client: reqwest natively, Fetch on Workers",
+      "OpenAI, Anthropic, Gemini, Cohere, Bedrock and compatible APIs",
+      "Typed errors, retries and timeouts for streaming calls",
+    ],
+    color: "from-portfolio-copper to-amber-600",
+  },
+  {
+    id: "codex-router",
+    title: "codex-router",
+    description:
+      "A local Rust reverse proxy that lets the Codex CLI talk to OpenAI, DeepSeek, OpenRouter, GLM and other providers based on the model name. It translates between the Responses and Chat Completions APIs where needed.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/codex-router",
+    type: "service",
+    stack: ["Rust", "Actix Web", "OpenAI APIs", "Anthropic API"],
+    highlights: [
+      "Prefix routing table across providers",
+      "Two-way Responses and Chat Completions translation",
+      "Anthropic Messages passthrough with SSE streaming",
+    ],
+    color: "from-slate-600 to-portfolio-forest",
+  },
+  {
+    id: "agentmux",
+    title: "agentmux",
+    description:
+      "tmux for AI agents: a Rust daemon that owns agent CLIs in PTYs, with a CLI and MCP server to spawn, watch, steer and wait on Claude Code, Codex and other terminal agents.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/agentmux",
+    type: "cli",
+    stack: ["Rust", "PTY", "MCP"],
+    highlights: [
+      "Read-only and workspace-write safety profiles per provider",
+      "Incremental output reads and terminal screen reconstruction",
+      "Durable sessions that survive daemon restarts",
+    ],
+    color: "from-portfolio-forest to-portfolio-moss",
+  },
+  {
+    id: "bitbucket-cli",
+    title: "bb: Bitbucket CLI",
+    description:
+      "A Rust command-line tool for Bitbucket Cloud and Server covering repositories, pull requests, pipelines and issues. Credentials live in the system keychain and every command can output JSON for scripting.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/bitbucket-cli",
+    type: "cli",
+    installCommand: "brew install iamngoni/tap/bb",
+    cliDemo: [
+      "# Install",
+      "$ brew install iamngoni/tap/bb",
+      "",
+      "# Review and merge a pull request",
+      "$ bb pr list",
+      "$ bb pr approve 42",
+      "$ bb pr merge 42",
+      "",
+      "# Follow a pipeline",
+      "$ bb pipeline logs 12345 --follow",
+    ],
+    color: "from-portfolio-copperDark to-portfolio-copper",
+  },
+  {
+    id: "anton-mlx",
+    title: "Anton MLX",
+    description:
+      "A local MLX chat control plane for a homelab Mac. A Rust server supervises the MLX model server with an explicit state machine, proxies chat with usage tracking, and serves a React dashboard from a single binary.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/anton-mlx",
+    type: "service",
+    stack: ["Rust", "Actix Web", "MLX", "React", "libSQL"],
+    highlights: [
+      "Model server supervisor: starting, ready, degraded, crashed",
+      "Chat proxy with persistence, usage capture and metrics",
+      "Ships as one binary that serves the built dashboard",
+    ],
+    color: "from-slate-600 to-portfolio-moss",
+  },
+  {
+    id: "keel",
+    title: "Keel",
+    description:
+      "A lightweight native SwiftUI client for an existing Docker Engine, whether that's Docker Desktop, OrbStack or Colima. It manages containers, images, volumes and networks without the heavyweight GUI.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/Keel",
+    type: "desktop",
+    stack: ["Swift", "SwiftUI", "Docker"],
+    highlights: [
+      "Containers grouped by compose project",
+      "Per-container logs, CPU, memory and network stats",
+      "Image, volume and network cleanup with confirmation",
+    ],
+    color: "from-slate-600 to-stone-500",
+  },
+  {
+    id: "wintosh",
+    title: "Wintosh",
+    description:
+      "A macOS app for creating bootable Windows installation USB drives, written in Rust with a four-step gpui wizard. The core handles ISO probing, partition planning and WIM splitting, backed by 124 tests.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/wintosh",
+    type: "desktop",
+    stack: ["Rust", "gpui", "wimlib"],
+    highlights: [
+      "Disk-safety checks and a heavily tested layout engine",
+      "Windows 11 setup options and answer-file generation",
+      "Explicit erase confirmation before anything is written",
+    ],
+    color: "from-portfolio-moss to-slate-600",
+  },
+  {
+    id: "actuate",
+    title: "actuate",
+    description:
+      "Eight UI design skills for AI coding agents, covering hierarchy, spacing, typography, color, depth, imagery and finishing touches. They install into Claude Code, Codex, Cursor and other harnesses.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/actuate",
+    type: "library",
+    installCommand: "npx skills add iamngoni/actuate",
+    usageCode: `# Skills included
+hierarchy        spacing
+typography       color
+depth            imagery
+finishing-touches
+starting-fresh
+
+# Then ask your agent:
+"Use the hierarchy skill to fix this screen"`,
+    color: "from-portfolio-copper to-orange-600",
+  },
+  {
+    id: "siteskin",
+    title: "SiteSkin",
+    description:
+      "A Chrome extension that gives old, unmaintained websites a full modern reskin using remotely updated packs. Its first target is ZISPA, Zimbabwe's .co.zw domain registry.",
+    date: "2026",
+    githubUrl: "https://github.com/iamngoni/siteskin",
+    type: "web",
+    stack: ["JavaScript", "Chrome MV3", "CSS"],
+    highlights: [
+      "Pack library fetched at a pinned commit with offline fallback",
+      "Per-site packs that rebuild the page before it renders",
+      "Popup showing permission and pack status",
+    ],
+    color: "from-portfolio-forest to-portfolio-copper",
+  },
+  {
     id: "heimdall",
     title: "Heimdall",
     description:
       "An agentic, context-aware security scanner for source code repositories. It builds a threat model, reasons over the codebase, validates findings in a sandbox, and returns ranked vulnerabilities with patches and proof-of-concept exploits.",
     date: "2026",
     githubUrl: "https://github.com/iamngoni/heimdall",
+    featured: true,
     type: "service",
     stack: ["Rust", "AI Agents", "Security", "Postgres"],
     highlights: [
@@ -96,6 +508,8 @@ const projects: Project[] = [
       "A macOS menu bar app for controlling built-in and external display brightness, color temperature, and display profiles from a compact native popover.",
     date: "2026",
     githubUrl: "https://github.com/iamngoni/Montr-Control-Your-Displays",
+    liveUrl: "https://montr.iamngoni.dev",
+    sitePreview: "https://montr.iamngoni.dev",
     type: "desktop",
     stack: ["Swift", "macOS", "DDC/CI", "Sparkle"],
     highlights: [
@@ -112,6 +526,10 @@ const projects: Project[] = [
       "A native macOS clipboard manager and free alternative for keeping clipboard history close at hand.",
     date: "2026",
     githubUrl: "https://github.com/iamngoni/Pastr",
+    liveUrl: "https://pastr.iamngoni.dev",
+    sitePreview: "https://pastr.iamngoni.dev",
+    appStoreUrl: "https://apps.apple.com/app/pastr/id6757497760",
+    status: "Mac App Store",
     type: "desktop",
     stack: ["Swift", "macOS", "Clipboard", "Xcode"],
     highlights: [
@@ -285,7 +703,6 @@ const projects: Project[] = [
     description:
       "A revamp of the ShoppersChoice shopping platform app, showcasing modern Flutter UI design patterns and smooth user experience for e-commerce applications.",
     date: "Jul 2022",
-    githubUrl: "https://github.com/iamngoni/shoppers_choice",
     type: "mobile",
     appPath: "/apps/shoppers_choice/index.html",
     color: "from-orange-700 to-portfolio-copper",
@@ -343,6 +760,8 @@ const projects: Project[] = [
       "AI-powered Git commit message generator that whispers the perfect commit message for your changes. Takes the guesswork out of writing meaningful commit messages.",
     date: "2024",
     githubUrl: "https://github.com/iamngoni/gitwhisper",
+    packageUrl: "https://pub.dev/packages/gitwhisper",
+    featured: true,
     type: "cli",
     cliDemo: [
       "# Stage your changes",
@@ -765,6 +1184,7 @@ function RepoPreview({ project }: { project: Project }) {
               <span className="text-xs font-mono text-portfolio-soft">
                 {project.date}
               </span>
+              {project.status && <StatusBadge status={project.status} />}
             </div>
             <h3 className="text-lg font-bold text-portfolio-ink">
               {project.title}
@@ -809,9 +1229,29 @@ function RepoPreview({ project }: { project: Project }) {
           </div>
         )}
 
-        <div className="flex items-center gap-2 rounded-lg border border-portfolio-line bg-portfolio-paper/70 px-3 py-2 text-xs text-portfolio-soft">
-          <Github className="w-3.5 h-3.5 flex-shrink-0" />
-          <span className="truncate">{project.githubUrl}</span>
+        <div className="space-y-2">
+          {getProjectLinks(project).map(({ href, label, icon: Icon }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 rounded-lg border border-portfolio-line bg-portfolio-paper/70 px-3 py-2 text-xs text-portfolio-ink transition-colors hover:border-portfolio-copper/60"
+            >
+              <Icon className="w-3.5 h-3.5 flex-shrink-0 text-portfolio-soft group-hover:text-portfolio-copper" />
+              <span className="font-semibold">{label}</span>
+              <span className="min-w-0 flex-1 truncate text-portfolio-soft">
+                {href.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+              </span>
+              <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 text-portfolio-soft group-hover:text-portfolio-copper" />
+            </a>
+          ))}
+          {!project.githubUrl && (
+            <div className="flex items-center gap-2 px-1 text-xs text-portfolio-soft">
+              <Lock className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Closed source</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -819,6 +1259,29 @@ function RepoPreview({ project }: { project: Project }) {
 }
 
 // Preview content component used in both desktop and bottom sheet
+function hasInteractivePreview(project: Project) {
+  switch (project.type) {
+    case "mobile":
+    case "tablet":
+    case "web":
+      return Boolean(project.appPath);
+    case "cli":
+      return Boolean(project.cliDemo);
+    case "library":
+      return Boolean(
+        project.installCommand || project.usageCode || project.imagePreview,
+      );
+    case "contribution":
+      return true;
+    default:
+      return false;
+  }
+}
+
+function usesSitePreview(project: Project) {
+  return Boolean(project.sitePreview) && !hasInteractivePreview(project);
+}
+
 function ProjectPreviewContent({
   project,
   isMobile,
@@ -826,6 +1289,13 @@ function ProjectPreviewContent({
   project: Project;
   isMobile: boolean;
 }) {
+  if (usesSitePreview(project)) {
+    return <WebPreview appPath={project.sitePreview!} />;
+  }
+  if (!hasInteractivePreview(project)) {
+    return <RepoPreview project={project} />;
+  }
+
   return (
     <>
       {project.type === "mobile" && project.appPath && (
@@ -855,13 +1325,126 @@ function ProjectPreviewContent({
           repoName="zed-industries/zed"
         />
       )}
-      {project.type !== "mobile" &&
-        project.type !== "tablet" &&
-        project.type !== "web" &&
-        project.type !== "cli" &&
-        project.type !== "library" &&
-        project.type !== "contribution" && <RepoPreview project={project} />}
     </>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-portfolio-forest/25 bg-portfolio-forest/[0.07] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-portfolio-forest">
+      <span className="h-1.5 w-1.5 rounded-full bg-portfolio-forest" />
+      {status}
+    </span>
+  );
+}
+
+interface ProjectLink {
+  href: string;
+  label: string;
+  icon: typeof Github;
+  primary?: boolean;
+}
+
+function getProjectLinks(project: Project): ProjectLink[] {
+  const links: ProjectLink[] = [];
+
+  if (project.githubUrl) {
+    links.push({ href: project.githubUrl, label: "Source", icon: Github });
+  }
+  if (project.releasesUrl) {
+    links.push({
+      href: project.releasesUrl,
+      label: "Download",
+      icon: Download,
+      primary: true,
+    });
+  }
+  if (project.liveUrl) {
+    links.push({
+      href: project.liveUrl,
+      label: "Website",
+      icon: Globe,
+      primary: true,
+    });
+  }
+  if (project.playStoreUrl) {
+    links.push({
+      href: project.playStoreUrl,
+      label: "Google Play",
+      icon: Play,
+      primary: true,
+    });
+  }
+  if (project.appStoreUrl) {
+    links.push({
+      href: project.appStoreUrl,
+      label: "App Store",
+      icon: Apple,
+      primary: true,
+    });
+  }
+  if (
+    (project.type === "mobile" ||
+      project.type === "tablet" ||
+      project.type === "web") &&
+    project.appPath &&
+    project.appPath !== project.liveUrl
+  ) {
+    links.push({
+      href: project.appPath,
+      label: project.type === "web" ? "Visit Site" : "Full Screen",
+      icon: ExternalLink,
+      primary: true,
+    });
+  }
+  if (project.packageUrl) {
+    links.push({
+      href: project.packageUrl,
+      label: "Package",
+      icon: Package,
+      primary: true,
+    });
+  }
+
+  return links;
+}
+
+function ProjectLinks({
+  project,
+  fill = false,
+}: {
+  project: Project;
+  fill?: boolean;
+}) {
+  const links = getProjectLinks(project);
+
+  return (
+    <div className="flex flex-wrap gap-2 sm:gap-3">
+      {links.map(({ href, label, icon: Icon, primary }) => (
+        <a
+          key={label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${fill ? "flex-1 justify-center py-3" : "py-2"} flex items-center gap-2 px-4 text-sm rounded-lg transition-all ${
+            primary
+              ? "text-portfolio-ivory bg-portfolio-forest hover:bg-portfolio-moss"
+              : "text-portfolio-ink border border-portfolio-moss/45 hover:border-portfolio-copper/70 hover:text-portfolio-copper"
+          }`}
+        >
+          <Icon className="w-4 h-4" />
+          {label}
+        </a>
+      ))}
+      {!project.githubUrl && (
+        <span
+          className={`${fill ? "flex-1 justify-center py-3" : "py-2"} flex items-center gap-2 px-4 text-sm text-portfolio-soft border border-dashed border-portfolio-line rounded-lg`}
+        >
+          <Lock className="w-4 h-4" />
+          Closed source
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -946,41 +1529,8 @@ function PreviewBottomSheet({
             </div>
 
             {/* Actions */}
-            <div className="p-4 border-t border-portfolio-line bg-portfolio-paper/55 flex gap-3">
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm text-portfolio-ink border border-portfolio-moss/45 rounded-lg hover:border-portfolio-copper/70 hover:text-portfolio-copper transition-all"
-              >
-                <Github className="w-4 h-4" />
-                Source
-              </a>
-              {(project.type === "mobile" ||
-                project.type === "tablet" ||
-                project.type === "web") &&
-                project.appPath && (
-                  <a
-                    href={project.appPath}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm text-portfolio-ivory bg-portfolio-forest rounded-lg hover:bg-portfolio-moss transition-all"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    {project.type === "web" ? "Visit" : "Full Screen"}
-                  </a>
-                )}
-              {project.type === "library" && project.packageUrl && (
-                <a
-                  href={project.packageUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm text-portfolio-ivory bg-portfolio-forest rounded-lg hover:bg-portfolio-moss transition-all"
-                >
-                  <Package className="w-4 h-4" />
-                  Package
-                </a>
-              )}
+            <div className="p-4 border-t border-portfolio-line bg-portfolio-paper/55">
+              <ProjectLinks project={project} fill />
             </div>
           </motion.div>
         </>
@@ -989,10 +1539,97 @@ function PreviewBottomSheet({
   );
 }
 
+type ProjectFilter = "all" | "featured" | ProjectType;
+
+const filterOrder: ProjectType[] = [
+  "desktop",
+  "service",
+  "mobile",
+  "web",
+  "cli",
+  "library",
+  "tablet",
+  "contribution",
+];
+
+const filterLabels: Record<ProjectType, string> = {
+  mobile: "Mobile",
+  tablet: "Tablet",
+  web: "Web",
+  desktop: "Desktop",
+  service: "Services",
+  cli: "CLI",
+  library: "Libraries",
+  contribution: "Open Source",
+};
+
+const orderedProjects = [
+  ...projects.filter((project) => project.featured),
+  ...projects.filter((project) => !project.featured),
+];
+
 export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
-  const [activeProject, setActiveProject] = useState<Project>(projects[0]);
+  const [activeProject, setActiveProject] = useState<Project>(
+    orderedProjects[0],
+  );
+  const [filter, setFilter] = useState<ProjectFilter>("all");
   const [showPreview, setShowPreview] = useState(false);
   const isMobile = useIsMobile(1024); // lg breakpoint
+
+  const filters = useMemo(() => {
+    const counts = new Map<ProjectType, number>();
+    for (const project of projects) {
+      counts.set(project.type, (counts.get(project.type) ?? 0) + 1);
+    }
+    const featuredCount = projects.filter((project) => project.featured).length;
+    return [
+      { id: "all" as ProjectFilter, label: "All", count: projects.length },
+      ...(featuredCount
+        ? [
+            {
+              id: "featured" as ProjectFilter,
+              label: "Featured",
+              count: featuredCount,
+            },
+          ]
+        : []),
+      ...filterOrder
+        .filter((type) => counts.has(type))
+        .map((type) => ({
+          id: type as ProjectFilter,
+          label: filterLabels[type],
+          count: counts.get(type) ?? 0,
+        })),
+    ];
+  }, []);
+
+  const visibleProjects = useMemo(
+    () =>
+      orderedProjects.filter((project) =>
+        filter === "all"
+          ? true
+          : filter === "featured"
+            ? project.featured
+            : project.type === filter,
+      ),
+    [filter],
+  );
+
+  const liveCount = projects.filter(
+    (project) => project.liveUrl || project.playStoreUrl || project.appStoreUrl,
+  ).length;
+
+  const handleFilterChange = (next: ProjectFilter) => {
+    setFilter(next);
+    const first = orderedProjects.find((project) =>
+      next === "all"
+        ? true
+        : next === "featured"
+          ? project.featured
+          : project.type === next,
+    );
+    if (first && !isMobile) setActiveProject(first);
+  };
   const TypeIcon = typeIcons[activeProject.type];
 
   const handleProjectClick = (project: Project) => {
@@ -1032,6 +1669,10 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                 <h2 className="font-display text-3xl leading-none lg:text-4xl">
                   Show Me The <span className="gradient-text">Code</span>
                 </h2>
+                <p className="mt-2 font-mono text-xs text-portfolio-soft">
+                  {projects.length} projects
+                  {liveCount > 0 && ` · ${liveCount} live or in stores`}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <a
@@ -1063,12 +1704,39 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
             </div>
 
             {/* Content */}
-            <div className="flex h-[calc(100%-72px)] lg:h-[calc(100%-88px)]">
+            <div className="flex h-[calc(100%-96px)] lg:h-[calc(100%-112px)]">
               {/* Project list - full width on mobile, 2/5 on desktop */}
               <div
-                className={`${isMobile ? "w-full" : "w-2/5"} border-r border-portfolio-line overflow-y-auto p-4 space-y-2`}
+                className={`${isMobile ? "w-full" : "w-2/5"} border-r border-portfolio-line overflow-y-auto`}
               >
-                {projects.map((project) => {
+                <div className="sticky top-0 z-10 border-b border-portfolio-line bg-portfolio-ivory/95 px-4 py-3 backdrop-blur">
+                  <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none]">
+                    {filters.map(({ id, label, count }) => {
+                      const selected = filter === id;
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => handleFilterChange(id)}
+                          className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                            selected
+                              ? "border-portfolio-ink bg-portfolio-ink text-portfolio-ivory"
+                              : "border-portfolio-line text-portfolio-soft hover:border-portfolio-moss/60 hover:text-portfolio-ink"
+                          }`}
+                        >
+                          {id === "featured" && <Star className="h-3 w-3" />}
+                          {label}
+                          <span
+                            className={`font-mono text-[10px] ${selected ? "text-portfolio-ivory/70" : "text-portfolio-soft/70"}`}
+                          >
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="p-4 space-y-2">
+                {visibleProjects.map((project) => {
                   const Icon = typeIcons[project.type];
                   const isActive = activeProject.id === project.id;
                   return (
@@ -1097,12 +1765,33 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                           </h3>
                           <Icon className="w-4 h-4 text-portfolio-soft" />
                         </div>
-                        <div className="flex items-center gap-2 text-portfolio-soft text-xs ml-5">
+                        <div className="flex flex-wrap items-center gap-2 text-portfolio-soft text-xs ml-5">
                           <Calendar className="w-3 h-3" />
                           <span>{project.date}</span>
                           <span className="text-portfolio-copper/60">•</span>
                           <span>{typeLabels[project.type]}</span>
+                          {!project.githubUrl && (
+                            <Lock
+                              className="w-3 h-3"
+                              aria-label="Closed source"
+                            />
+                          )}
+                          {project.status && (
+                            <StatusBadge status={project.status} />
+                          )}
                         </div>
+                        {project.stack && (
+                          <div className="mt-2 ml-5 flex flex-wrap gap-1.5">
+                            {project.stack.slice(0, 4).map((item) => (
+                              <span
+                                key={item}
+                                className="rounded border border-portfolio-line px-1.5 py-0.5 font-mono text-[10px] text-portfolio-soft"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </button>
 
                       {/* Mobile: Show description and preview button for active item */}
@@ -1130,6 +1819,7 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                     </div>
                   );
                 })}
+                </div>
               </div>
 
               {/* Preview area - desktop only */}
@@ -1144,60 +1834,33 @@ export function ProjectsSidebar({ isOpen, onClose }: ProjectsSidebarProps) {
                   </div>
 
                   {/* Preview */}
-                  <div
-                    className={`flex-1 flex overflow-hidden ${activeProject.type === "web" || activeProject.type === "tablet" ? "p-4" : "items-center justify-center p-6"}`}
-                  >
-                    <ProjectPreviewContent
-                      project={activeProject}
-                      isMobile={false}
-                    />
-                  </div>
+                  {activeProject.type === "web" ||
+                  activeProject.type === "tablet" ||
+                  usesSitePreview(activeProject) ? (
+                    <div className="flex-1 flex overflow-hidden p-4">
+                      <ProjectPreviewContent
+                        project={activeProject}
+                        isMobile={false}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex overflow-y-auto p-6">
+                      {/* m-auto centres short previews without clipping tall ones */}
+                      <div className="m-auto flex w-full justify-center">
+                        <ProjectPreviewContent
+                          project={activeProject}
+                          isMobile={false}
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   {/* Project info */}
                   <div className="p-4 border-t border-portfolio-line bg-portfolio-paper/55">
                     <p className="text-portfolio-soft text-sm mb-4 line-clamp-3">
                       {activeProject.description}
                     </p>
-                    <div className="flex gap-3">
-                      <a
-                        href={activeProject.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-portfolio-ink border border-portfolio-moss/45 rounded-lg hover:border-portfolio-copper/70 hover:text-portfolio-copper transition-all"
-                      >
-                        <Github className="w-4 h-4" />
-                        Source
-                      </a>
-                      {(activeProject.type === "mobile" ||
-                        activeProject.type === "tablet" ||
-                        activeProject.type === "web") &&
-                        activeProject.appPath && (
-                          <a
-                            href={activeProject.appPath}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-portfolio-ivory bg-portfolio-forest rounded-lg hover:bg-portfolio-moss transition-all"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            {activeProject.type === "mobile" ||
-                            activeProject.type === "tablet"
-                              ? "Full Screen"
-                              : "Visit Site"}
-                          </a>
-                        )}
-                      {activeProject.type === "library" &&
-                        activeProject.packageUrl && (
-                          <a
-                            href={activeProject.packageUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-portfolio-ivory bg-portfolio-forest rounded-lg hover:bg-portfolio-moss transition-all"
-                          >
-                            <Package className="w-4 h-4" />
-                            View Package
-                          </a>
-                        )}
-                    </div>
+                    <ProjectLinks project={activeProject} />
                   </div>
                 </div>
               )}

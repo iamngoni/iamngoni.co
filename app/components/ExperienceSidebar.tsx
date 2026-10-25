@@ -61,7 +61,7 @@ function getDuration(period: string): string {
 const experiences: Experience[] = [
   {
     id: "toppan",
-    title: "Software Engineer",
+    title: "Senior Software Engineer",
     company: "TOPPAN Security",
     type: "Contract",
     period: "Apr 2024 - Present",

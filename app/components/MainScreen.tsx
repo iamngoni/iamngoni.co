@@ -60,7 +60,7 @@ export function MainScreen() {
   return (
     <>
       <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-portfolio-ivory text-portfolio-ink">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_45%,hsl(40_38%_92%/0.86),hsl(42_48%_96%)_48%,hsl(40_35%_91%))]" />
+        <div className="absolute inset-0 bg-portfolio-ivory" />
         <GitHubContributions />
 
         {/* Content */}
@@ -104,7 +104,7 @@ export function MainScreen() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.94] sm:leading-[0.92] mb-5 sm:mb-6"
+                className="font-poster uppercase tracking-[-0.005em] text-[3.25rem] sm:text-7xl md:text-7xl lg:text-8xl xl:text-[6.75rem] leading-[1.02] sm:leading-[0.98] mb-5 sm:mb-6"
               >
                 <span>Talk is cheap.</span>
                 <br />

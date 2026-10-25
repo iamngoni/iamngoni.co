@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface ContributionDay {
   date: string;
@@ -66,133 +66,21 @@ async function fetchGitHubContributions(
   }
 }
 
-// Color levels - base and bright versions
-const levelColors = {
-  base: [
-    "hsl(154 12% 70% / 0.08)",
-    "hsl(154 18% 58% / 0.18)",
-    "hsl(150 24% 42% / 0.26)",
-    "hsl(148 34% 30% / 0.34)",
-    "hsl(22 48% 48% / 0.42)",
-  ],
-  bright: [
-    "hsl(154 12% 70% / 0.20)",
-    "hsl(154 18% 52% / 0.34)",
-    "hsl(150 28% 36% / 0.46)",
-    "hsl(148 38% 24% / 0.58)",
-    "hsl(22 53% 48% / 0.72)",
-  ],
-};
-
-interface GridCellProps {
-  day: ContributionDay;
-  mouseX: any;
-  mouseY: any;
-  gridRef: React.RefObject<HTMLDivElement | null>;
-}
-
-function GridCell({ day, mouseX, mouseY, gridRef }: GridCellProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const cellRef = useRef<HTMLDivElement>(null);
-
-  // Calculate distance from mouse to create ripple effect
-  const x = useTransform(mouseX, (val: number) => {
-    if (!cellRef.current || !gridRef.current) return 0;
-    const rect = cellRef.current.getBoundingClientRect();
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const cellCenterX = rect.left + rect.width / 2 - gridRect.left;
-    return (val - cellCenterX) / 50;
-  });
-
-  const y = useTransform(mouseY, (val: number) => {
-    if (!cellRef.current || !gridRef.current) return 0;
-    const rect = cellRef.current.getBoundingClientRect();
-    const gridRect = gridRef.current.getBoundingClientRect();
-    const cellCenterY = rect.top + rect.height / 2 - gridRect.top;
-    return (val - cellCenterY) / 50;
-  });
-
-  const springConfig = { stiffness: 150, damping: 15 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
-
-  return (
-    <motion.div
-      ref={cellRef}
-      style={{
-        x: springX,
-        y: springY,
-      }}
-      animate={{
-        backgroundColor: isHovered
-          ? levelColors.bright[day.level]
-          : levelColors.base[day.level],
-        scale: isHovered ? 1.5 : 1,
-        boxShadow: isHovered
-          ? "0 8px 20px hsl(22 48% 48% / 0.18)"
-          : "0 0 0px hsl(154 12% 70% / 0)",
-      }}
-      transition={{ duration: 0.2 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="w-[10px] h-[10px] rounded-sm cursor-pointer"
-      title={`${day.date}: ${day.count} contributions`}
-    />
-  );
-}
+// Color levels, faint so the grid stays a background texture
+const levelColors = [
+  "hsl(220 9% 70% / 0.10)",
+  "hsl(152 30% 45% / 0.16)",
+  "hsl(152 35% 35% / 0.24)",
+  "hsl(152 45% 22% / 0.32)",
+  "hsl(18 70% 46% / 0.40)",
+];
 
 export function GitHubContributions() {
   const [contributions, setContributions] = useState<ContributionWeek[]>([]);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  // Mouse position relative to grid
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Floating animation offset - much larger range now
-  const [floatOffset, setFloatOffset] = useState({ x: 0, y: 0 });
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     fetchGitHubContributions("iamngoni").then(setContributions);
-  }, []);
-
-  // Handle mouse move for parallax effect
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!gridRef.current) return;
-      const rect = gridRef.current.getBoundingClientRect();
-      mouseX.set(e.clientX - rect.left);
-      mouseY.set(e.clientY - rect.top);
-    },
-    [mouseX, mouseY],
-  );
-
-  // Floating animation - moves across a large portion of the screen
-  useEffect(() => {
-    let animationId: number;
-    let time = 0;
-
-    const animate = () => {
-      time += 0.002; // Slower movement
-
-      // Large floating range: ~300px in X, ~200px in Y
-      // Multiple sine waves at different frequencies for organic movement
-      const x =
-        Math.sin(time) * 150 +
-        Math.sin(time * 0.7) * 80 +
-        Math.sin(time * 0.3) * 50;
-
-      const y =
-        Math.cos(time * 0.8) * 100 +
-        Math.cos(time * 0.5) * 60 +
-        Math.sin(time * 0.2) * 40;
-
-      setFloatOffset({ x, y });
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => cancelAnimationFrame(animationId);
   }, []);
 
   if (contributions.length === 0) return null;
@@ -200,28 +88,34 @@ export function GitHubContributions() {
   return (
     <div className="absolute inset-0 hidden items-center justify-center overflow-hidden pointer-events-none sm:flex">
       <motion.div
-        ref={gridRef}
-        animate={{
-          x: floatOffset.x,
-          y: floatOffset.y,
-        }}
-        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-        onMouseMove={handleMouseMove}
-        className="mt-28 flex gap-[3px] opacity-55 pointer-events-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.6 }}
+        transition={{ duration: 1.2, delay: 0.6 }}
+        className="mt-28"
       >
+        {/* Slow drift on one transform: GPU-composited, no per-frame React renders */}
+        <motion.div
+          animate={
+            reduceMotion
+              ? undefined
+              : { x: [0, 36, -24, 0], y: [0, -18, 14, 0], rotate: [0, 0.6, -0.4, 0] }
+          }
+          transition={{ duration: 28, ease: "easeInOut", repeat: Infinity }}
+          className="flex gap-[3px]"
+        >
         {contributions.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-[3px]">
             {week.days.map((day) => (
-              <GridCell
+              <div
                 key={day.date}
-                day={day}
-                mouseX={mouseX}
-                mouseY={mouseY}
-                gridRef={gridRef}
+                className="h-[10px] w-[10px] rounded-sm"
+                style={{ backgroundColor: levelColors[day.level] }}
+                title={`${day.date}: ${day.count} contributions`}
               />
             ))}
           </div>
         ))}
+        </motion.div>
       </motion.div>
     </div>
   );
